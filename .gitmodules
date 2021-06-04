@@ -1,0 +1,3 @@
+[submodule "backend/enterprise-lcs-webadmin-backend"]
+	path = backend/enterprise-lcs-webadmin-backend
+	url = git@github.com:koompi/enterprise-lcs-webadmin-backend.git
