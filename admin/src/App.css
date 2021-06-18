@@ -3,6 +3,11 @@
 html {
   scroll-behavior: smooth;
 }
+.h1,
+.h2,
+.h3 {
+  font-weight: 700;
+}
 .ant-layout.ant-layout-has-sider > .ant-layout,
 .ant-layout.ant-layout-has-sider > .ant-layout-content {
   overflow-x: hidden;
@@ -182,4 +187,137 @@ html {
   text-transform: uppercase;
   text-align: center;
   margin-bottom: 0 !important;
+}
+.container {
+  width: 100% auto;
+  min-height: 20%;
+  border-radius: 8px;
+  padding: 20px 20px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.container-header {
+  background-color: #1b262c;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.container-header h1 {
+  color: #fff;
+  font-weight: 700;
+  font-size: 22px;
+}
+.desc-container-banner {
+  width: 80%;
+  margin: auto;
+  margin-top: 25px;
+}
+.desc-container-banner p {
+  font-size: 18px;
+}
+.desc-container {
+  width: 80%;
+  margin: auto;
+}
+.desc-container p {
+  font-size: 18px;
+}
+.desc-details-left {
+  justify-content: end;
+  text-align: end;
+}
+.desc-details-right {
+  justify-content: start;
+  text-align: start;
+}
+.container-details {
+  width: 95%;
+  margin: auto;
+}
+.container-details h2 {
+  font-weight: 700;
+}
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-radius: 4px !important;
+}
+.ant-select-arrow .anticon > svg {
+  vertical-align: middle;
+  font-size: 13px;
+}
+.select-option {
+  width: 255px !important;
+  margin-bottom: 6px !important;
+}
+.detect-button {
+  width: 120px;
+}
+
+.label-info {
+  width: 50% !important;
+  border-radius: 4px !important;
+}
+.button-apply {
+  width: 120px !important;
+  border-radius: 8px !important;
+  margin-top: 30px;
+  position: relative;
+  left: 130% !important;
+}
+.button-apply2 {
+  float: right;
+  margin-top: 40px;
+}
+.select-option-wireless {
+  width: 350px !important;
+  margin-bottom: 6px !important;
+}
+.ant-form-item-label > label {
+  font-size: 18px !important;
+  justify-content: end;
+  text-align: end;
+  margin-right: 30px;
+}
+.ant-form-item-control-input-content .ant-input {
+  border-radius: 8px !important;
+  background-color: #fff;
+}
+.dns-desc-container {
+  margin-top: 30px;
+}
+.ant-btn-lg,
+.ant-btn {
+  border-radius: 4px !important;
+  min-width: 120px;
+}
+.dns-desc-container h2 {
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.close-icon {
+  font-size: 28px;
+  background: #f0f2f5;
+  padding: 5px;
+  border-radius: 50%;
+  position: absolute;
+  right: 20px;
+  top: 13px;
+  cursor: pointer;
+  z-index: 100;
+}
+.ant-modal-content {
+  border-radius: 8px !important;
+}
+.ant-modal-header {
+  border-radius: 8px 8px 0 0 !important;
+}
+.submit-button {
+  margin-top: 10px;
+  float: right;
+  margin-bottom: -20px;
+}
+.container-buttons {
+  float: right;
+}
+.add-button {
+  margin-right: 10px;
 }

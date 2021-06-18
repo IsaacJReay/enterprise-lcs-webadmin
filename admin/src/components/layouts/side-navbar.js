@@ -18,43 +18,37 @@ const { SubMenu } = Menu;
 const SideNavBar = () => {
   const [pathname, setPathname] = useState(window.location.pathname);
 
-  const subMenu = window.location.pathname.split("/")[2];
+  // const subMenu = window.location.pathname.split("/")[2];
 
   useEffect(() => {
     setPathname(window.location.pathname);
   }, [pathname]);
 
-  const rootSubmenuKeys = ["network", "storage", "management", "website"];
+  // const rootSubmenuKeys = ["network", "storage", "management", "website"];
 
-  const [openKeys, setOpenKeys] = useState([pathname]);
+  // const [openKeys, setOpenKeys] = useState([pathname]);
 
-  const onOpenChange = (keys) => {
-    const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-    if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-      setOpenKeys(keys);
-    } else {
-      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-    }
-  };
+  // const onOpenChange = (keys) => {
+  //   const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
+  //   if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+  //     setOpenKeys(keys);
+  //   } else {
+  //     setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+  //   }
+  // };
 
   return (
     <React.Fragment>
       <Sider
-        // style={{
-        //   boxShadow: " 18px 0px 35px 0px rgba(0, 0, 0, 0.02)",
-        // }}
+        style={{
+          boxShadow: " 18px 0px 35px 0px rgba(0, 0, 0, 0.02)",
+        }}
         theme="light"
         width="350px"
         breakpoint="lg"
         collapsedWidth="0"
       >
-        <Menu
-          defaultSelectedKeys={[pathname]}
-          defaultOpenKeys={[subMenu]}
-          onOpenChange={onOpenChange}
-          theme="light"
-          mode="inline"
-        >
+        <Menu defaultSelectedKeys={["pathname"]} theme="light" mode="inline">
           {/* <Row gutter={[24, 12]}>
             <Col span={24}>
               <div className="menu-navbar" key="/dashboard/status">
@@ -171,77 +165,65 @@ const SideNavBar = () => {
             </Col>
           </Row> */}
 
-          <Menu.Item key="/dashboard/status" icon={<SwitcherOutlined />}>
-            <Link to="/dashboard/status">Status</Link>
+          <Menu.Item key="/tatus" icon={<SwitcherOutlined />}>
+            <Link to="/status">Status</Link>
           </Menu.Item>
-          <SubMenu
-            key="/dashboard/network"
-            icon={<ShareAltOutlined />}
-            title="Network"
-          >
-            <Menu.Item key="/dashboard/network/wan">
-              <Link to="/dashboard/network/wan">WAN</Link>
+          <SubMenu key="/network" icon={<ShareAltOutlined />} title="Network">
+            <Menu.Item key="/network/wan">
+              <Link to="/network/wan">WAN</Link>
             </Menu.Item>
-            <Menu.Item key="/dashboard/network/wlan">
-              <Link to="/dashboard/network/wlan">WLAN</Link>
+            <Menu.Item key="/network/wlan">
+              <Link to="/network/wlan">WLAN</Link>
             </Menu.Item>
           </SubMenu>
-          <Menu.Item key="/dashboard/wireless" icon={<WifiOutlined />}>
-            <Link to="/dashboard/wireless">Wireless</Link>
+          <Menu.Item key="/wireless" icon={<WifiOutlined />}>
+            <Link to="/wireless">Wireless</Link>
           </Menu.Item>
-          <Menu.Item key="/dashboard/dhcp" icon={<HddOutlined />}>
-            <Link to="/dashboard/dhcp">DHCP</Link>
+          <Menu.Item key="/dhcp" icon={<HddOutlined />}>
+            <Link to="/dhcp">DHCP</Link>
           </Menu.Item>
-          <Menu.Item key="/dashboard/dns" icon={<UngroupOutlined />}>
-            <Link to="/dashboard/dns">DNS</Link>
+          <Menu.Item key="/dns" icon={<UngroupOutlined />}>
+            <Link to="/dns">DNS</Link>
           </Menu.Item>
           <SubMenu
-            key="/dashboard/storage"
+            key="/storage"
             icon={<CloudServerOutlined />}
             title="Storage"
           >
-            <Menu.Item key="/dashboard/storage/sumsung">
-              <Link to="/dashboard/storage/sumsung">Samsung EVO</Link>
+            <Menu.Item key="/storage/sumsung">
+              <Link to="/storage/sumsung">Samsung EVO</Link>
             </Menu.Item>
-            <Menu.Item key="/dashboard/storage/USB">
-              <Link to="/dashboard/storage/USB">USB</Link>
+            <Menu.Item key="/storage/USB">
+              <Link to="/storage/USB">USB</Link>
             </Menu.Item>
           </SubMenu>
           <SubMenu
-            key="/dashboard/management"
+            key="/management"
             icon={<SettingOutlined />}
             title="Management"
           >
-            <Menu.Item key="/dashboard/management/system-update">
-              <Link to="/dashboard/management/system-update">
-                System Updates
-              </Link>
+            <Menu.Item key="/management/system-update">
+              <Link to="/management/system-update">System Updates</Link>
             </Menu.Item>
-            <Menu.Item key="/dashboard/management/users-account">
-              <Link to="/dashboard/management/users-account">
-                Users Account
-              </Link>
+            <Menu.Item key="/management/users-account">
+              <Link to="/management/users-account">Users Account</Link>
             </Menu.Item>
-            <Menu.Item key="/dashboard/management/export">
-              <Link to="/dashboard/management/export">Export</Link>
+            <Menu.Item key="/management/export">
+              <Link to="/management/export">Export</Link>
             </Menu.Item>
-            <Menu.Item key="/dashboard/management/import">
-              <Link to="/dashboard/management/import">Import</Link>
+            <Menu.Item key="/management/import">
+              <Link to="/management/import">Import</Link>
             </Menu.Item>
-            <Menu.Item key="/dashboard/management/reset">
-              <Link to="/dashboard/management/reset">Reset All</Link>
+            <Menu.Item key="/management/reset">
+              <Link to="/management/reset">Reset All</Link>
             </Menu.Item>
           </SubMenu>
-          <SubMenu
-            key="/dashboard/website"
-            icon={<GlobalOutlined />}
-            title="Website"
-          >
-            <Menu.Item key="/dashboard/website/View">
-              <Link to="/dashboard/website/View">View</Link>
+          <SubMenu key="/website" icon={<GlobalOutlined />} title="Website">
+            <Menu.Item key="/website/View">
+              <Link to="/website/View">View</Link>
             </Menu.Item>
-            <Menu.Item key="/dashboard/website/hosting">
-              <Link to="/dashboard/website/hosting">Web Hosting</Link>
+            <Menu.Item key="/website/hosting">
+              <Link to="/website/hosting">Web Hosting</Link>
             </Menu.Item>
           </SubMenu>
         </Menu>

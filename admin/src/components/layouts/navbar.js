@@ -2,6 +2,7 @@ import React from "react";
 import { Layout, Avatar, Popover, Row, Col } from "antd";
 import { Link } from "react-router-dom";
 import { HiLogout } from "react-icons/hi";
+import { FiSettings } from "react-icons/fi";
 import Avatar1 from "../../assets/images/avatar/avatar.png";
 
 const { Header } = Layout;
@@ -9,7 +10,7 @@ const { Header } = Layout;
 const NavBar = () => {
   return (
     <React.Fragment>
-      <Header>
+      <Header style={{ background: "#1B262C" }}>
         <div className="logos">
           <Link to="/">
             <img
@@ -40,7 +41,21 @@ const NavBar = () => {
           content={
             <div style={{ width: "270px" }}>
               <Row className="accountNavbarhover">
-                <Col style={{ paddingTop: "4px" }} span={4}>
+                <Col style={{ paddingTop: "6px" }} span={4}>
+                  <FiSettings style={{ fontSize: "21px" }} />
+                </Col>
+                <Link to="/logout">
+                  <Col
+                    className="logout"
+                    style={{ paddingTop: "4px", color: "black" }}
+                    span={20}
+                  >
+                    <p>Setting</p>
+                  </Col>
+                </Link>
+              </Row>
+              <Row className="accountNavbarhover">
+                <Col style={{ paddingTop: "6px" }} span={4}>
                   <HiLogout style={{ fontSize: "21px" }} />
                 </Col>
                 <Link to="/logout">
