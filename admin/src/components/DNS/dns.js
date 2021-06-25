@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Layout,
   Col,
@@ -13,10 +13,25 @@ import {
 import NavBar from "../layouts/navbar";
 import SideNavBar from "../layouts/side-navbar";
 import { Link } from "react-router-dom";
+import { FiPlus } from "react-icons/fi";
+import CreateDomain from "./create-domain";
 
 const { Content } = Layout;
 
 const DNSSetting = () => {
+  const [visible, setVisible] = useState(false);
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+  const handleOk = () => {
+    setVisible(false);
+  };
+
+  const createDomain = () => {
+    setVisible(true);
+  };
+
   const data = [
     {
       id: "1",
@@ -51,7 +66,7 @@ const DNSSetting = () => {
       dataIndex: " status",
       key: "status",
       render: () => {
-        return <Checkbox />;
+        return <Checkbox disabled />;
       },
     },
     {
@@ -63,6 +78,7 @@ const DNSSetting = () => {
             <Link to="/dns-management">
               <Tag color="processing">Manage</Tag>
             </Link>
+            <Tag color="warning">Edit</Tag>
             <Tag color="error">Delete</Tag>
           </React.Fragment>
         );
@@ -76,6 +92,11 @@ const DNSSetting = () => {
         <Layout>
           <SideNavBar />
           <Content>
+            <CreateDomain
+              visible={visible}
+              handleCancel={handleCancel}
+              handleOk={handleOk}
+            />
             <Row gutter={[32, 32]}>
               <Col span={16}>
                 <Form>
@@ -86,21 +107,11 @@ const DNSSetting = () => {
                     <hr />
 
                     <div className="dns-desc-container">
-                      <Form.Item label="Domain Name">
-                        <Row gutter={[24, 0]}>
-                          <Col span={12}>
-                            <Input size="large" placeholder="Text here ..." />
-                          </Col>
-                          <Col span={12}>
-                            <Button
-                              type="primary"
-                              htmlType="button"
-                              size="large"
-                            >
-                              Create
-                            </Button>
-                          </Col>
-                        </Row>
+                      <Form.Item>
+                        <Button type="primary" onClick={createDomain}>
+                          <FiPlus className="add-button" />
+                          Create Domain
+                        </Button>
                       </Form.Item>
                     </div>
                     <div className="dns-desc-container">
@@ -111,16 +122,6 @@ const DNSSetting = () => {
                         scroll={{ y: 350 }}
                       />
                     </div>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        htmlType="button"
-                        className="button-apply2"
-                        size="large"
-                      >
-                        Apply
-                      </Button>
-                    </Form.Item>
                   </div>
                 </Form>
               </Col>

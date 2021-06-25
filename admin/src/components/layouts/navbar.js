@@ -12,7 +12,7 @@ const NavBar = () => {
     <React.Fragment>
       <Header style={{ background: "#1B262C" }}>
         <div className="logos">
-          <Link to="/">
+          <Link to="/status">
             <img
               src="/images/icons/Koompi-white.png"
               className="logo-content-server"
@@ -42,9 +42,9 @@ const NavBar = () => {
             <div style={{ width: "270px" }}>
               <Row className="accountNavbarhover">
                 <Col style={{ paddingTop: "6px" }} span={4}>
-                  <FiSettings style={{ fontSize: "21px" }} />
+                  <FiSettings style={{ fontSize: "20px", color: "black" }} />
                 </Col>
-                <Link to="/logout">
+                <Link to="/ ">
                   <Col
                     className="logout"
                     style={{ paddingTop: "4px", color: "black" }}
@@ -56,7 +56,7 @@ const NavBar = () => {
               </Row>
               <Row className="accountNavbarhover">
                 <Col style={{ paddingTop: "6px" }} span={4}>
-                  <HiLogout style={{ fontSize: "21px" }} />
+                  <HiLogout style={{ fontSize: "20px", color: "black" }} />
                 </Col>
                 <Link to="/logout">
                   <Col

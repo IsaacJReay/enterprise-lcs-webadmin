@@ -16,12 +16,14 @@ import dataDns from "./data.json";
 import { FiEdit, FiPlus } from "react-icons/fi";
 import DNSRename from "./rename";
 import { Link } from "react-router-dom";
+import AddRecord from "./adding-record";
 
 const { Content } = Layout;
 const { Option } = Select;
 
 const DNSManagement = () => {
   const [visible, setVisible] = useState(false);
+  const [records, setRecords] = useState(false);
 
   const showModalRename = () => {
     setVisible(true);
@@ -29,10 +31,16 @@ const DNSManagement = () => {
 
   const handleCancel = () => {
     setVisible(false);
+    setRecords(false);
   };
 
   const handleOk = () => {
     setVisible(false);
+    setRecords(false);
+  };
+
+  const showAddRecords = () => {
+    setRecords(true);
   };
 
   const columns = [
@@ -94,6 +102,11 @@ const DNSManagement = () => {
               handleCancel={handleCancel}
               handleOk={handleOk}
             />
+            <AddRecord
+              records={records}
+              handleCancel={handleCancel}
+              handleOk={handleOk}
+            />
             <Row gutter={[32, 32]}>
               <Col span={16}>
                 <Form>
@@ -123,7 +136,7 @@ const DNSManagement = () => {
                     </div>
                     <div className="dns-desc-container">
                       <Form.Item>
-                        <Button type="primary">
+                        <Button type="primary" onClick={showAddRecords}>
                           <FiPlus className="add-button" />
                           Add Record
                         </Button>
@@ -138,30 +151,16 @@ const DNSManagement = () => {
 
                     <Form.Item>
                       <div className="container-buttons">
-                        <Row gutter={12}>
-                          <Col>
-                            <Link to="/dns">
-                              <Button
-                                type="primary"
-                                htmlType="button"
-                                className="button-apply2"
-                                size="large"
-                              >
-                                Back
-                              </Button>
-                            </Link>
-                          </Col>
-                          <Col>
-                            <Button
-                              type="primary"
-                              htmlType="button"
-                              className="button-apply2"
-                              size="large"
-                            >
-                              Apply
-                            </Button>
-                          </Col>
-                        </Row>
+                        <Link to="/dns">
+                          <Button
+                            type="primary"
+                            htmlType="button"
+                            className="button-apply2"
+                            size="large"
+                          >
+                            Back
+                          </Button>
+                        </Link>
                       </div>
                     </Form.Item>
                   </div>

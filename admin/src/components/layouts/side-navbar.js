@@ -185,7 +185,7 @@ const SideNavBar = () => {
           <Menu.Item key="/dns" icon={<UngroupOutlined />}>
             <Link to="/dns">DNS</Link>
           </Menu.Item>
-          <SubMenu
+          {/* <SubMenu
             key="/storage"
             icon={<CloudServerOutlined />}
             title="Storage"
@@ -225,7 +225,7 @@ const SideNavBar = () => {
             <Menu.Item key="/website/hosting">
               <Link to="/website/hosting">Web Hosting</Link>
             </Menu.Item>
-          </SubMenu>
+          </SubMenu> */}
         </Menu>
       </Sider>
     </React.Fragment>

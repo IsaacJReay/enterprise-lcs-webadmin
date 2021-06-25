@@ -35,7 +35,8 @@ html {
 }
 .accountNavbarhover {
   transition: 0.3s;
-  padding: 4px;
+  padding-top: 10px;
+  padding-left: 15px;
   color: black !important;
 }
 .sub-topnavbar {
@@ -287,6 +288,9 @@ html {
 .ant-btn {
   border-radius: 4px !important;
   min-width: 120px;
+  background-color: #0caedc !important;
+  border-color: #0caedc !important;
+  color: #fff !important;
 }
 .dns-desc-container h2 {
   font-size: 25px;
@@ -320,4 +324,9 @@ html {
 }
 .add-button {
   margin-right: 10px;
+}
+.container-adding-records {
+  padding-top: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
