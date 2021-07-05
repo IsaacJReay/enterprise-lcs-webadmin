@@ -1,4 +1,7 @@
-use crate::file;
+use crate::{
+    file,
+    linux
+};
 use aes::Aes128;
 use hex_literal::hex;
 use block_modes::{
@@ -6,6 +9,7 @@ use block_modes::{
     Cbc, 
     block_padding::Pkcs7
 };
+use rand::Rng;
 
 pub fn padding_convert(password: &str) -> [u8; 16] {
 
@@ -116,4 +120,47 @@ pub fn decrypt_file(filename: &str, password: &str) -> String {
     let _result = file::createfile(&file, &decrypted_byte_vec_u8);
 
     file
+}
+
+pub fn generate_token(username: &str, password: &str) -> String{
+
+    let (_code, output, _error) = linux::query_date_for_calculate();
+
+    let encrypted_userame = encrypt(username.to_string(), padding_convert("Koompi-Onelab"));
+    let encrypted_password= encrypt(password.to_string(), padding_convert("Koompi-Onelab"));
+    let encrypted_time = encrypt(output, padding_convert("Koompi-Onelab"));
+
+    
+    let random_text1 = encrypt(generate_random(32), padding_convert("Koompi-Onelab"));
+
+    let random_text2 = encrypt(generate_random(32), padding_convert("Koompi-Onelab"));
+
+    let token: String = format!("{}.{}.{}.{}.{}", base64::encode(random_text1), base64::encode(encrypted_userame), base64::encode(encrypted_password), base64::encode(encrypted_time), base64::encode(random_text2));
+
+    token
+}
+
+pub fn extract_token(auth: &str) -> u64 {
+    let auth_split_whitespace_vec=auth.split_ascii_whitespace().collect::<Vec<&str>>();
+    let auth_split_dot_vec: Vec<&str> = auth_split_whitespace_vec[1].split(".").collect::<Vec<&str>>();
+    let decoded_base64 = base64::decode(auth_split_dot_vec[3]).unwrap();
+    let base64_string = String::from_utf8(decoded_base64).unwrap();
+    let decrypted_base64 = decrypt(base64_string, padding_convert("Koompi-Onelab")).parse::<u64>().unwrap();               
+    decrypted_base64
+}
+
+fn generate_random(string_len: usize) -> String{
+    const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+                            abcdefghijklmnopqrstuvwxyz\
+                            0123456789)(*&^%$#@!~";
+    let mut rng = rand::thread_rng();
+
+    let random_string: String = (0..string_len)
+        .map(|_| {
+            let idx = rng.gen_range(0..CHARSET.len());
+            CHARSET[idx] as char
+        })
+        .collect();
+
+    random_string
 }

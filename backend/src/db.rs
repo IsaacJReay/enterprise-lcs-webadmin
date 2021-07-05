@@ -1,8 +1,7 @@
 use sqlite::State;
 use wildmatch::WildMatch;
 use ipnetwork::Ipv4Network;
-use crate::{
-    linux, 
+use crate::{ 
     tool,
     security, 
     structs::{
@@ -354,14 +353,59 @@ pub fn create_tables() {
             .execute(
 r#"
 CREATE TABLE dnszones (id TXT, domain_name TXT, status TXT);
-CREATE TABLE logindata (variable TXT, value TXT, timestamp TXT);
+CREATE TABLE logindata (variable TXT, value TXT);
 CREATE TABLE zonerecords(id TXT, subdomain_name TXT, type TXT, address TXT, foreign_key TXT);
+CREATE TABLE tokentable(token TXT);
 
-INSERT INTO logindata VALUES ('username', 'NULL', '0');
-INSERT INTO logindata VALUES ('password', 'NULL', '0');
+INSERT INTO logindata VALUES ('username', 'NULL');
+INSERT INTO logindata VALUES ('password', 'NULL');
 "#,)
             .unwrap();
     }
+}
+
+pub fn insert_into_token_table(token: &str){
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    connection
+        .execute(
+            format!("INSERT INTO tokentable VALUES ('{}');", token)
+        )
+            .unwrap()
+}
+
+pub fn delete_from_token_table(token: &str) {
+
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    let auth_split_whitespace_vec = token.split_ascii_whitespace().collect::<Vec<&str>>();
+
+    connection
+        .execute(
+            format!("DELETE FROM tokentable WHERE token='{}';", auth_split_whitespace_vec[1])
+        )
+            .unwrap()
+}
+
+pub fn query_token(token: &str) -> bool {
+
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    let auth_split_whitespace_vec = token.split_ascii_whitespace().collect::<Vec<&str>>();
+
+
+    let mut check_empty_statement = connection
+        .prepare(
+            format!("SELECT EXISTS(SELECT token FROM tokentable WHERE token='{}' LIMIT 1);", auth_split_whitespace_vec[1])
+        )
+            .unwrap();
+
+    check_empty_statement.next().unwrap();
+    let output: u64 = check_empty_statement.read::<i64>(0).unwrap().try_into().unwrap();
+
+    output!=0
+    
+    
 }
 
 pub fn update_logindata(username: &str, password: &str){
@@ -369,25 +413,13 @@ pub fn update_logindata(username: &str, password: &str){
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
     let encrypted_password = security::encrypt(password.to_string(), security::padding_convert("Koompi-Onelab"));
-
-    let (code,output,error) = linux::query_date_for_calculate();
-
-    let mut newdate: String = String::new();
-
-    match &code {
-        1 => println!("{}", &error),
-        0 => newdate = output.to_owned(),
-        _ => println!("Broken"),
-    }
     
     connection
         .execute(
 format!("
 UPDATE logindata SET value = '{}' WHERE variable = 'username';
 UPDATE logindata SET value = '{}' WHERE variable = 'password';
-UPDATE logindata SET timestamp = '{}' WHERE variable = 'username';
-UPDATE logindata SET timestamp = '{}' WHERE variable = 'password';
-", &username, &encrypted_password, &newdate, &newdate)
+", &username, &encrypted_password)
         )
         .unwrap()
 }
@@ -408,16 +440,15 @@ UPDATE wan_networkd SET value = '{}' WHERE variable = 'dns';
 
 }
 
-pub fn query_logindata() -> (String, String, u64){
+pub fn query_logindata() -> (String, String){
     
     let mut username: String = String::new();
     let mut password: String = String::new();
-    let mut olddate: u64 = 0;
     
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
     let mut statement = connection
-        .prepare("SELECT value,timestamp FROM logindata")
+        .prepare("SELECT value FROM logindata")
         .unwrap();
 
     let mut increment: u8 = 0;
@@ -428,14 +459,13 @@ pub fn query_logindata() -> (String, String, u64){
         }
         else if increment == 1 {
             password = statement.read::<String>(0).unwrap();
-            olddate = statement.read::<i64>(1).unwrap().try_into().unwrap();
         }
         increment = increment + 1;
     };
 
     let decrypted_password = security::decrypt(password, security::padding_convert("Koompi-Onelab"));
 
-    (username, decrypted_password, olddate)
+    (username, decrypted_password)
 }
 
 pub fn read_dnszones() -> Vec<DnsZones> {

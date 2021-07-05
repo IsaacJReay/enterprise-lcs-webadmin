@@ -16,10 +16,7 @@ use crate::{
         ZoneRecords,
     }, 
     linux, 
-    tool::{
-        self, 
-        comparedate
-    }
+    tool,
 };
 
 pub fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
@@ -39,14 +36,12 @@ pub fn createfile(filename: &str, content: &[u8]) -> std::io::Result<()> {
 
 }
 
-pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool, bool){
-    let (_username, password, olddate) = db::query_logindata();
+pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
 
     let write_hostapd_status: bool;
-    let passwordstatus: bool = tool::comparedate(olddate);
     let move_hostapd_status: bool;
     let restart_hostapd_status: bool;
-
+    let (_username, password) = db::query_logindata();
 
     let conf: String = gen_hostapd_conf(&hostapdparam.ssid, hostapdparam.hide_ssid, &hostapdparam.hw_mode, &hostapdparam.channel, hostapdparam.wpa, &hostapdparam.passphrase, hostapdparam.hw_n_mode, hostapdparam.qos);
 
@@ -68,20 +63,18 @@ pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool, bool){
         _ => restart_hostapd_status = false,
     }
 
-    (write_hostapd_status, passwordstatus, move_hostapd_status, restart_hostapd_status)
+    (write_hostapd_status, move_hostapd_status, restart_hostapd_status)
 }
 
-pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool, bool){
-    let (_username, password, olddate) = db::query_logindata();
+pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool){
 
     // Create Status variables
+    let (_username, password) = db::query_logindata();
 
     let write_networkd_status: bool;
     let write_acl_status: bool;
     let write_options_status: bool;
     let write_named_status: bool;
-
-    let passwordstatus: bool = tool::comparedate(olddate);
 
     let move_networkd_status: bool;
     let move_acl_status: bool;
@@ -174,8 +167,7 @@ pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkPar
 
     (
     write_networkd_status, 
-    write_named_status, 
-    passwordstatus, 
+    write_named_status,  
     move_networkd_status, 
     move_named_status, 
     restart_networkd_status, 
@@ -185,7 +177,7 @@ pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkPar
 
 pub fn config_named() -> (bool, bool) {
     
-    let (_username, password, _olddate) = db::query_logindata();
+    let (_username, password) = db::query_logindata();
     let named_conf: String = gen_named_conf();
     let named_conf_zones: String = gen_named_conf_internal_zones();
     let named_conf_logging: String = gen_named_conf_logging();
@@ -242,12 +234,11 @@ pub fn config_named() -> (bool, bool) {
 
 }
 
-pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool, bool) {
-    let (_username, password, olddate) = db::query_logindata();
+pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool) {
+    let (_username, password) = db::query_logindata();
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;
-    let passwordstatus = comparedate(olddate);
 
     let networkd_conf = gen_systemd_networkd_wired_static(
         &staticwirednetworkparam.internet_ip, 
@@ -277,16 +268,15 @@ pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWired
         _ => restart_networkd_status = false,
     }
 
-    (write_networkd_status, passwordstatus, move_networkd_status, restart_networkd_status)
+    (write_networkd_status, move_networkd_status, restart_networkd_status)
 
 }
 
-pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool, bool) {
-    let (_username, password, olddate) = db::query_logindata();
+pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool) {
+    let (_username, password) = db::query_logindata();
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;
-    let password_status = comparedate(olddate);
 
     let networkd_conf = gen_systemd_networkd_wired_dynamic();
 
@@ -310,13 +300,11 @@ pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool, bool) {
         _ => restart_networkd_status = false,
     }
 
-    (write_networkd_status, password_status, move_networkd_status, restart_networkd_status)
+    (write_networkd_status, move_networkd_status, restart_networkd_status)
 }
 
-pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool, bool) {
-    let (_username, password, olddate) = db::query_logindata();
-
-    let passwordstatus: bool = tool::comparedate(olddate);
+pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
+    let (_username, password) = db::query_logindata();
     let zone_vec  = db::read_dnszones();
     // println!("Inside {:#?}", zone_vec);
     let mut record_vec: Vec<ZoneRecords>;
@@ -402,13 +390,12 @@ pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool, bool) {
     let cleanup_named_status: bool = cleanup_exzone_status && cleanup_var_named_status;
     
 
-    (cleanup_named_status, write_named_status, passwordstatus, move_named_status, restart_named_status)
+    (cleanup_named_status, write_named_status, move_named_status, restart_named_status)
 }
 
-pub fn config_var_named_external_zones(zone_vec: Vec<PartialZoneRecords>) -> (bool, bool, bool, bool){
-    let (_username, password, olddate) = db::query_logindata();
+pub fn config_var_named_external_zones(zone_vec: Vec<PartialZoneRecords>) -> (bool, bool, bool){
+    let (_username, password) = db::query_logindata();
 
-    let passwordstatus: bool = tool::comparedate(olddate);
     let dns_vec = db::read_dnszones();
     let mut filename: String = String::new();
 
@@ -440,7 +427,7 @@ pub fn config_var_named_external_zones(zone_vec: Vec<PartialZoneRecords>) -> (bo
         0 => restart_named_status = true,
         _ => restart_named_status = false,
     }
-    (write_var_zone_status, passwordstatus, move_var_zone_status, restart_named_status)
+    (write_var_zone_status, move_var_zone_status, restart_named_status)
 }
 
 fn gen_hostapd_conf(ssid: &str, hide_ssid: bool, hw_mode: &str, channel: &u8, wpa: u8, passphrase: &str, hw_n_mode: bool, qos: bool) -> String {
@@ -492,7 +479,7 @@ wmm_enabled={}
     hide_ssid as u8, 
     hw_n_mode as u8, 
     qos as u8
-)
+    )
 }
 
 fn gen_systemd_networkd_wireless(router_ip: &str, netmask: &str, range_start: &str, range_end: &str, dns: &str, default_lease: &str, max_lease: &str, timezone: &str) -> String{

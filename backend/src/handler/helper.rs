@@ -15,53 +15,39 @@ pub fn return_httpsresponse_from_config_named_conf_external_zone() -> Result<Htt
     let (
         cleanup_named_status,
         write_named_status, 
-        passwordstatus, 
         move_named_status, 
         restart_named_status
     ) = file::config_name_conf_external_zones();
 
-
     if cleanup_named_status {
         if write_named_status {
-            if passwordstatus {
-                if move_named_status {
-                    if restart_named_status {
-                        Ok(HttpResponse::Ok().json(
-                                HttpResponseCustom {
-                                    operation_status: "Success".to_string(),
-                                    reason: "".to_string(),
-                                }
-                            )  
-                        )
-                    }
-                    else {
-                        Ok(
-                            HttpResponse::Ok().json(
-                                HttpResponseCustom {
-                                    operation_status: "Failed".to_string(),
-                                    reason: "restart_service_error".to_string(),
-                                }
-                            )
-                        )
-                    }
+            if move_named_status {
+                if restart_named_status {
+                    Ok(HttpResponse::Ok().json(
+                            HttpResponseCustom {
+                                operation_status: "Success".to_string(),
+                                reason: "".to_string(),
+                            }
+                        )  
+                    )
                 }
                 else {
                     Ok(
                         HttpResponse::Ok().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
-                                reason: "move_file_error".to_string(),
+                                reason: "restart_service_error".to_string(),
                             }
                         )
                     )
                 }
             }
-            else{
+            else {
                 Ok(
                     HttpResponse::Ok().json(
                         HttpResponseCustom {
                             operation_status: "Failed".to_string(),
-                            reason: "password_timeout".to_string(),
+                            reason: "move_file_error".to_string(),
                         }
                     )
                 )
@@ -107,13 +93,12 @@ pub fn return_httpsresponse_from_config_var_named_external_zone(foreign_key: &st
     
     let (
         write_var_zone_status, 
-        passwordstatus, 
         move_var_zone_status, 
         restart_named_status
     ) = file::config_var_named_external_zones(record_vec);
 
-    if write_var_zone_status{
-        if passwordstatus {
+
+        if write_var_zone_status{
             if move_var_zone_status {
                 if restart_named_status {
                     Ok(
@@ -152,20 +137,9 @@ pub fn return_httpsresponse_from_config_var_named_external_zone(foreign_key: &st
                 HttpResponse::Ok().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
-                        reason: "password_timeout".to_string(),
+                        reason: "write_file_error".to_string(),
                     }
                 )
             )
         }
-    }
-    else{
-        Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "write_file_error".to_string(),
-                }
-            )
-        )
-    }
 }
