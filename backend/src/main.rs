@@ -12,10 +12,11 @@ use std::{
 };
 use actix_web::{
     middleware,
+    http,
     App,
     HttpServer,
 };
-
+use actix_cors::Cors;
 use crate::db::{
     create_tables, 
     populate_dnszones, 
@@ -31,10 +32,19 @@ async fn main() -> Result<()> {
     create_tables();
     populate_dnszones();
     populate_zonerecords();
+    // let production_cors = Cors::default()
+    //           .allowed_origin("http://localhost:3000")
+    //           .allowed_origin("http://127.0.0.1:3000")
+    //           .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+    //           .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+    //           .allowed_header(http::header::CONTENT_TYPE)
+    //           .max_age(900); 
+    // let development_cors = Cors::permissive();
 
     let server = HttpServer::new(
         move || {
             App::new()
+                .wrap(Cors::permissive())
                 .wrap(middleware::Logger::default())
                         //handling / and /private/api and get request
                 .service(handler::get::get_logindata)                       // link: /private/api/user/query
