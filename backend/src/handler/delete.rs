@@ -22,8 +22,10 @@ use crate::{
 
 #[delete("/private/api/settings/dns/zone_record/deletion")]
 pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: web::Json<DeleteRecord>) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -75,8 +77,10 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
 
 #[delete("/private/api/settings/dns/domain_name/deletion")]
 pub async fn delete_delete_domain_name(req: HttpRequest,dns_id_struct: web::Json<DnsId>) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);

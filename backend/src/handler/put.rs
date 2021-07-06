@@ -19,8 +19,10 @@ use crate::{
 
 #[put("/private/api/settings/dns/status/update")]
 pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::Json<UpdateStatus>) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -69,8 +71,10 @@ pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::
 
 #[put("/private/api/settings/dns/domain_name/update")]
 pub async fn put_rename_domain_name(req: HttpRequest, rename_domain_struct: web::Json<RenameDomain>) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);

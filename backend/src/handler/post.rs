@@ -73,8 +73,10 @@ pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResp
 #[post("/private/api/user/password")]
 pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<PasswdParam>) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (username, _password) = db::query_logindata();
@@ -142,8 +144,10 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
 #[post("/private/api/settings/hostapd")]
 pub async fn post_hostapd_settings(req: HttpRequest, hostapdparam: web::Json<HostapdParam>) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -248,8 +252,10 @@ pub async fn post_hostapd_settings(req: HttpRequest, hostapdparam: web::Json<Hos
 #[post("/private/api/settings/wirelessnetwork")]
 pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkparam: web::Json<WirelessNetworkParam>) -> Result<HttpResponse> {
     
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -362,8 +368,10 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
 #[post("/private/api/settings/reset")]
 pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
     
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (username, password) = db::query_logindata();
@@ -508,8 +516,10 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
 #[post("/private/api/settings/import")]
 pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<RestoreParam>, mut payload: Multipart) -> Result<HttpResponse> {
     
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, password) = db::query_logindata();
@@ -644,8 +654,10 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
 #[post("/private/api/setting/wirednetwork/static")]
 pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam: web::Json<StaticWiredNetworkParam>) -> Result<HttpResponse> {
     
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, _password) = db::query_logindata();
@@ -754,8 +766,10 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
 #[post("/private/api/setting/wirednetwork/dynamic")]
 pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, _password) = db::query_logindata();
@@ -852,8 +866,10 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
 #[post("/private/api/settings/dns/domain_name/creation")]
 pub async fn post_create_domain_name(req: HttpRequest, domain_name_struct: web::Json<CreateDomainName>) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, _password) = db::query_logindata();
@@ -904,8 +920,10 @@ pub async fn post_create_domain_name(req: HttpRequest, domain_name_struct: web::
 #[post("/private/api/settings/dns/zone_record/creation")]
 pub async fn post_add_zone_record(req: HttpRequest, zone_record_struct: web::Json<PartialZoneRecords>) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, _password) = db::query_logindata();
@@ -955,8 +973,10 @@ pub async fn post_add_zone_record(req: HttpRequest, zone_record_struct: web::Jso
 #[post("/private/api/settings/time/timezone")]
 pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Timezone>) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, password) = db::query_logindata();
@@ -1021,8 +1041,10 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
 #[post("/private/api/settings/time/timedate")]
 pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, password) = db::query_logindata();
@@ -1089,8 +1111,10 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
 #[post("/private/api/settings/export")]
 pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<BackupParam>) -> Result<NamedFile, HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let (_username, _password) = db::query_logindata();

@@ -10,8 +10,10 @@ use crate::{db, linux, security, structs::{ForeignKey, HostapdParam, HttpRespons
 #[get("/private/api/user/query")]
 pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth) {
             let olddate = security::extract_token(auth);
             let (username, _password) = db::query_logindata();
@@ -66,8 +68,10 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
 #[get("/private/api/settings/status")]
 pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
 
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
 
@@ -155,8 +159,10 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
 
 #[get("/private/api/settings/hostapd/status")]
 pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -225,8 +231,10 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
 
 #[get("/private/api/settings/wirednetwork/status")]
 pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
 
@@ -291,8 +299,10 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
 
 #[get("/private/api/settings/wirelessnetwork/status")]
 pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
 
@@ -362,8 +372,10 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
 
 #[get("/private/api/settings/dns/domain_name/status")]
 pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
 
@@ -414,8 +426,10 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
 
 #[get("/private/api/settings/dns/zone_records/status")]
 pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<ForeignKey>) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -465,8 +479,10 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
 
 #[get("/private/api/settings/time/get")]
 pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
-    let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-    if !auth.is_empty(){
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
