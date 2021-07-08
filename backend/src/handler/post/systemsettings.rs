@@ -1,5 +1,4 @@
 use std::io::Write;
-
 use actix_web::{
     HttpRequest,
     HttpResponse,
@@ -100,7 +99,6 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
         )
     }
 }
-
 
 #[post("/private/api/settings/import")]
 pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<RestoreParam>, mut payload: Multipart) -> Result<HttpResponse> {

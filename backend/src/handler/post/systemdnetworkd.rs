@@ -133,7 +133,6 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
     }
 }
 
-
 #[post("/private/api/setting/wirednetwork/static")]
 pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam: web::Json<StaticWiredNetworkParam>) -> Result<HttpResponse> {
     

@@ -16,7 +16,6 @@ use crate::{
     },
 };
 
-
 #[post("/private/api/settings/hostapd")]
 pub async fn post_hostapd_settings(req: HttpRequest, hostapdparam: web::Json<HostapdParam>) -> Result<HttpResponse> {
 

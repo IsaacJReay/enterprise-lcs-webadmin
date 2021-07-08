@@ -17,7 +17,6 @@ use crate::{
     },
 };
 
-
 #[post("/private/api/settings/time/timezone")]
 pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Timezone>) -> Result<HttpResponse> {
 

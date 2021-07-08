@@ -22,7 +22,6 @@ use crate::{
 
 };
 
-
 #[post("/private/api/user/login")]
 pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResponse> {
     
