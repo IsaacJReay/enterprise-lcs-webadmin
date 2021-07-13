@@ -200,3 +200,26 @@ pub struct TimeDate {
     pub time: String,
     pub date: String,
 }
+#[derive(Serialize, Deserialize)]
+pub struct PartUUID{
+    drive_partuuid: String,
+}
+#[derive(Serialize, Deserialize)]
+pub struct ItemName{
+    item_name: String,
+}
+#[derive(Serialize)]
+pub struct DriveDescription {
+    drive_label: String,
+    drive_partuuid: PartUUID,
+    free_space: String,
+    total_space: String,
+}
+#[derive(Serialize)]
+pub struct DriveItem {
+    item_name: ItemName,
+    item_date: String,
+    item_type: String,
+    item_size: String,
+}
+
