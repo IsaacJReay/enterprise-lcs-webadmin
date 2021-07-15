@@ -27,8 +27,17 @@ pub fn comparedate(olddate: u64) -> bool {
 }
 
 pub fn from_binary(binary_ip: String) -> String {
+
+    let binary_ip_length: usize = binary_ip.len();
+    let mut full_binary_ip = binary_ip;
+    if binary_ip_length < 32 {
+        let variation: usize = 32 - binary_ip_length;
+        for each_fill in 0..variation{
+            full_binary_ip = format!("{}{}", 0, full_binary_ip);
+        }
+    }
  
-    let mut splited_binary_ip: Vec<&str> = binary_ip.split("").collect();
+    let mut splited_binary_ip: Vec<&str> = full_binary_ip.split("").collect();
     let mut octet_index: usize = 0;
 
     let mut first_octet_vec: Vec<&str> = Vec::new();
