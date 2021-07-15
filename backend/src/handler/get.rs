@@ -33,7 +33,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
             else{
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::RequestTimeout().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -44,7 +44,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom{
                         operation_status: "failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -55,7 +55,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::NonAuthoritativeInformation().json(
                 HttpResponseCustom{
                     operation_status: "failed".to_string(),
                     reason: "missing-token".to_string(),
