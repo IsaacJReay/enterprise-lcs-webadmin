@@ -9,6 +9,10 @@ Backend is build with Rust, Bash, and Sqlite.
 
 * POST API Documentations [POST API Documentations](api-doc/POST.md)
 
+* PUT API Documentations [PUT API Documentations](api-doc/PUT.md)
+
+* DELETE API Documentations [POST API Documentations](api-doc/DELETE.md)
+
 ### Installations
 
 #### On Raspberry Pi
