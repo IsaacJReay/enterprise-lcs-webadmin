@@ -112,6 +112,13 @@
 >>    "reason": "actual_reason_goes_here"
 >>  }
 >> ``` 
+>> - Response 415 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "untar_file_error"
+>>  }
+>> ``` 
 >> - Response 410 
 >> ```json
 >>  {
