@@ -9,18 +9,7 @@ use pam::{
     Authenticator,
     PasswordConv,
 };
-use crate::{
-    db,
-    tool,
-    security,
-    linux,
-    structs::{
-        LoginParam,
-        HttpResponseCustom,
-        PasswdParam,
-    },
-
-};
+use crate::{db, linux, security, structs::{HttpResponseCustom, LoginParam, LoginResponse, PasswdParam}, tool};
 
 #[post("/private/api/user/login")]
 pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResponse> {
@@ -40,13 +29,13 @@ pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResp
             .open_session()
             .is_ok() {
         db::update_logindata(&logindata.username, &logindata.password);
-        let token = security::generate_token(&logindata.username, &logindata.password);
-        db::insert_into_token_table(&token);
+        let new_token = security::generate_token(&logindata.username, &logindata.password);
+        db::insert_into_token_table(&new_token);
         Ok(
             HttpResponse::Ok().json(
-                HttpResponseCustom {
+                LoginResponse {
                     operation_status: "Success".to_string(),
-                    reason: token,
+                    token: new_token,
                 }
             )
         )
