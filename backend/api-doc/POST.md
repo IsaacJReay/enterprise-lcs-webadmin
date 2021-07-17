@@ -1,13 +1,5 @@
-# Enterprise-LocalContentServer-WebAdmin
+# POST API Documentations
 
-## Backend
-Backend is build with Rust, Bash, and Sqlite.
-
-* GET API Documentations [GET API Documentations](api-doc/GET.md)
-
-
----
-There are 11 POST api
 > ### -  /private/api/user/login
 ```
   - Use for Login
