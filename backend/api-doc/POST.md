@@ -562,13 +562,8 @@
 >>  - Body
 >> ```json
 >>  {
->>    "timezone": {
->>      "timezone": "Asia/Phnom_Penh"
->>    },
->>    "timedate": {
 >>      "time": "18:17:16",
 >>      "date": "2012-10-30"
->>    },
 >>  }
 >> ```
 >>
