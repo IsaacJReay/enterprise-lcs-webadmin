@@ -1,125 +1,651 @@
 # POST API Documentations
 
-> ### -  /private/api/user/login
-```
-  - Use for Login
-  - Must be done first before everything else
-```
-Example: 
-```json
-{
-  "username": "alarm",
-  "password": "alarm"
-}
-```
+> ### - /private/api/user/login
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | `NULL`           |  `NULL`   |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>     "username": "alarm",
+>>     "password": "alarm"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "token": "actual_token_goes_here"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "wrong_username_or_password"
+>>  }
+>> ```
 
-> ### -  /private/api/user/password
-```
-  - Use for Reset Login Password
-  - Required Successful log in first
-  - Old password cannot be the same as new password
-```
-Example: 
-```json
-{
-  "old_password": "alarm",
-  "new_password": "123"
-}
-```
+> ### - /private/api/user/password
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization    | `String`  |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>   "old_password": "alarm",
+>>   "new_password": "123"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** New Password must not be the same as Old Password
 
-> ### -  /private/api/settings/import
-```
-  - Use for upload back config after Backup
-  - Required Successful log in first
-  - Password Cannot exceed 16 characters
-```
-Example:
-```json
-{
-  "password": "ABCabc123"
-}
-```
-**Note:** Need upload File in form of Multiload
+> ### - /private/api/settings/import
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization    | `String`  |
+>> 
+>>  - Body
+>>
+>> | Body Parameter | Data Type |
+>> | -------------- | --------- |
+>> | File           | `Multiload` |
+>> | Password       | `String`  | 
+>>
+>> ```json
+>>  {
+>>    "password": "ABCabc123"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** `Password` must not exceed 16 Characters
 
-> ### -  /private/api/settings/export
-```
-  - Use for download backup config
-  - Required Successful log in first
-  - Filename cannot have space and cannot have any sign
-  - Password Cannot exceed 16 characters
-```
-Example: 
-```json
-{
-  "filename": "lcs_backup-2020";
-  "password": "ABCabc123";
-}
-```
+> ### - /private/api/settings/export
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization    | `String`  |
+>> 
+>>  - Body
+>>
+>> ```json
+>>  {
+>>    "filename": "lcs_backup-2020",    
+>>    "password": "ABCabc123"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>>
+>> | Body Parameter | Data Type |
+>> | -------------- | --------- |
+>> | File           | `Multiload` |
+>> | Text Response  | `Json`    | 
+>>
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** `Password` must not exceed 16 Characters; `Filename` cannot have space or any symbol           
 
-> ### -  /private/api/settings/reset
-```
-  - Use for reset all configuration
-  - Requred Successful log in first
-  - Doesn't have a body
-```
+> ### - /private/api/settings/reset
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization    | `String` |
+>> 
+>>  - Body
+>> ```json
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** Everything goes to default factory configuration
 
 > ### - /private/api/settings/hostapd
-```
-  - Use for setup wifi hotspot related setting
-  - Required Successful log in first
-  - WPA can only have 1 or 2
-  - Channel can only range from 1 to 14
-```
-Example:
-```json
-{
-  "ssid": "Sala",
-  "hide_ssid": false,
-  "hw_mode": "g",
-  "channel": 11,
-  "wpa": 2,
-  "passphrase": "Koompi-Onelab",
-  "hw_n_mode": true,
-  "qos": true
-}
-```
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>   "ssid": "Sala",
+>>   "hide_ssid": false,
+>>   "hw_mode": "g",
+>>   "channel": 11,
+>>   "wpa": 2,
+>>   "passphrase": "Koompi-Onelab",
+>>   "hw_n_mode": true,
+>>   "qos": true
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** `WPA` can only be 1 or 2; `Channel` can only range from 1 to 14
 
-> ### -  /private/api/settings/wirelessnetwork
-```
-  - Use for setup wifi network address related settings
-  - Required Successful log in first
-```
-Example:
-```json
-{
-  "router_ip": "10.100.100.1",
-  "netmask": "255.255.255.0",
-  "range_start": "10.100.100.1",
-  "range_end": "10.100.100.254",
-  "dns": "1.1.1.1 8.8.8.8",
-  "default_lease": "1800",
-  "max_lease": "7200",
-  "timezone": "Asia/Phnom_Penh"
-}
-```
+> ### - /private/api/settings/wirelessnetwork
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>   "router_ip": "10.100.100.1",
+>>   "netmask": "255.255.255.0",
+>>   "range_start": "10.100.100.1",
+>>   "range_end": "10.100.100.254",
+>>   "dns": "1.1.1.1 8.8.8.8",
+>>   "default_lease": "1800",
+>>   "max_lease": "7200",
+>>   "timezone": "Asia/Phnom_Penh"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
 
-> ### -  /private/api/settings/wirednetwork/static
-```
-  - Use for setup WAN network with static address
-  - Required Successful log in first
-```
-Example:
-```json
-{
-  "internet_ip": "192.168.1.10",
-  "netmask": "255.255.255.0",
-  "gateway": "192.168.1.1",
-  "dns": "1.1.1.1 8.8.8.8 1.0.0.1 8.8.4.4"
-}
-```
-> ### -  /private/api/settings/wirednetwork/dynamic
-```
-  - Use for setup WAN network with dynamic address
-  - Required Successful log in first
-  - Doesn't have a body
-```
+
+> ### - /private/api/settings/wirednetwork/dynamic
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>   "internet_ip": "192.168.1.10",
+>>   "netmask": "255.255.255.0",
+>>   "gateway": "192.168.1.1",
+>>   "dns": "1.1.1.1 8.8.8.8 1.0.0.1 8.8.4.4"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/wirednetwork/static
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/dns/domain_name/creation
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>    "domain_name": "koompi.com"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** `domain_name` must be a website without subdomain
+
+> ### - /private/api/settings/dns/zone_record/creation
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>    "subdomain_name": "sala",
+>>    "dns_type": "A",
+>>    "address": "10.100.100.1",
+>>    "foreign_key": "1"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** `subdomain_name` must be a subdomain without its main website name after and is also website form; `dns_type` must only be A, AAAA, CNAME, MX 10, PTR, CERT, SRV, TXT, SOA.
+
+> ### - /private/api/settings/time/timedate
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>    "timezone": {
+>>      "timezone": "Asia/Phnom_Penh"
+>>    },
+>>    "timedate": {
+>>      "time": "18:17:16",
+>>      "date": "2012-10-30"
+>>    },
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** `timezone` must be a valid timezone from website https://en.wikipedia.org/wiki/List_of_tz_database_time_zones; `time` and `date` must follow the format shown in body.
+
+> ### - /private/api/settings/time/timezone
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>    "timezone": "Asia/Phnom_Penh",
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+>> **Note:** `timezone` must be a valid timezone from website https://en.wikipedia.org/wiki/List_of_tz_database_time_zones;
