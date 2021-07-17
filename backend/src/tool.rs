@@ -32,7 +32,7 @@ pub fn from_binary(binary_ip: String) -> String {
     let mut full_binary_ip = binary_ip;
     if binary_ip_length < 32 {
         let variation: usize = 32 - binary_ip_length;
-        for each_fill in 0..variation{
+        for _each_fill in 0..variation{
             full_binary_ip = format!("{}{}", 0, full_binary_ip);
         }
     }
