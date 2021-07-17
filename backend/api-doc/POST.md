@@ -601,7 +601,7 @@
 >>    "reason": "missing-token"
 >>  }
 >> ```
->> **Note:** `timezone` must be a valid timezone from website https://en.wikipedia.org/wiki/List_of_tz_database_time_zones; `time` and `date` must follow the format shown in body.
+>> **Note:** `time` and `date` must follow the format shown in body.
 
 > ### - /private/api/settings/time/timezone
 >>
