@@ -33,7 +33,7 @@ pub fn return_httpsresponse_from_config_named_conf_external_zone() -> Result<Htt
                 }
                 else {
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: "restart_service_error".to_string(),
@@ -44,7 +44,7 @@ pub fn return_httpsresponse_from_config_named_conf_external_zone() -> Result<Htt
             }
             else {
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::InternalServerError().json(
                         HttpResponseCustom {
                             operation_status: "Failed".to_string(),
                             reason: "move_file_error".to_string(),
@@ -55,7 +55,7 @@ pub fn return_httpsresponse_from_config_named_conf_external_zone() -> Result<Htt
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::InternalServerError().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "write_file_error".to_string(),
@@ -66,7 +66,7 @@ pub fn return_httpsresponse_from_config_named_conf_external_zone() -> Result<Htt
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::InternalServerError().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "clean-file-error".to_string(),
@@ -112,7 +112,7 @@ pub fn return_httpsresponse_from_config_var_named_external_zone(foreign_key: &st
                 }
                 else{
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: "restart_service_error".to_string(),
@@ -123,7 +123,7 @@ pub fn return_httpsresponse_from_config_var_named_external_zone(foreign_key: &st
             }
             else {
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::InternalServerError().json(
                         HttpResponseCustom {
                             operation_status: "Failed".to_string(),
                             reason: "move_file_error".to_string(),
@@ -134,7 +134,7 @@ pub fn return_httpsresponse_from_config_var_named_external_zone(foreign_key: &st
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::InternalServerError().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "write_file_error".to_string(),

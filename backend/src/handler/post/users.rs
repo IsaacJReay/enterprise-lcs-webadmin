@@ -53,7 +53,7 @@ pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResp
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "wrong_username_or_password".to_string(),
@@ -90,7 +90,7 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
                 }
                 else{
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: error,
@@ -102,7 +102,7 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -113,7 +113,7 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -124,7 +124,7 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),

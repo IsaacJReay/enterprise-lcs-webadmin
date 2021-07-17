@@ -56,7 +56,7 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
                 }
                 else {
                     Err(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom{
                                 operation_status: "failed".to_string(),
                                 reason: format!("tar-{}-failed", backup_name),
@@ -68,7 +68,7 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
             else {
                 db::delete_from_token_table(auth);
                 Err(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -79,7 +79,7 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
         }
         else{
             Err(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -90,7 +90,7 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
     }
     else{
         Err(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -172,7 +172,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                         }
                         else {
                             Ok(
-                                HttpResponse::Ok().json(
+                                HttpResponse::InternalServerError().json(
                                     HttpResponseCustom {
                                         operation_status: "Failed".to_string(),
                                         reason: "restart_service".to_string(),
@@ -183,7 +183,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                     }
                     else {
                         Ok(
-                            HttpResponse::Ok().json(
+                            HttpResponse::InternalServerError().json(
                                 HttpResponseCustom {
                                     operation_status: "Failed".to_string(),
                                     reason: "move_file_error".to_string(),
@@ -194,7 +194,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                 }
                 else {
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::UnsupportedMediaType().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: "untar_file_error".to_string(),
@@ -206,7 +206,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -217,7 +217,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -228,7 +228,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -309,7 +309,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                                     )
                                 },
                                 _ => Ok(
-                                    HttpResponse::Ok().json(
+                                    HttpResponse::InternalServerError().json(
                                         HttpResponseCustom {
                                             operation_status: "Failed".to_string(),
                                             reason: "reset_password_error".to_string(),
@@ -320,7 +320,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                         }
                         else{
                             Ok(
-                                HttpResponse::Ok().json(
+                                HttpResponse::InternalServerError().json(
                                     HttpResponseCustom {
                                         operation_status: "Failed".to_string(),
                                         reason: "restart_service_error".to_string(),
@@ -331,7 +331,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                     }
                     else{
                         Ok(
-                            HttpResponse::Ok().json(
+                            HttpResponse::InternalServerError().json(
                                 HttpResponseCustom {
                                     operation_status: "Failed".to_string(),
                                     reason: "move_file_error".to_string(),
@@ -342,7 +342,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                 }
                 else {
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: "write_file_error".to_string(),
@@ -354,7 +354,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -365,7 +365,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -376,7 +376,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),

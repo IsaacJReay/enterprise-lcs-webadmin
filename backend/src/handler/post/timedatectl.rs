@@ -41,7 +41,7 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
                             )
                         ),
                     _ => Ok(
-                            HttpResponse::Ok().json(
+                            HttpResponse::InternalServerError().json(
                                 HttpResponseCustom {
                                     operation_status: "Failed".to_string(),
                                     reason: format!("{}", error),
@@ -53,7 +53,7 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -64,7 +64,7 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -75,7 +75,7 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -111,7 +111,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
                             )
                         ),
                     _ => Ok(
-                            HttpResponse::Ok().json(
+                            HttpResponse::InternalServerError().json(
                                 HttpResponseCustom {
                                     operation_status: "Failed".to_string(),
                                     reason: format!("{}", error),
@@ -123,7 +123,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -134,7 +134,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -145,7 +145,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),

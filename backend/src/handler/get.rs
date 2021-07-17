@@ -33,7 +33,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
             else{
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::RequestTimeout().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -55,7 +55,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::NonAuthoritativeInformation().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom{
                     operation_status: "failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -125,7 +125,7 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
             else{
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom {
                             operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -136,7 +136,7 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -147,7 +147,7 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -197,7 +197,7 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -208,7 +208,7 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -219,7 +219,7 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -265,7 +265,7 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -276,7 +276,7 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -287,7 +287,7 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -338,7 +338,7 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -349,7 +349,7 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -360,7 +360,7 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -392,7 +392,7 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -403,7 +403,7 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -414,7 +414,7 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -445,7 +445,7 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -456,7 +456,7 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -467,7 +467,7 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -522,7 +522,7 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -533,7 +533,7 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -544,7 +544,7 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),

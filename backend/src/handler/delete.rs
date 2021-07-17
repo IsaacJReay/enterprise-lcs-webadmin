@@ -43,7 +43,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -54,7 +54,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -65,7 +65,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -92,7 +92,7 @@ pub async fn delete_delete_domain_name(req: HttpRequest,dns_id_struct: web::Json
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -103,7 +103,7 @@ pub async fn delete_delete_domain_name(req: HttpRequest,dns_id_struct: web::Json
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -114,7 +114,7 @@ pub async fn delete_delete_domain_name(req: HttpRequest,dns_id_struct: web::Json
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),

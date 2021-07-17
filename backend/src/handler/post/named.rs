@@ -41,7 +41,7 @@ pub async fn post_create_domain_name(req: HttpRequest, domain_name_struct: web::
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -52,7 +52,7 @@ pub async fn post_create_domain_name(req: HttpRequest, domain_name_struct: web::
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -63,7 +63,7 @@ pub async fn post_create_domain_name(req: HttpRequest, domain_name_struct: web::
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -94,7 +94,7 @@ pub async fn post_add_zone_record(req: HttpRequest, zone_record_struct: web::Jso
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -105,7 +105,7 @@ pub async fn post_add_zone_record(req: HttpRequest, zone_record_struct: web::Jso
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -116,7 +116,7 @@ pub async fn post_add_zone_record(req: HttpRequest, zone_record_struct: web::Jso
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),

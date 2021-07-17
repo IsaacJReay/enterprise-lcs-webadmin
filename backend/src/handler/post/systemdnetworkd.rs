@@ -67,7 +67,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
                         }
                         else{
                             Ok(
-                                HttpResponse::Ok().json(
+                                HttpResponse::InternalServerError().json(
                                     HttpResponseCustom {
                                         operation_status: "Failed".to_string(),
                                         reason: "restart_service_error".to_string(),
@@ -78,7 +78,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
                     }
                     else {
                         Ok(
-                            HttpResponse::Ok().json(
+                            HttpResponse::InternalServerError().json(
                                 HttpResponseCustom {
                                     operation_status: "Failed".to_string(),
                                     reason: "move_file_error".to_string(),
@@ -89,7 +89,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
                 }
                 else{
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: "write_file_error".to_string(),
@@ -101,7 +101,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -112,7 +112,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -123,7 +123,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -179,7 +179,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
                         }
                         else{
                             Ok(
-                                HttpResponse::Ok().json(
+                                HttpResponse::InternalServerError().json(
                                     HttpResponseCustom {
                                         operation_status: "Failed".to_string(),
                                         reason: "restart_service_error".to_string(),
@@ -190,7 +190,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
                     }
                     else {
                         Ok(
-                            HttpResponse::Ok().json(
+                            HttpResponse::InternalServerError().json(
                                 HttpResponseCustom {
                                     operation_status: "Failed".to_string(),
                                     reason: "move_file_error".to_string(),
@@ -201,7 +201,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
                 }
                 else{
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: "write_file_error".to_string(),
@@ -213,7 +213,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -224,7 +224,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -235,7 +235,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
@@ -279,7 +279,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
                         }
                         else{
                             Ok(
-                                HttpResponse::Ok().json(
+                                HttpResponse::InternalServerError().json(
                                     HttpResponseCustom {
                                         operation_status: "Failed".to_string(),
                                         reason: "restart_service_error".to_string(),
@@ -290,7 +290,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
                     }
                     else {
                         Ok(
-                            HttpResponse::Ok().json(
+                            HttpResponse::InternalServerError().json(
                                 HttpResponseCustom {
                                     operation_status: "Failed".to_string(),
                                     reason: "move_file_error".to_string(),
@@ -301,7 +301,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
                 }
                 else{
                     Ok(
-                        HttpResponse::Ok().json(
+                        HttpResponse::InternalServerError().json(
                             HttpResponseCustom {
                                 operation_status: "Failed".to_string(),
                                 reason: "write_file_error".to_string(),
@@ -313,7 +313,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
             else {
                 db::delete_from_token_table(auth);
                 Ok(
-                    HttpResponse::Ok().json(
+                    HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "failed".to_string(),
                             reason: "token-timeout".to_string(),
@@ -324,7 +324,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
         }
         else{
             Ok(
-                HttpResponse::Ok().json(
+                HttpResponse::Unauthorized().json(
                     HttpResponseCustom {
                         operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
@@ -335,7 +335,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
     }
     else{
         Ok(
-            HttpResponse::Ok().json(
+            HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
                     operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
