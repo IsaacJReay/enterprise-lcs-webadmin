@@ -175,7 +175,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                                 HttpResponse::InternalServerError().json(
                                     HttpResponseCustom {
                                         operation_status: "Failed".to_string(),
-                                        reason: "restart_service".to_string(),
+                                        reason: "restart_service_error".to_string(),
                                     }
                                 )
                             )
