@@ -11,7 +11,7 @@ Backend is build with Rust, Bash, and Sqlite.
 
 * PUT API Documentations [PUT API Documentations](api-doc/PUT.md)
 
-* DELETE API Documentations [POST API Documentations](api-doc/DELETE.md)
+* DELETE API Documentations [DELETE API Documentations](api-doc/DELETE.md)
 
 ### Installations
 
