@@ -27,11 +27,7 @@ const WirelessSetting = () => {
   };
   return (
     <React.Fragment>
-      <Layout style={{ minHeight: "100vh" }}>
-        <NavBar />
-        <Layout>
-          <SideNavBar />
-          {/* <Content>
+      {/* <Content>
             <Row gutter={[32, 32]}>
               <Col span={16}>
                 <Form>
@@ -171,125 +167,123 @@ const WirelessSetting = () => {
               </Col>
             </Row>
           </Content> */}
-          <Content>
-            <Row gutter={[32, 32]}>
-              <Col span={16}>
-                <Form {...layout}>
-                  <div className="container">
-                    <div className="container-header">
-                      <h1>Wireless Setting</h1>
-                    </div>
-                    <hr />
-
-                    <div className="desc-container-banner">
-                      <Form.Item label="Network Name SSID">
-                        <Row gutter={[12, 0]}>
-                          <Col>
-                            <Input size="large" placeholder="Text here ..." />
-                          </Col>
-                          <Col>
-                            <Checkbox>Hide SSID</Checkbox>
-                          </Col>
-                        </Row>
-                      </Form.Item>
-                      <Form.Item label="Security ">
-                        <Select
-                          defaultValue="WP2/WPA2-Personal (Recommended)"
-                          size="large"
-                          className="select-option-wireless"
-                        >
-                          <Option value="WP2/WPA2-Personal (Recommended)">
-                            WP2/WPA2-Personal (Recommended)
-                          </Option>
-                          <Option value="WP2/WPA2-Personal">
-                            WP2/WPA2-Personal
-                          </Option>
-                        </Select>
-                      </Form.Item>
-                      <Form.Item label="Version ">
-                        <Radio.Group>
-                          <Radio value="WPA2-SPK">WPA2-SPK</Radio>
-                          <Radio value="WPA-SPK">WPA-SPK</Radio>
-                        </Radio.Group>
-                      </Form.Item>
-                      <Form.Item label="Password ">
-                        <Input.Password
-                          size="large"
-                          placeholder="password"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                      <Form.Item label="Mood">
-                        <Select
-                          defaultValue=" 802.11g"
-                          size="large"
-                          className="select-option-wireless"
-                        >
-                          <Option value="  802.11g">802.11g</Option>
-                          <Option value="  902.11g">802.11g</Option>
-                        </Select>
-                      </Form.Item>
-                      <Form.Item label="Channel Width  ">
-                        <Select
-                          defaultValue="WP2/WPA2-Personal (Recommended)"
-                          size="large"
-                          className="select-option-wireless"
-                        >
-                          <Option value="WP2/WPA2-Personal (Recommended)">
-                            WP2/WPA2-Personal (Recommended)
-                          </Option>
-                          <Option value="WP2/WPA2-Personal">
-                            WP2/WPA2-Personal
-                          </Option>
-                        </Select>
-                      </Form.Item>
-                      <Form.Item label="Channel ">
-                        <Row gutter={[0, 12]}>
-                          <Col span={24}>
-                            <Select
-                              defaultValue=" 1"
-                              size="large"
-                              className="select-option"
-                            >
-                              <Option value="1">1</Option>
-                              <Option value="2">2</Option>
-                              <Option value="3">3</Option>
-                              <Option value="4">4</Option>
-                            </Select>
-                          </Col>
-                          <Col span={24}>
-                            <Radio.Group>
-                              <Radio value="QOS">QOS</Radio>
-                              <Radio value="802.11N">802.11N</Radio>
-                            </Radio.Group>
-                          </Col>
-                        </Row>
-                      </Form.Item>
-                    </div>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        htmlType="button"
-                        className="button-apply"
-                        size="large"
-                      >
-                        Apply
-                      </Button>
-                    </Form.Item>
-                  </div>
-                </Form>
-              </Col>
-              <Col span={8}>
-                <div className="container">
-                  <div className="container-header">
-                    <h1>Desciptions</h1>
-                  </div>
+      <Content>
+        <Row gutter={[32, 32]}>
+          <Col span={16}>
+            <Form {...layout}>
+              <div className="container">
+                <div className="container-header">
+                  <h1>Wireless Setting</h1>
                 </div>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
-      </Layout>
+                <hr />
+
+                <div className="desc-container-banner">
+                  <Form.Item label="Network Name SSID">
+                    <Row gutter={[12, 0]}>
+                      <Col>
+                        <Input size="large" placeholder="Text here ..." />
+                      </Col>
+                      <Col>
+                        <Checkbox>Hide SSID</Checkbox>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                  <Form.Item label="Security ">
+                    <Select
+                      defaultValue="WP2/WPA2-Personal (Recommended)"
+                      size="large"
+                      className="select-option-wireless"
+                    >
+                      <Option value="WP2/WPA2-Personal (Recommended)">
+                        WP2/WPA2-Personal (Recommended)
+                      </Option>
+                      <Option value="WP2/WPA2-Personal">
+                        WP2/WPA2-Personal
+                      </Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item label="Version ">
+                    <Radio.Group>
+                      <Radio value="WPA2-SPK">WPA2-SPK</Radio>
+                      <Radio value="WPA-SPK">WPA-SPK</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item label="Password ">
+                    <Input.Password
+                      size="large"
+                      placeholder="password"
+                      className="label-info"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mood">
+                    <Select
+                      defaultValue=" 802.11g"
+                      size="large"
+                      className="select-option-wireless"
+                    >
+                      <Option value="  802.11g">802.11g</Option>
+                      <Option value="  902.11g">802.11g</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item label="Channel Width  ">
+                    <Select
+                      defaultValue="WP2/WPA2-Personal (Recommended)"
+                      size="large"
+                      className="select-option-wireless"
+                    >
+                      <Option value="WP2/WPA2-Personal (Recommended)">
+                        WP2/WPA2-Personal (Recommended)
+                      </Option>
+                      <Option value="WP2/WPA2-Personal">
+                        WP2/WPA2-Personal
+                      </Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item label="Channel ">
+                    <Row gutter={[0, 12]}>
+                      <Col span={24}>
+                        <Select
+                          defaultValue=" 1"
+                          size="large"
+                          className="select-option"
+                        >
+                          <Option value="1">1</Option>
+                          <Option value="2">2</Option>
+                          <Option value="3">3</Option>
+                          <Option value="4">4</Option>
+                        </Select>
+                      </Col>
+                      <Col span={24}>
+                        <Radio.Group>
+                          <Radio value="QOS">QOS</Radio>
+                          <Radio value="802.11N">802.11N</Radio>
+                        </Radio.Group>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                </div>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="button"
+                    className="button-apply"
+                    size="large"
+                  >
+                    Apply
+                  </Button>
+                </Form.Item>
+              </div>
+            </Form>
+          </Col>
+          <Col span={8}>
+            <div className="container">
+              <div className="container-header">
+                <h1>Desciptions</h1>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Content>
     </React.Fragment>
   );
 };

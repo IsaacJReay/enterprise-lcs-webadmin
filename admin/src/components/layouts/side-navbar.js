@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Row, Col } from "antd";
+import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
 import {
   SwitcherOutlined,
   ShareAltOutlined,
   WifiOutlined,
   HddOutlined,
-  GlobalOutlined,
-  CloudServerOutlined,
-  SettingOutlined,
   UngroupOutlined,
+  CloudServerOutlined,
 } from "@ant-design/icons";
 
 const { Sider } = Layout;
@@ -185,47 +183,13 @@ const SideNavBar = () => {
           <Menu.Item key="/dns" icon={<UngroupOutlined />}>
             <Link to="/dns">DNS</Link>
           </Menu.Item>
-          {/* <SubMenu
-            key="/storage"
-            icon={<CloudServerOutlined />}
-            title="Storage"
-          >
-            <Menu.Item key="/storage/sumsung">
-              <Link to="/storage/sumsung">Samsung EVO</Link>
-            </Menu.Item>
-            <Menu.Item key="/storage/USB">
-              <Link to="/storage/USB">USB</Link>
-            </Menu.Item>
-          </SubMenu>
-          <SubMenu
-            key="/management"
-            icon={<SettingOutlined />}
-            title="Management"
-          >
-            <Menu.Item key="/management/system-update">
-              <Link to="/management/system-update">System Updates</Link>
-            </Menu.Item>
-            <Menu.Item key="/management/users-account">
-              <Link to="/management/users-account">Users Account</Link>
-            </Menu.Item>
-            <Menu.Item key="/management/export">
-              <Link to="/management/export">Export</Link>
-            </Menu.Item>
-            <Menu.Item key="/management/import">
-              <Link to="/management/import">Import</Link>
-            </Menu.Item>
-            <Menu.Item key="/management/reset">
-              <Link to="/management/reset">Reset All</Link>
-            </Menu.Item>
-          </SubMenu>
-          <SubMenu key="/website" icon={<GlobalOutlined />} title="Website">
-            <Menu.Item key="/website/View">
-              <Link to="/website/View">View</Link>
-            </Menu.Item>
-            <Menu.Item key="/website/hosting">
-              <Link to="/website/hosting">Web Hosting</Link>
-            </Menu.Item>
-          </SubMenu> */}
+          <Menu.Item key="/storages" icon={<CloudServerOutlined />}>
+            <Link to="/storages">Storages</Link>
+          </Menu.Item>
+
+          <Link to="/about-us">
+            <a className="about-us">About US</a>
+          </Link>
         </Menu>
       </Sider>
     </React.Fragment>

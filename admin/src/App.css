@@ -82,10 +82,11 @@ html {
   margin: 0;
   padding: 0px 15px;
 } */
-.anticon svg {
-  color: #000;
-  font-size: 20px;
-  margin-right: 8px;
+.ant-menu-item .ant-menu-item-icon,
+.ant-menu-submenu-title .ant-menu-item-icon,
+.ant-menu-item .anticon,
+.ant-menu-submenu-title .anticon {
+  font-size: 25px !important;
 }
 .ant-menu-title-content {
   font-size: 18px;
@@ -332,4 +333,120 @@ html {
 }
 .content-padding {
   padding: 30px 50px;
+}
+.ant-collapse-header {
+  font-size: 20px;
+}
+.storages-container {
+  padding: 10px;
+}
+.item-storages {
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+.item-storages p {
+  color: #000;
+}
+.item-storages:hover {
+  background: rgba(101, 221, 255, 0.21);
+  border: 1px solid #65ddff;
+}
+.storages-icon {
+  width: 80px;
+  margin: 0;
+  display: block;
+}
+.ant-progress-inner,
+.ant-progress-success-bg,
+.ant-progress-bg {
+  border-radius: 2px !important;
+}
+.about-us {
+  position: absolute;
+  bottom: 50px;
+  left: 35%;
+  font-size: 16px;
+  color: #9da3ac;
+  font-weight: 600;
+}
+.about-us-title {
+  font-weight: 900;
+  font-size: 100px;
+  color: rgba(184, 184, 184, 0.219);
+}
+.about-us-sub-title {
+  font-size: 40px;
+  font-weight: 900;
+  color: #1b262c;
+  margin-top: -40px;
+}
+.intro-banner {
+  width: 65%;
+  justify-content: center;
+  text-align: center;
+  font-size: 18px;
+}
+.wrap-intro-about-us {
+  margin-top: 32px;
+  padding: 40px;
+  width: 70%;
+  margin: auto;
+}
+.mission-background,
+.vision-background,
+.history-background {
+  padding: 10px;
+  min-height: 400px;
+  border-radius: 8px;
+  height: 400px;
+  padding: 30px;
+  text-align: center;
+  justify-content: start;
+  background-color: #ffffff;
+}
+.mission-header,
+.vision-header,
+.history-header {
+  font-weight: 900;
+  font-size: 20px;
+}
+.logo_miss_vis_his {
+  height: 120px;
+  width: 120px;
+}
+.mission-p {
+  font-size: 18px;
+  justify-content: center;
+  text-align: center;
+}
+.header-storages {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  padding: 20px 25px;
+}
+.ant-btn-circle {
+  border-radius: 50px !important;
+}
+.back-btn {
+  font-size: 25px;
+}
+.header-storage-2 {
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 20px;
+  font-weight: 700;
+  background-color: bisque;
+  width: 100%;
+}
+.btn-options-storages {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  padding: 10px 25px;
+  justify-content: end;
+  text-align: end;
+}
+.local-data-container {
+  padding: 15px 20px;
 }

@@ -1,17 +1,6 @@
 import React, { useState } from "react";
-import {
-  Layout,
-  Col,
-  Row,
-  Button,
-  Input,
-  Form,
-  Table,
-  Checkbox,
-  Tag,
-} from "antd";
-import NavBar from "../layouts/navbar";
-import SideNavBar from "../layouts/side-navbar";
+import { Layout, Col, Row, Button, Form, Table, Checkbox, Tag } from "antd";
+
 import { Link } from "react-router-dom";
 import { FiPlus } from "react-icons/fi";
 import CreateDomain from "./create-domain";
@@ -87,55 +76,49 @@ const DNSSetting = () => {
   ];
   return (
     <React.Fragment>
-      <Layout style={{ minHeight: "100vh" }}>
-        <NavBar />
-        <Layout>
-          <SideNavBar />
-          <Content>
-            <CreateDomain
-              visible={visible}
-              handleCancel={handleCancel}
-              handleOk={handleOk}
-            />
-            <Row gutter={[32, 32]}>
-              <Col span={16}>
-                <Form>
-                  <div className="container">
-                    <div className="container-header">
-                      <h1>DNS Setting</h1>
-                    </div>
-                    <hr />
-
-                    <div className="dns-desc-container">
-                      <Form.Item>
-                        <Button type="primary" onClick={createDomain}>
-                          <FiPlus className="add-button" />
-                          Create Domain
-                        </Button>
-                      </Form.Item>
-                    </div>
-                    <div className="dns-desc-container">
-                      <Table
-                        columns={columns}
-                        dataSource={data}
-                        pagination={false}
-                        scroll={{ y: 350 }}
-                      />
-                    </div>
-                  </div>
-                </Form>
-              </Col>
-              <Col span={8}>
-                <div className="container">
-                  <div className="container-header">
-                    <h1>Desciptions</h1>
-                  </div>
+      <Content>
+        <CreateDomain
+          visible={visible}
+          handleCancel={handleCancel}
+          handleOk={handleOk}
+        />
+        <Row gutter={[32, 32]}>
+          <Col span={16}>
+            <Form>
+              <div className="container">
+                <div className="container-header">
+                  <h1>DNS Setting</h1>
                 </div>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
-      </Layout>
+                <hr />
+
+                <div className="dns-desc-container">
+                  <Form.Item>
+                    <Button type="primary" onClick={createDomain}>
+                      <FiPlus className="add-button" />
+                      Create Domain
+                    </Button>
+                  </Form.Item>
+                </div>
+                <div className="dns-desc-container">
+                  <Table
+                    columns={columns}
+                    dataSource={data}
+                    pagination={false}
+                    scroll={{ y: 350 }}
+                  />
+                </div>
+              </div>
+            </Form>
+          </Col>
+          <Col span={8}>
+            <div className="container">
+              <div className="container-header">
+                <h1>Desciptions</h1>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Content>
     </React.Fragment>
   );
 };

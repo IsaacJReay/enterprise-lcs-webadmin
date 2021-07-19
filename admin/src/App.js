@@ -12,6 +12,10 @@ import DNSSetting from "./components/DNS/dns";
 import DNSManagement from "./components/DNS/manage-dns";
 import PrivateRoute from "./privateRoute";
 import PublicRoute from "./publicRoute";
+import Storages from "./components/storage/storage";
+import Logout from "./components/logout";
+import AboutUs from "./components/about";
+import LocalStorage from "./components/storage/local-storage";
 
 function App() {
   return (
@@ -20,6 +24,7 @@ function App() {
         <Switch>
           <PublicRoute exact="true" path="/" component={Login} />
           <PublicRoute exact="true" path="/login" component={Login} />
+          <PublicRoute exact="true" path="/logout" component={Logout} />
           <PrivateRoute exact path="/status" component={StatusPage} />
           <PrivateRoute exact path="/network/wan" component={WANSetting} />
           <PrivateRoute exact path="/network/wlan" component={WLANSetting} />
@@ -31,6 +36,9 @@ function App() {
             path="/dns-management"
             component={DNSManagement}
           />
+          <PrivateRoute exact path="/storages" component={Storages} />
+          <PrivateRoute exact path="/storages/local" component={LocalStorage} />
+          <PrivateRoute exact path="/about-us" component={AboutUs} />
         </Switch>
       </Router>
     </React.Fragment>

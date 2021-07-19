@@ -44,7 +44,7 @@ const NavBar = () => {
                 <Col style={{ paddingTop: "6px" }} span={4}>
                   <FiSettings style={{ fontSize: "20px", color: "black" }} />
                 </Col>
-                <Link to="/ ">
+                <Link to="/logout">
                   <Col
                     className="logout"
                     style={{ paddingTop: "4px", color: "black" }}

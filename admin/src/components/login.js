@@ -14,26 +14,29 @@ const Login = () => {
 
     axios
       .post(
-        "http://10.100.100.1:8080/private/api/user/login",
+        "http://10.42.0.188:8002/private/api/user/login",
         adminLogin,
         setLoading(true)
       )
 
       .then(async (res) => {
-        const { token } = res.data;
-        await localStorage.setItem("token", token);
-      })
-      .then(async (res) => {
-        setLoading(true);
-        message.success("Successful!");
-        window.location.replace("/status");
+        await localStorage.setItem("token", res.data.reason);
+        if (res.data.operation_status === "Success") {
+          setLoading(true);
+          message.success("Successful!");
+          window.location.replace("/status");
+        } else {
+          setLoading(true);
+          message.error("Invalide username or password ");
+          setLoading(false);
+        }
       })
 
       .catch((err) => {
         setTimeout(() => {
           setLoading(false);
         }, 1000);
-        // message.error(err.response.data.message);
+        message.error(err.response.data.reason);
       });
   };
 

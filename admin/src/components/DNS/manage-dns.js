@@ -10,8 +10,6 @@ import {
   Tag,
   Popover,
 } from "antd";
-import NavBar from "../layouts/navbar";
-import SideNavBar from "../layouts/side-navbar";
 import dataDns from "./data.json";
 import { FiEdit, FiPlus } from "react-icons/fi";
 import DNSRename from "./rename";
@@ -92,91 +90,85 @@ const DNSManagement = () => {
   ];
   return (
     <React.Fragment>
-      <Layout style={{ minHeight: "100vh" }}>
-        <NavBar />
-        <Layout>
-          <SideNavBar />
-          <Content>
-            <DNSRename
-              visible={visible}
-              handleCancel={handleCancel}
-              handleOk={handleOk}
-            />
-            <AddRecord
-              records={records}
-              handleCancel={handleCancel}
-              handleOk={handleOk}
-            />
-            <Row gutter={[32, 32]}>
-              <Col span={16}>
-                <Form>
-                  <div className="container">
-                    <div className="container-header">
-                      <h1>DNS Setting</h1>
-                    </div>
-                    <hr />
-
-                    <div className="dns-desc-container">
-                      <Form.Item label="Domain Name">
-                        <Row gutter={[6, 0]}>
-                          <Col>
-                            <h2>sala.koompi.com</h2>
-                          </Col>
-                          <Col>
-                            <Popover
-                              title={null}
-                              content="Rename"
-                              placement="topLeft"
-                            >
-                              <FiEdit onClick={showModalRename} />
-                            </Popover>
-                          </Col>
-                        </Row>
-                      </Form.Item>
-                    </div>
-                    <div className="dns-desc-container">
-                      <Form.Item>
-                        <Button type="primary" onClick={showAddRecords}>
-                          <FiPlus className="add-button" />
-                          Add Record
-                        </Button>
-                      </Form.Item>
-                      <Table
-                        columns={columns}
-                        dataSource={dataDns}
-                        pagination={false}
-                        scroll={{ y: 350 }}
-                      />
-                    </div>
-
-                    <Form.Item>
-                      <div className="container-buttons">
-                        <Link to="/dns">
-                          <Button
-                            type="primary"
-                            htmlType="button"
-                            className="button-apply2"
-                            size="large"
-                          >
-                            Back
-                          </Button>
-                        </Link>
-                      </div>
-                    </Form.Item>
-                  </div>
-                </Form>
-              </Col>
-              <Col span={8}>
-                <div className="container">
-                  <div className="container-header">
-                    <h1>Desciptions</h1>
-                  </div>
+      <Content>
+        <DNSRename
+          visible={visible}
+          handleCancel={handleCancel}
+          handleOk={handleOk}
+        />
+        <AddRecord
+          records={records}
+          handleCancel={handleCancel}
+          handleOk={handleOk}
+        />
+        <Row gutter={[32, 32]}>
+          <Col span={16}>
+            <Form>
+              <div className="container">
+                <div className="container-header">
+                  <h1>DNS Setting</h1>
                 </div>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
-      </Layout>
+                <hr />
+
+                <div className="dns-desc-container">
+                  <Form.Item label="Domain Name">
+                    <Row gutter={[6, 0]}>
+                      <Col>
+                        <h2>sala.koompi.com</h2>
+                      </Col>
+                      <Col>
+                        <Popover
+                          title={null}
+                          content="Rename"
+                          placement="topLeft"
+                        >
+                          <FiEdit onClick={showModalRename} />
+                        </Popover>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                </div>
+                <div className="dns-desc-container">
+                  <Form.Item>
+                    <Button type="primary" onClick={showAddRecords}>
+                      <FiPlus className="add-button" />
+                      Add Record
+                    </Button>
+                  </Form.Item>
+                  <Table
+                    columns={columns}
+                    dataSource={dataDns}
+                    pagination={false}
+                    scroll={{ y: 350 }}
+                  />
+                </div>
+
+                <Form.Item>
+                  <div className="container-buttons">
+                    <Link to="/dns">
+                      <Button
+                        type="primary"
+                        htmlType="button"
+                        className="button-apply2"
+                        size="large"
+                      >
+                        Back
+                      </Button>
+                    </Link>
+                  </div>
+                </Form.Item>
+              </div>
+            </Form>
+          </Col>
+          <Col span={8}>
+            <div className="container">
+              <div className="container-header">
+                <h1>Desciptions</h1>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Content>
     </React.Fragment>
   );
 };
