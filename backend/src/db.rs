@@ -4,6 +4,7 @@ use ipnetwork::Ipv4Network;
 use crate::{ 
     tool,
     security, 
+    DECRYPT_KEY,
     structs::{
         DnsZones,
         ZoneRecords,
@@ -412,7 +413,7 @@ pub fn update_logindata(username: &str, password: &str){
     
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
-    let encrypted_password = security::encrypt(password.to_string(), security::padding_convert("Koompi-Onelab"));
+    let encrypted_password = security::encrypt(password.to_string(), security::padding_convert(DECRYPT_KEY));
     
     connection
         .execute(
@@ -463,7 +464,7 @@ pub fn query_logindata() -> (String, String){
         increment = increment + 1;
     };
 
-    let decrypted_password = security::decrypt(password, security::padding_convert("Koompi-Onelab"));
+    let decrypted_password = security::decrypt(password, security::padding_convert(DECRYPT_KEY));
 
     (username, decrypted_password)
 }
@@ -552,7 +553,6 @@ pub fn populate_dnszones() {
                     active_zones_id += 1;
                 }
                 else if WildMatch::new(r#"# zone*"#).matches(&line){
-                    // println!("ab");
                     let line_vec = &line.split_whitespace().clone().collect::<Vec<&str>>();
                     inactive_zones.insert(inactive_zones_id, line_vec[2].to_string().replace("\"", ""));
                     inactive_zones_id += 1;                    
@@ -630,9 +630,8 @@ pub fn insert_domain_name_into_dnszones(domain_name: &str) {
 
     connection
             .execute(format!(
-                r#"
-                INSERT INTO dnszones VALUES ('{}', '{}', 'false');
-                "#,latest_id, domain_name),
+                r#"INSERT INTO dnszones VALUES ('{}', '{}', 'false');"#,
+                latest_id, domain_name),
             )
             .unwrap();
 }
@@ -671,9 +670,8 @@ pub fn insert_into_zonerecords(zone_struct: PartialZoneRecords) {
 
     connection
             .execute(format!(
-                r#"
-                INSERT INTO zonerecords VALUES ('{}', '{}', '{}', '{}', '{}');
-                "#,latest_id, subdomain_name, dns_type, address, foreign_key),
+                r#"INSERT INTO zonerecords VALUES ('{}', '{}', '{}', '{}', '{}');"#,
+                latest_id, subdomain_name, dns_type, address, foreign_key),
             )
             .unwrap();
 }
@@ -694,10 +692,10 @@ pub fn delete_from_dnszones_by_id(id: &str){
 
     connection
             .execute(format!(
-                r#"
-                DELETE FROM dnszones WHERE id='{}';
-                DELETE FROM zonerecords WHERE foreign_key='{}';
-                "#,id,id)
+r#"
+DELETE FROM dnszones WHERE id='{}';
+DELETE FROM zonerecords WHERE foreign_key='{}';
+"#,id,id)
             )
             .unwrap();
 
@@ -705,10 +703,10 @@ pub fn delete_from_dnszones_by_id(id: &str){
         for new_id in u64_dnszones_id..dnszones_latest_id {
             connection
                 .execute(format!(
-                    r#"
-                    UPDATE dnszones SET id = '{}' WHERE id = '{}';
-                    UPDATE zonerecords SET foreign_key = '{}' WHERE foreign_key = '{}';
-                    "#, new_id, new_id+1, new_id, new_id+1),
+r#"
+UPDATE dnszones SET id = '{}' WHERE id = '{}';
+UPDATE zonerecords SET foreign_key = '{}' WHERE foreign_key = '{}';
+"#, new_id, new_id+1, new_id, new_id+1),
                 )
                 .unwrap();
         }
@@ -735,9 +733,8 @@ pub fn delete_from_zonerecords_by_id(id: &str, foreign_key: &str) {
 
     connection
             .execute(format!(
-                r#"
-                DELETE FROM zonerecords WHERE id='{}' AND foreign_key='{}'
-                "#,id, foreign_key)
+                r#"DELETE FROM zonerecords WHERE id='{}' AND foreign_key='{}'"#,
+                id, foreign_key)
             )
             .unwrap();
 
@@ -745,9 +742,8 @@ pub fn delete_from_zonerecords_by_id(id: &str, foreign_key: &str) {
         for new_id in u64_id..latest_id {
             connection
             .execute(format!(
-                r#"
-                UPDATE zonerecords SET id = '{}' WHERE id = '{}' AND foreign_key='{}';
-                "#, new_id, new_id+1, foreign_key),
+                r#"UPDATE zonerecords SET id = '{}' WHERE id = '{}' AND foreign_key='{}';"#, 
+                new_id, new_id+1, foreign_key),
             )
             .unwrap();
         }
@@ -756,8 +752,12 @@ pub fn delete_from_zonerecords_by_id(id: &str, foreign_key: &str) {
 
 pub fn update_domain_name_by_foreign_key(foreign_key: &str, domain_name: &str) {
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
-    let _statement = connection
-        .prepare(format!("UPDATE dnszones SET domain_name = '{}' WHERE id = '{}'", domain_name, foreign_key))
+    connection
+        .execute(format!(
+                r#"UPDATE dnszones SET domain_name = '{}' WHERE id = '{}'"#, 
+                domain_name, foreign_key
+            )
+        )
         .unwrap();
 }
 
