@@ -3,6 +3,87 @@ use run_script::{
     run_script
 };
 
+use crate::structs::{
+    DriveDescription,
+    PartUUID,
+};
+
+pub fn get_partitions() -> (i32, String, String) {
+    let options = ScriptOptions::new();
+
+    let command = 
+r#"
+dash_reached=false;
+count_line=0;
+
+while read -r line;
+do
+    $dash_reached && count_line=$(( $count_line+1 )) && [[ $count_line > 2 ]] && current_disk=$(echo $line | awk -F' ' '{printf $NF}') && alldisks=$(printf "$alldisks /dev/$current_disk"); 
+    [[ $line == -------------------------------------------------------------------------- ]] && dash_reached=true;
+
+done <<< $(udisksctl status)
+
+disks_array=($alldisks);
+disks_array_length=$(echo "${#disks_array[@]}");
+
+for (( i=0; i<$disks_array_length; i++ ));
+do
+    udisks_command_temp=$(udisksctl info -b ${disks_array[$(( $disks_array_length-$i-1 ))]} | grep /org/freedesktop/UDisks2/block_devices/ | sed '1d' | sed 's/Partitions://' | xargs);
+    temp_array=($udisks_command_temp);
+    temp_array_length=$(echo "${#temp_array[@]}");
+    for (( j=0; j<$temp_array_length; j++ ));
+    do
+        partitions_temp=$(echo ${temp_array[$j]} | awk -F'/' '{printf $NF}');
+        partitions_list=$(echo $partitions_temp $partitions_list);
+    done
+    partitions_list=$(echo "| $partitions_list");
+done
+
+partitions_list=$(echo $partitions_list | sed 's/^.//');
+printf "$partitions_list""#;
+    let (code, output, error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    (code, output, error)
+
+}
+
+pub fn mount_ro_partition(password: &str, partition_name: &str) -> (DriveDescription, String) {
+    let options = ScriptOptions::new();
+    let _command = 
+r#"
+part_uuid=$(ls -lha /dev/disk/by-uuid | grep partition_name | awk -F' ' '{printf $9}');
+mount_location="/tmp/$part_uuid";
+mkdir $mount_location -p;
+echo password | sudo -S mount -o ro /dev/partition_name $mount_location;
+part_information=$(df -h | grep $mount_location);
+#echo $part_information
+total_size=$(echo $part_information | awk -F' ' '{printf $2}');
+free_space=$(echo $part_information | awk -F' ' '{printf $4}');
+printf "$mount_location $part_uuid $total_size $free_space"
+"#;
+    let _command = _command.replace("password", password);
+    let command = _command.replacen("partition_name", partition_name,2);
+    let (_code, output, _error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+    let splited_output = output.split_whitespace().collect::<Vec<&str>>();
+    let drive_struct = DriveDescription{
+        drive_label: "Removeable Device".to_string(),
+        drive_partuuid: PartUUID{
+            drive_partuuid: splited_output[1].to_string()
+        },
+        total_space: splited_output[2].to_string(),
+        free_space: splited_output[3].to_string(),
+    };
+    (drive_struct, splited_output[0].to_string())
+}
+
 pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, String, String){
 
     let options = ScriptOptions::new();
