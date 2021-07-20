@@ -15,7 +15,7 @@ use crate::{
     tool,
     security,
     linux,
-    file,
+    config,
     structs::{
         BackupParam,
         HttpResponseCustom,
@@ -124,7 +124,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                     let filename = content_type.get_filename().unwrap();
                     let filepath = format!("/tmp/{}", sanitize_filename::sanitize(&filename));
 
-                    // File::create is blocking operation, use threadpool
+                    // config::create is blocking operation, use threadpool
                     let mut f = web::block(|| std::fs::File::create(filepath))
                         .await
                         .unwrap();
@@ -265,13 +265,13 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                     move_named_status, 
                     restart_wireless_networkd_status, 
                     restart_named_status
-                ) = file::config_systemd_networkd_wireless(wirelessnetworkparam);
+                ) = config::config_systemd_networkd_wireless(wirelessnetworkparam);
 
                 let (
                     write_wired_networkd_status, 
                     move_wired_networkd_status, 
                     restart_wired_networkd_status
-                ) = file::config_systemd_networkd_wired_dynamic();
+                ) = config::config_systemd_networkd_wired_dynamic();
             
                 let write_networkd_status = write_wired_networkd_status && write_wireless_networkd_status;
                 let move_networkd_status = move_wired_networkd_status && move_wireless_networkd_status;
@@ -281,7 +281,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                     write_hostapd_status,
                     move_hostapd_status, 
                     restart_hostapd_status
-                ) = file::config_hostapd(hostapdparam);
+                ) = config::config_hostapd(hostapdparam);
 
                 let (
                     error_code, 

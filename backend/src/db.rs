@@ -356,6 +356,7 @@ r#"
 CREATE TABLE dnszones (id TXT, domain_name TXT, status TXT);
 CREATE TABLE logindata (variable TXT, value TXT);
 CREATE TABLE zonerecords(id TXT, subdomain_name TXT, type TXT, address TXT, foreign_key TXT);
+CREATE TABLE storagetable(path TXT, uuid TXT, mount TXT);
 CREATE TABLE tokentable(token TXT);
 
 INSERT INTO logindata VALUES ('username', 'NULL');
@@ -365,6 +366,62 @@ INSERT INTO logindata VALUES ('password', 'NULL');
     }
 }
 
+pub fn insert_into_storage_table(path: &str, uuid: &str, mount: &str) {
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    connection
+        .execute(
+            format!("INSERT INTO storagetable VALUES ('{}', '{}', '{}');", path, uuid, mount)
+        )
+            .unwrap();
+}
+
+pub fn delete_from_storage_table(uuid: &str) {
+
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    connection
+        .execute(
+            format!("DELETE FROM storagetable WHERE uuid='{}';", uuid)
+        )
+            .unwrap();
+
+}
+
+pub fn query_existence_from_storage_table(path: &str) -> bool {
+
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    let mut check_empty_statement = connection
+        .prepare(
+            format!("SELECT EXISTS(SELECT path FROM storagetable WHERE path='{}' LIMIT 1);", path)
+        )
+            .unwrap();
+
+    check_empty_statement.next().unwrap();
+    let output: u64 = check_empty_statement.read::<i64>(0).unwrap().try_into().unwrap();
+
+    output!=0
+    
+}
+
+pub fn query_path_mount_from_storage_table(uuid: &str) -> (String, String) {
+
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    let mut read_path_mount = connection
+        .prepare(
+            format!("SELECT path,mount from storagetable WHERE uuid='{}';", uuid)
+        )
+            .unwrap();
+
+    read_path_mount.next().unwrap();
+    let path: String = read_path_mount.read::<String>(0).unwrap();
+    let mount: String = read_path_mount.read::<String>(1).unwrap();
+
+    (path, mount)
+}
+
 pub fn insert_into_token_table(token: &str){
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
@@ -372,7 +429,7 @@ pub fn insert_into_token_table(token: &str){
         .execute(
             format!("INSERT INTO tokentable VALUES ('{}');", token)
         )
-            .unwrap()
+            .unwrap();
 }
 
 pub fn delete_from_token_table(token: &str) {
@@ -405,8 +462,7 @@ pub fn query_token(token: &str) -> bool {
     let output: u64 = check_empty_statement.read::<i64>(0).unwrap().try_into().unwrap();
 
     output!=0
-    
-    
+     
 }
 
 pub fn update_logindata(username: &str, password: &str){

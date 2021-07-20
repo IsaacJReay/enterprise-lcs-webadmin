@@ -5,7 +5,26 @@ use actix_web::{
     web,
     HttpRequest,
 };
-use crate::{db, linux, security, structs::{ForeignKey, HostapdParam, HttpResponseCustom, NTPStatus, StaticWiredNetworkParam, StatusPageResult, TimeDate, TimeDateZone, TimeDateZoneNTP, Timezone, WanPageResult, WirelessNetworkParam}, tool};
+use crate::{
+    db, 
+    linux, 
+    security, 
+    tool, 
+    structs::{
+        ForeignKey, 
+        HostapdParam, 
+        HttpResponseCustom, 
+        NTPStatus, 
+        StaticWiredNetworkParam, 
+        StatusPageResult, 
+        TimeDate, 
+        TimeDateZone, 
+        TimeDateZoneNTP, 
+        Timezone, 
+        WanPageResult, 
+        WirelessNetworkParam
+    }
+};
 
 #[get("/private/api/user/query")]
 pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
@@ -554,3 +573,53 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
+// #[get("/private/api/settings/storage/status")]
+// pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
+//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+//     if !auth_is_empty{
+//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+//         if db::query_token(auth){
+//             let olddate = security::extract_token(auth);
+//             let passwordstatus: bool = tool::comparedate(olddate);
+//             if passwordstatus {
+//                 let (_code, output, _error) = linux::get_partitions();
+//                 let allpartitions = output.split_whitespace().collect::<Vec<&str>>();
+//                 let allpartitions_length = allpartitions.len();
+
+                
+//             }
+//             else {
+//                 db::delete_from_token_table(auth);
+//                 Ok(
+//                     HttpResponse::Gone().json(
+//                         HttpResponseCustom{
+//                             operation_status: "failed".to_string(),
+//                             reason: "token-timeout".to_string(),
+//                         }
+//                     )
+//                 )
+//             }
+//         }
+//         else{
+//             Ok(
+//                 HttpResponse::Unauthorized().json(
+//                     HttpResponseCustom {
+//                         operation_status: "Failed".to_string(),
+//                         reason: "incorrect-token".to_string(),
+//                     }
+//                 )
+//             )
+//         }
+//     }
+//     else{
+//         Ok(
+//             HttpResponse::Unauthorized().json(
+//                 HttpResponseCustom {
+//                     operation_status: "Failed".to_string(),
+//                     reason: "missing-token".to_string(),
+//                 }
+//             )
+//         )
+//     } 
+// }

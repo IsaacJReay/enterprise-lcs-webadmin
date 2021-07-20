@@ -3,7 +3,7 @@ use actix_web::{
     Result, 
 };
 use crate::{
-    file,
+    config,
     db,
     structs::{
         HttpResponseCustom,
@@ -17,7 +17,7 @@ pub fn return_httpsresponse_from_config_named_conf_external_zone() -> Result<Htt
         write_named_status, 
         move_named_status, 
         restart_named_status
-    ) = file::config_name_conf_external_zones();
+    ) = config::config_name_conf_external_zones();
 
     if cleanup_named_status {
         if write_named_status {
@@ -95,7 +95,7 @@ pub fn return_httpsresponse_from_config_var_named_external_zone(foreign_key: &st
         write_var_zone_status, 
         move_var_zone_status, 
         restart_named_status
-    ) = file::config_var_named_external_zones(record_vec);
+    ) = config::config_var_named_external_zones(record_vec);
 
 
         if write_var_zone_status{

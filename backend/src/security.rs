@@ -1,5 +1,5 @@
 use crate::{
-    file,
+    config,
     linux,
     DECRYPT_KEY,
 };
@@ -77,7 +77,7 @@ pub fn decrypt(encrypted_text: String, key: [u8; 16]) -> String {
 }
 
 pub fn encrypt_file(filename: &str, password: &str) -> String {
-    let mut byte_file = file::get_file_as_byte_vec(&filename.to_string());
+    let mut byte_file = config::get_file_as_byte_vec(&filename.to_string());
 
     byte_file.reverse();
 
@@ -91,13 +91,13 @@ pub fn encrypt_file(filename: &str, password: &str) -> String {
 
     let processed_file = filename.replace("tar.zst", "kconf");
 
-    let _result = file::createfile(&processed_file, enc_o_string.as_bytes());
+    let _result = config::createfile(&processed_file, enc_o_string.as_bytes());
 
     processed_file
 }
 
 pub fn decrypt_file(filename: &str, password: &str) -> String {
-    let byte_file = String::from_utf8(file::get_file_as_byte_vec(&filename.to_string())).unwrap();
+    let byte_file = String::from_utf8(config::get_file_as_byte_vec(&filename.to_string())).unwrap();
     let mut byte_file_sanitized = byte_file.split_whitespace().collect::<Vec<&str>>();
     byte_file_sanitized.reverse();
     let mut string_byte_file: String = String::new();
@@ -118,7 +118,7 @@ pub fn decrypt_file(filename: &str, password: &str) -> String {
 
     let file = filename.replace("kconf", "tar.zst");
 
-    let _result = file::createfile(&file, &decrypted_byte_vec_u8);
+    let _result = config::createfile(&file, &decrypted_byte_vec_u8);
 
     file
 }

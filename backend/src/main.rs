@@ -1,4 +1,4 @@
-mod file;
+mod config;
 mod db;
 mod tool;
 mod linux;
@@ -24,7 +24,7 @@ use crate::db::{
 };
 
 const IP_ADDRESS: &str = "0.0.0.0:8080";
-const DECRYPT_KEY: &str = "Koompi-Onelab";
+const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 16 characters
 
 #[actix_web::main]
 async fn main() -> Result<()> {

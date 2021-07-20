@@ -51,7 +51,7 @@ printf "$partitions_list""#;
 
 }
 
-pub fn mount_ro_partition(password: &str, partition_name: &str) -> (DriveDescription, String) {
+pub fn mount_ro_partition(password: &str, partition_name: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
     let _command = 
 r#"
@@ -59,14 +59,31 @@ part_uuid=$(ls -lha /dev/disk/by-uuid | grep partition_name | awk -F' ' '{printf
 mount_location="/tmp/$part_uuid";
 mkdir $mount_location -p;
 echo password | sudo -S mount -o ro /dev/partition_name $mount_location;
-part_information=$(df -h | grep $mount_location);
-#echo $part_information
-total_size=$(echo $part_information | awk -F' ' '{printf $2}');
-free_space=$(echo $part_information | awk -F' ' '{printf $4}');
-printf "$mount_location $part_uuid $total_size $free_space"
+printf "$mount_location"
 "#;
     let _command = _command.replace("password", password);
     let command = _command.replacen("partition_name", partition_name,2);
+    let (code, output, error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    (code, output, error)
+
+}
+
+pub fn get_partition_information(mount_location: &str) -> DriveDescription {
+
+    let options = ScriptOptions::new();
+    let _command = 
+r#"
+part_information=$(df -h | grep mount_location);
+total_size=$(echo $part_information | awk -F' ' '{printf $2}');
+free_space=$(echo $part_information | awk -F' ' '{printf $4}');
+printf "$part_uuid $total_size $free_space"
+"#;
+    let command = _command.replace("mount_location", mount_location);
     let (_code, output, _error) = run_script!(
         &format!("{}", command),
         &vec![],
@@ -76,12 +93,14 @@ printf "$mount_location $part_uuid $total_size $free_space"
     let drive_struct = DriveDescription{
         drive_label: "Removeable Device".to_string(),
         drive_partuuid: PartUUID{
-            drive_partuuid: splited_output[1].to_string()
+            drive_partuuid: splited_output[0].to_string()
         },
-        total_space: splited_output[2].to_string(),
-        free_space: splited_output[3].to_string(),
+        total_space: splited_output[1].to_string(),
+        free_space: splited_output[2].to_string(),
     };
-    (drive_struct, splited_output[0].to_string())
+    
+    drive_struct
+
 }
 
 pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, String, String){

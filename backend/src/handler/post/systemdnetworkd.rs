@@ -9,7 +9,7 @@ use crate::{
     db,
     security,
     tool,
-    file,
+    config,
     structs::{
         WirelessNetworkParam,
         HttpResponseCustom,
@@ -42,7 +42,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
                 let (
                     write_default_named_status, 
                     move_default_named_status
-                ) = file::config_named();
+                ) = config::config_named();
 
                 let (
                     write_networkd_status, 
@@ -51,7 +51,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
                     move_named_status, 
                     restart_networkd_status, 
                     restart_named_service
-                ) = file::config_systemd_networkd_wireless(deserial_param);
+                ) = config::config_systemd_networkd_wireless(deserial_param);
 
                 if write_networkd_status && write_named_status && write_default_named_status{
                     if move_networkd_status && move_named_status && move_default_named_status{
@@ -157,7 +157,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
                     write_networkd_status, 
                     move_networkd_status, 
                     restart_networkd_status
-                ) = file::config_systemd_networkd_wired_static(deserialparam);
+                ) = config::config_systemd_networkd_wired_static(deserialparam);
 
                 if write_networkd_status{
                     if move_networkd_status {
@@ -263,7 +263,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
                     write_networkd_status, 
                     move_networkd_status, 
                     restart_networkd_status
-                ) = file::config_systemd_networkd_wired_dynamic();
+                ) = config::config_systemd_networkd_wired_dynamic();
 
                 if write_networkd_status{
                     if move_networkd_status {

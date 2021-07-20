@@ -9,7 +9,7 @@ use crate::{
     tool,
     security,
     db,
-    file,
+    config,
     structs::{
         HostapdParam,
         HttpResponseCustom,
@@ -42,7 +42,7 @@ pub async fn post_hostapd_settings(req: HttpRequest, hostapdparam: web::Json<Hos
                     write_hostapd_status,
                     move_hostapd_status, 
                     restart_hostapd_status
-                ) = file::config_hostapd(deserial_param);
+                ) = config::config_hostapd(deserial_param);
 
                 if  write_hostapd_status {
                     if move_hostapd_status {

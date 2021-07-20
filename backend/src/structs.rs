@@ -3,6 +3,12 @@ use serde::{
     Serialize,
 };
 
+#[derive(Serialize)]
+pub struct LoginResponse {
+    pub operation_status: String,
+    pub token: String,
+}
+
 #[derive(Deserialize)]
 pub struct LoginParam {
     pub username: String,
@@ -202,24 +208,24 @@ pub struct TimeDate {
 }
 #[derive(Serialize, Deserialize)]
 pub struct PartUUID{
-    drive_partuuid: String,
+    pub drive_partuuid: String,
 }
 #[derive(Serialize, Deserialize)]
 pub struct ItemName{
-    item_name: String,
+    pub item_name: String,
 }
 #[derive(Serialize)]
 pub struct DriveDescription {
-    drive_label: String,
-    drive_partuuid: PartUUID,
-    free_space: String,
-    total_space: String,
+    pub drive_label: String,
+    pub drive_partuuid: PartUUID,
+    pub free_space: String,
+    pub total_space: String,
 }
 #[derive(Serialize)]
 pub struct DriveItem {
-    item_name: ItemName,
-    item_date: String,
-    item_type: String,
-    item_size: String,
+    pub item_name: ItemName,
+    pub item_date: String,
+    pub item_type: String,
+    pub item_size: String,
 }
 
