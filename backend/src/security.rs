@@ -1,6 +1,7 @@
 use crate::{
     file,
-    linux
+    linux,
+    DECRYPT_KEY,
 };
 use aes::Aes128;
 use hex_literal::hex;
@@ -126,14 +127,16 @@ pub fn generate_token(username: &str, password: &str) -> String{
 
     let (_code, output, _error) = linux::query_date_for_calculate();
 
-    let encrypted_userame = encrypt(username.to_string(), padding_convert("Koompi-Onelab"));
-    let encrypted_password= encrypt(password.to_string(), padding_convert("Koompi-Onelab"));
-    let encrypted_time = encrypt(output, padding_convert("Koompi-Onelab"));
+
+
+    let encrypted_userame = encrypt(username.to_string(), padding_convert(DECRYPT_KEY));
+    let encrypted_password= encrypt(password.to_string(), padding_convert(DECRYPT_KEY));
+    let encrypted_time = encrypt(output, padding_convert(DECRYPT_KEY));
 
     
-    let random_text1 = encrypt(generate_random(32), padding_convert("Koompi-Onelab"));
+    let random_text1 = encrypt(generate_random(32), padding_convert(DECRYPT_KEY));
 
-    let random_text2 = encrypt(generate_random(32), padding_convert("Koompi-Onelab"));
+    let random_text2 = encrypt(generate_random(32), padding_convert(DECRYPT_KEY));
 
     let token: String = format!("{}.{}.{}.{}.{}", base64::encode(random_text1), base64::encode(encrypted_userame), base64::encode(encrypted_password), base64::encode(encrypted_time), base64::encode(random_text2));
 
