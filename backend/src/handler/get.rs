@@ -23,6 +23,7 @@ use crate::{
         Timezone, 
         WanPageResult, 
         WirelessNetworkParam,
+        PartUUID,
         DriveDescription,
     }
 };
@@ -587,12 +588,16 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 let (_username, password) = db::query_logindata();
                 let (_code, output, _error) = linux::get_partitions();
                 let all_partitions: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
+                let mut local_content_storage = linux::get_partition_information("/kmp");
+                local_content_storage.drive_partuuid = PartUUID {
+                    drive_partuuid: "kmp".to_string(),
+                };
                 let mut mounted_partitions_mount: Vec<String> = Vec::new();
                 let mut unmount_partitions: Vec<&str> = Vec::new();
-                let mut drives_description: Vec<DriveDescription> = Vec::new();
+                let mut drives_description: Vec<DriveDescription> = vec![local_content_storage];
                 let mut mounted_partitions_length: usize = 0;
                 let mut unmount_partitions_length: usize = 0;
-                let mut drives_description_length: usize = 0;
+                let mut drives_description_length: usize = drives_description.len();
                 let mut mount_operation_status: bool = true;
                 for each_partition in all_partitions {
                     let is_mounted = db::query_existence_from_storage_table(each_partition);
