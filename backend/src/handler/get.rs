@@ -22,7 +22,8 @@ use crate::{
         TimeDateZoneNTP, 
         Timezone, 
         WanPageResult, 
-        WirelessNetworkParam
+        WirelessNetworkParam,
+        DriveDescription,
     }
 };
 
@@ -496,7 +497,7 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
     } 
 }
 
-#[get("/private/api/settings/time/get")]
+#[get("/private/api/settings/time/status")]
 pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
@@ -573,53 +574,110 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
-// #[get("/private/api/settings/storage/status")]
-// pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
-//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+#[get("/private/api/settings/storage/status")]
+pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
-//     if !auth_is_empty{
-//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-//         if db::query_token(auth){
-//             let olddate = security::extract_token(auth);
-//             let passwordstatus: bool = tool::comparedate(olddate);
-//             if passwordstatus {
-//                 let (_code, output, _error) = linux::get_partitions();
-//                 let allpartitions = output.split_whitespace().collect::<Vec<&str>>();
-//                 let allpartitions_length = allpartitions.len();
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth){
+            let olddate = security::extract_token(auth);
+            let passwordstatus: bool = tool::comparedate(olddate);
+            if passwordstatus {
+                let (_username, password) = db::query_logindata();
+                let (_code, output, _error) = linux::get_partitions();
+                let all_partitions: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
+                let mut mounted_partitions_mount: Vec<String> = Vec::new();
+                let mut unmount_partitions: Vec<&str> = Vec::new();
+                let mut drives_description: Vec<DriveDescription> = Vec::new();
+                let mut mounted_partitions_length: usize = 0;
+                let mut unmount_partitions_length: usize = 0;
+                let mut drives_description_length: usize = 0;
+                let mut mount_operation_status: bool = true;
+                for each_partition in all_partitions {
+                    let is_mounted = db::query_existence_from_storage_table(each_partition);
+                    match is_mounted{
+                        true => {
+                            let mount = db::query_mount_by_path_from_storage_table(each_partition);
+                            // mounted_partitions_mount[mounted_partitions_length] = mount;
+                            mounted_partitions_mount.insert(mounted_partitions_length, mount);
+                            mounted_partitions_length +=1;
+                        },
+                        false => {
+                            unmount_partitions.insert(unmount_partitions_length, each_partition);
+                            unmount_partitions_length +=1;
+                        },
+                    }
+                }
 
-                
-//             }
-//             else {
-//                 db::delete_from_token_table(auth);
-//                 Ok(
-//                     HttpResponse::Gone().json(
-//                         HttpResponseCustom{
-//                             operation_status: "failed".to_string(),
-//                             reason: "token-timeout".to_string(),
-//                         }
-//                     )
-//                 )
-//             }
-//         }
-//         else{
-//             Ok(
-//                 HttpResponse::Unauthorized().json(
-//                     HttpResponseCustom {
-//                         operation_status: "Failed".to_string(),
-//                         reason: "incorrect-token".to_string(),
-//                     }
-//                 )
-//             )
-//         }
-//     }
-//     else{
-//         Ok(
-//             HttpResponse::Unauthorized().json(
-//                 HttpResponseCustom {
-//                     operation_status: "Failed".to_string(),
-//                     reason: "missing-token".to_string(),
-//                 }
-//             )
-//         )
-//     } 
-// }
+                for each_partition in unmount_partitions {
+                    let (code, output, _error) = linux::mount_ro_partition(&password, each_partition);
+                    match code {
+                        0 => {
+                            mounted_partitions_mount.insert(mounted_partitions_length, output);
+                            mounted_partitions_length +=1;
+                        },
+                        _ => {
+                            mount_operation_status = false;
+                            break;
+                        },
+                    }   
+                }
+
+                if mount_operation_status {
+                    for each_mount in mounted_partitions_mount {
+                        let current_drive_description = linux::get_partition_information(&each_mount);
+                        drives_description.insert(drives_description_length, current_drive_description);
+                        drives_description_length +=1;
+                    }
+                    Ok(
+                        HttpResponse::Ok().json(
+                            drives_description
+                        )
+                    )
+                }
+                else {
+                    Ok(
+                        HttpResponse::InternalServerError().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: "mount-failed".to_string(),
+                            }  
+                        )
+                    )
+                }
+            }
+            else {
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "failed".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom {
+                        operation_status: "Failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom {
+                    operation_status: "Failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    } 
+}
