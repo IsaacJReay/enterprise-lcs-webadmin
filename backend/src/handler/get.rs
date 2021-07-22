@@ -605,7 +605,6 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                     match is_mounted{
                         true => {
                             let mount = db::query_mount_by_path_from_storage_table(each_partition);
-                            // mounted_partitions_mount[mounted_partitions_length] = mount;
                             mounted_partitions_mount.insert(mounted_partitions_length, mount);
                             mounted_partitions_length +=1;
                         },
