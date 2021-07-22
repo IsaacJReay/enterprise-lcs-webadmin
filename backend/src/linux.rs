@@ -3,9 +3,12 @@ use run_script::{
     run_script
 };
 
-use crate::structs::{
-    DriveDescription,
-    PartUUID,
+use crate::{
+    db,
+    structs::{
+        DriveDescription,
+        PartUUID,
+    }
 };
 
 pub fn get_partitions() -> (i32, String, String) {
@@ -59,7 +62,7 @@ part_uuid=$(ls -lha /dev/disk/by-uuid | grep partition_name | awk -F' ' '{printf
 mount_location="/tmp/$part_uuid";
 mkdir $mount_location -p;
 echo password | sudo -S mount -o ro /dev/partition_name $mount_location;
-printf "$mount_location"
+printf "$part_uuid $mount_location"
 "#;
     let _command = _command.replace("password", password);
     let command = _command.replacen("partition_name", partition_name,2);
@@ -69,7 +72,12 @@ printf "$mount_location"
         &options
     ).unwrap();
 
-    (code, output, error)
+    let splited_output: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
+
+
+    db::insert_into_storage_table(partition_name, splited_output[0], splited_output[1]);
+
+    (code, splited_output[1].to_string(), error)
 
 }
 
@@ -79,6 +87,8 @@ pub fn get_partition_information(mount_location: &str) -> DriveDescription {
     let _command = 
 r#"
 part_information=$(df -h | grep mount_location);
+partition_name=$(echo $part_information | awk -F' ' '{printf $1}' | awk -F'/' '{printf $3}');
+part_uuid=$(ls -lha /dev/disk/by-uuid | grep $partition_name | awk -F' ' '{printf $9}');
 total_size=$(echo $part_information | awk -F' ' '{printf $2}');
 free_space=$(echo $part_information | awk -F' ' '{printf $4}');
 printf "$part_uuid $total_size $free_space"
@@ -89,6 +99,7 @@ printf "$part_uuid $total_size $free_space"
         &vec![],
         &options
     ).unwrap();
+
     let splited_output = output.split_whitespace().collect::<Vec<&str>>();
     let drive_struct = DriveDescription{
         drive_label: "Removeable Device".to_string(),
