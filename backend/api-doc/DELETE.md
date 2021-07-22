@@ -1,4 +1,4 @@
-# PUT API Documentations
+# Delete API Documentations
 
 > ### - /private/api/settings/dns/zone_record/deletion
 >>
