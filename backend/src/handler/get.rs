@@ -592,6 +592,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 local_content_storage.drive_partuuid = PartUUID {
                     drive_partuuid: "kmp".to_string(),
                 };
+                local_content_storage.drive_label = "Local Content Storage".to_string();
                 let mut mounted_partitions_mount: Vec<String> = Vec::new();
                 let mut unmount_partitions: Vec<&str> = Vec::new();
                 let mut drives_description: Vec<DriveDescription> = vec![local_content_storage];
