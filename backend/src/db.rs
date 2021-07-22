@@ -405,21 +405,35 @@ pub fn query_existence_from_storage_table(path: &str) -> bool {
     
 }
 
-pub fn query_path_mount_from_storage_table(uuid: &str) -> (String, String) {
-
+pub fn query_mount_by_path_from_storage_table(path: &str) -> String {
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
     let mut read_path_mount = connection
         .prepare(
-            format!("SELECT path,mount from storagetable WHERE uuid='{}';", uuid)
+            format!("SELECT mount from storagetable WHERE path='{}';", path)
         )
             .unwrap();
 
     read_path_mount.next().unwrap();
     let path: String = read_path_mount.read::<String>(0).unwrap();
-    let mount: String = read_path_mount.read::<String>(1).unwrap();
 
-    (path, mount)
+    path
+}
+
+pub fn query_mount_by_uuid_from_storage_table(uuid: &str) -> String {
+
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    let mut read_path_mount = connection
+        .prepare(
+            format!("SELECT mount from storagetable WHERE uuid='{}';", uuid)
+        )
+            .unwrap();
+
+    read_path_mount.next().unwrap();
+    let mount: String = read_path_mount.read::<String>(0).unwrap();
+
+    mount
 }
 
 pub fn insert_into_token_table(token: &str){
