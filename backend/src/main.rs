@@ -47,13 +47,17 @@ async fn main() -> Result<()> {
             App::new()
                 .wrap(Cors::permissive())
                 .wrap(middleware::Logger::default())
-                                                //handling / and /private/api and get request
+                                                            //handling get request
                 .service(handler::get::get_logindata)                                       // link: /private/api/user/query
                 .service(handler::get::get_statuspage)                                      // link: /private/api/settings/status
                 .service(handler::get::get_wanpage)                                         // link: /private/api/settings/wirednetwork/status
                 .service(handler::get::get_wlanpage)                                        // link: /private/api/settings/wirelessnetwork/status
                 .service(handler::get::get_wifipage)                                        // link: /private/api/settings/hostapd/status
-                                                //handling post request
+                .service(handler::get::get_domain_name_page)                                // link: /private/api/settings/dns/domain_name/status
+                .service(handler::get::get_zone_record_page)                                // link: /private/api/settings/dns/zone_records/status
+                .service(handler::get::get_timedatepage)                                    // link: /private/api/settings/time/status
+                .service(handler::get::get_storage_page)                                    // link: /private/api/settings/storage/status
+                                                            //handling post request
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password
                 .service(handler::post::systemsettings::post_settings_import)               // link: /private/api/settings/import
@@ -67,10 +71,10 @@ async fn main() -> Result<()> {
                 .service(handler::post::named::post_add_zone_record)                        // link: /private/api/settings/dns/zone_record/creation
                 .service(handler::post::timedatectl::post_set_time)                         // link: /private/api/settings/time/timedate
                 .service(handler::post::timedatectl::post_set_timezone)                     // link: /private/api/settings/time/timezone
-                                                //handling delete request
+                                                            //handling delete request
                 .service(handler::delete::delete_delete_zone_record)                        // link: /private/api/settings/dns/zone_record/deletion
                 .service(handler::delete::delete_delete_domain_name)                        // link: /private/api/settings/dns/domain_name/deletion
-                                                //handling put request
+                                                            //handling put request
                 .service(handler::put::put_update_dns_status)                               // link: /private/api/settings/dns/status/update
                 .service(handler::put::put_rename_domain_name)                              // link: /private/api/settings/dns/domain_name/update
         }
