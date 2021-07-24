@@ -48,6 +48,7 @@ async fn main() -> Result<()> {
                 .wrap(Cors::permissive())
                 .wrap(middleware::Logger::default())
                                                             //handling GET request
+                .service(handler::get::get_token_validated)                                 // link: /private/api/token/validation
                 .service(handler::get::get_logindata)                                       // link: /private/api/user/query
                 .service(handler::get::get_statuspage)                                      // link: /private/api/settings/status
                 .service(handler::get::get_wanpage)                                         // link: /private/api/settings/wirednetwork/status
