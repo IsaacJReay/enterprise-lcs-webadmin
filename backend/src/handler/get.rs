@@ -46,7 +46,7 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "Success".to_string(),
-                            reason: "token-timeout".to_string(),
+                            reason: "token-valid".to_string(),
                         }
                     )
                 )
@@ -57,7 +57,7 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
                             operation_status: "Failed".to_string(),
-                            reason: "token-valid".to_string(),
+                            reason: "token-timeout".to_string(),
                         }
                     )
                 )
