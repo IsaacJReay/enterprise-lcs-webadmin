@@ -1,5 +1,44 @@
 # GET API Documentations
 
+> ### - /private/api/token/validation
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>>  - Body
+>> ```
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation": "Success",
+>>    "reason": "token-valid"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+
 > ### - /private/api/user/query
 >>
 >> | Header Parameter | Data Type |
