@@ -43,7 +43,7 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
 
             if passwordstatus{
                 Ok(
-                    HttpResponse::Gone().json(
+                    HttpResponse::Ok().json(
                         HttpResponseCustom{
                             operation_status: "Success".to_string(),
                             reason: "token-valid".to_string(),
