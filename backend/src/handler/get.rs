@@ -28,6 +28,64 @@ use crate::{
     }
 };
 
+#[get("/private/api/token/validation")]
+pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth) {
+            let olddate = security::extract_token(auth);
+            let (_username, _password) = db::query_logindata();
+
+
+            let passwordstatus: bool = tool::comparedate(olddate);
+
+            if passwordstatus{
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "Success".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+            else{
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "failed".to_string(),
+                            reason: "token-valid".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom{
+                        operation_status: "failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom{
+                    operation_status: "failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    }
+}
+
 #[get("/private/api/user/query")]
 pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
 
@@ -686,3 +744,4 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
         )
     } 
 }
+
