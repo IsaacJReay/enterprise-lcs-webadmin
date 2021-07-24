@@ -114,6 +114,10 @@ printf "$part_uuid $total_size $free_space"
 
 }
 
+pub fn query_file_in_partition(password: &str, ) {
+    
+}
+
 pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, String, String){
 
     let options = ScriptOptions::new();

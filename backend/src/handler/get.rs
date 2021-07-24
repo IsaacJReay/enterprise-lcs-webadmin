@@ -56,7 +56,7 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-valid".to_string(),
                         }
                     )
@@ -67,7 +67,7 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
             Ok(
                 HttpResponse::Unauthorized().json(
                     HttpResponseCustom{
-                        operation_status: "failed".to_string(),
+                        operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
                     }
                 )
@@ -78,7 +78,7 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
         Ok(
             HttpResponse::Unauthorized().json(
                 HttpResponseCustom{
-                    operation_status: "failed".to_string(),
+                    operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
                 }
             )
@@ -114,7 +114,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -125,7 +125,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
             Ok(
                 HttpResponse::Unauthorized().json(
                     HttpResponseCustom{
-                        operation_status: "failed".to_string(),
+                        operation_status: "Failed".to_string(),
                         reason: "incorrect-token".to_string(),
                     }
                 )
@@ -136,7 +136,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
         Ok(
             HttpResponse::Unauthorized().json(
                 HttpResponseCustom{
-                    operation_status: "failed".to_string(),
+                    operation_status: "Failed".to_string(),
                     reason: "missing-token".to_string(),
                 }
             )
@@ -278,7 +278,7 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -346,7 +346,7 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -419,7 +419,7 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -473,7 +473,7 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -526,7 +526,7 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -603,7 +603,7 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -704,7 +704,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                         HttpResponse::InternalServerError().json(
                             HttpResponseCustom{
                                 operation_status: "Failed".to_string(),
-                                reason: "mount-failed".to_string(),
+                                reason: "mount-Failed".to_string(),
                             }  
                         )
                     )
@@ -715,7 +715,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

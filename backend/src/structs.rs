@@ -211,8 +211,9 @@ pub struct PartUUID{
     pub drive_partuuid: String,
 }
 #[derive(Serialize, Deserialize)]
-pub struct ItemName{
+pub struct ItemNamePath{
     pub item_name: String,
+    pub parent_directory: String,
 }
 #[derive(Serialize)]
 pub struct DriveDescription {
@@ -223,7 +224,7 @@ pub struct DriveDescription {
 }
 #[derive(Serialize)]
 pub struct DriveItem {
-    pub item_name: ItemName,
+    pub item_name: ItemNamePath,
     pub item_date: String,
     pub item_type: String,
     pub item_size: String,
