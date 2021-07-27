@@ -1,3 +1,5 @@
+extern crate byte_unit;
+
 mod config;
 mod db;
 mod tool;
@@ -58,6 +60,8 @@ async fn main() -> Result<()> {
                 .service(handler::get::get_zone_record_page)                                // link: /private/api/settings/dns/zone_records/status
                 .service(handler::get::get_timedatepage)                                    // link: /private/api/settings/time/status
                 .service(handler::get::get_storage_page)                                    // link: /private/api/settings/storage/status
+                .service(handler::get::get_storage_device_page)                              // link: /private/api/settings/storage/device/status
+                .service(handler::get::get_storage_device_directory_page)                   // link: /private/api/settings/storage/device/directory/status
                                                             //handling POST request
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password
