@@ -24,3 +24,8 @@ sqlite = "*"
 wildmatch = "*"
 rand="0.8.4"
 base64="*"
+
+[dependencies.byte-unit]
+version = "*"
+default-features = false
+features = ["u128"]
