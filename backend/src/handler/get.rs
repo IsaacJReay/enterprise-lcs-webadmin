@@ -5,28 +5,7 @@ use actix_web::{
     web,
     HttpRequest,
 };
-use crate::{
-    db, 
-    linux, 
-    security, 
-    tool, 
-    structs::{
-        ForeignKey, 
-        HostapdParam, 
-        HttpResponseCustom, 
-        NTPStatus, 
-        StaticWiredNetworkParam, 
-        StatusPageResult, 
-        TimeDate, 
-        TimeDateZone, 
-        TimeDateZoneNTP, 
-        Timezone, 
-        WanPageResult, 
-        WirelessNetworkParam,
-        PartUUID,
-        DriveDescription,
-    }
-};
+use crate::{db, linux, security, structs::{DriveDescription, ForeignKey, HostapdParam, HttpResponseCustom, ItemNamePath, NTPStatus, PartUUID, StaticWiredNetworkParam, StatusPageResult, TimeDate, TimeDateZone, TimeDateZoneNTP, Timezone, WanPageResult, WirelessNetworkParam}, tool};
 
 #[get("/private/api/token/validation")]
 pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
@@ -659,7 +638,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 let mut drives_description_length: usize = drives_description.len();
                 let mut mount_operation_status: bool = true;
                 for each_partition in all_partitions {
-                    let is_mounted = db::query_existence_from_storage_table(each_partition);
+                    let is_mounted = db::query_existence_from_storage_table_by_path(each_partition);
                     match is_mounted{
                         true => {
                             let mount = db::query_mount_by_path_from_storage_table(each_partition);
@@ -745,3 +724,153 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
+#[get("/private/api/settings/storage/device/status")]
+pub async fn get_storage_device_page(req: HttpRequest, uuid_struct: web::Json<PartUUID>) -> Result<HttpResponse> {
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth){
+            let olddate = security::extract_token(auth);
+            let passwordstatus: bool = tool::comparedate(olddate);
+            let (_username, password) = db::query_logindata();
+            if passwordstatus {
+                if &uuid_struct.drive_partuuid != "kmp" {
+                    let path = db::query_mount_by_uuid_from_storage_table(&uuid_struct.drive_partuuid);
+                    let all_file = linux::query_file_in_partition(&password, &path);
+                    Ok(
+                        HttpResponse::Ok().json(
+                            all_file
+                        )
+                    )
+                }
+                else{
+                    let all_file = linux::query_file_in_partition(&password, "/kmp");
+                    Ok(
+                        HttpResponse::Ok().json(
+                            all_file
+                        )
+                    )
+                }
+            }
+            else {
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "Failed".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom {
+                        operation_status: "Failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom {
+                    operation_status: "Failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    } 
+}
+
+#[get("/private/api/settings/storage/device/directory/status")]
+pub async fn get_storage_device_directory_page(req: HttpRequest, item_info_struct: web::Json<ItemNamePath>) -> Result<HttpResponse> {
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth){
+            let olddate = security::extract_token(auth);
+            let passwordstatus: bool = tool::comparedate(olddate);
+            let (_username, password) = db::query_logindata();
+            if passwordstatus {
+
+                if item_info_struct.item_name.is_empty() {
+
+                    // cd ..
+                    // println!("{}", db::query_existence_from_storage_table_by_mount(&item_info_struct.parent_directory));
+
+                    if item_info_struct.parent_directory == "/kmp" || db::query_existence_from_storage_table_by_mount(&item_info_struct.parent_directory) {
+
+                        let all_file = linux::query_file_in_partition(&password, &item_info_struct.parent_directory);
+                        Ok(
+                            HttpResponse::Ok().json(
+                                all_file
+                            )
+                        )
+                    }
+                    else {
+                        let splited_parent_directory = item_info_struct.parent_directory.split("/").collect::<Vec<&str>>();
+                        let previous_directory = item_info_struct.parent_directory.strip_suffix(&format!("/{}", splited_parent_directory[splited_parent_directory.len()-1])).unwrap();
+
+                        let all_file = linux::query_file_in_partition(&password, &previous_directory);
+                        Ok(
+                            HttpResponse::Ok().json(
+                                all_file
+                            )
+                        )
+                    }
+                }
+                else {
+
+                    // cd $forward_directory
+
+                    let directory_path = format!("{}/{}", item_info_struct.parent_directory, item_info_struct.item_name);
+
+                    let all_file = linux::query_file_in_partition(&password, &directory_path);
+                    Ok(
+                        HttpResponse::Ok().json(
+                            all_file
+                        )
+                    )
+                }
+            }
+            else {
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "Failed".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom {
+                        operation_status: "Failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom {
+                    operation_status: "Failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    } 
+}

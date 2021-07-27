@@ -388,13 +388,30 @@ pub fn delete_from_storage_table(uuid: &str) {
 
 }
 
-pub fn query_existence_from_storage_table(path: &str) -> bool {
+pub fn query_existence_from_storage_table_by_path(path: &str) -> bool {
 
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
     let mut check_empty_statement = connection
         .prepare(
             format!("SELECT EXISTS(SELECT path FROM storagetable WHERE path='{}' LIMIT 1);", path)
+        )
+            .unwrap();
+
+    check_empty_statement.next().unwrap();
+    let output: u64 = check_empty_statement.read::<i64>(0).unwrap().try_into().unwrap();
+
+    output!=0
+    
+}
+
+pub fn query_existence_from_storage_table_by_mount(mount: &str) -> bool {
+
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+
+    let mut check_empty_statement = connection
+        .prepare(
+            format!("SELECT EXISTS(SELECT mount FROM storagetable WHERE mount='{}' LIMIT 1);", mount)
         )
             .unwrap();
 
