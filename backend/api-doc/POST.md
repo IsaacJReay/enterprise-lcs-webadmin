@@ -356,7 +356,7 @@
 >> ```
 
 
-> ### - /private/api/settings/wirednetwork/dynamic
+> ### - /private/api/settings/wirednetwork/static
 >>
 >> | Header Parameter | Data Type |
 >> | ---------------- | --------- |
@@ -407,7 +407,7 @@
 >>  }
 >> ```
 
-> ### - /private/api/settings/wirednetwork/static
+> ### - /private/api/settings/wirednetwork/dynamic
 >>
 >> | Header Parameter | Data Type |
 >> | ---------------- | --------- |
