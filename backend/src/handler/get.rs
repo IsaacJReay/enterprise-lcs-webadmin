@@ -5,7 +5,7 @@ use actix_web::{
     web,
     HttpRequest,
 };
-use crate::{db, linux, security, structs::{DriveDescription, ForeignKey, HostapdParam, HttpResponseCustom, ItemNamePath, NTPStatus, PartUUID, StaticWiredNetworkParam, StatusPageResult, TimeDate, TimeDateZone, TimeDateZoneNTP, Timezone, WanPageResult, WirelessNetworkParam}, tool};
+use crate::{db, linux, security, structs::{DriveDescription, ForeignKey, HostapdParam, HttpResponseCustom, ItemNamePath, NTPStatus, PartUUID, StaticWiredNetworkParam, StatusPageResult, TimeDate, TimeDateZone, TimeDateZoneNTP, Timezone, WanPageResult, WirelessNetworkParam, UserName}, tool};
 
 #[get("/private/api/token/validation")]
 pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
@@ -74,7 +74,7 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth) {
             let olddate = security::extract_token(auth);
-            let (username, _password) = db::query_logindata();
+            let (current_username, _password) = db::query_logindata();
 
 
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -82,9 +82,9 @@ pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
             if passwordstatus{
                 Ok(
                     HttpResponse::Ok().json(
-                        format!(
-                            "Current User: {}", username
-                        )
+                        UserName{
+                            username: current_username
+                        }
                     )
                 )
             }
