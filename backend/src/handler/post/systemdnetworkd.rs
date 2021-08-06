@@ -133,7 +133,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
     }
 }
 
-#[post("/private/api/setting/wirednetwork/static")]
+#[post("/private/api/settings/wirednetwork/static")]
 pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam: web::Json<StaticWiredNetworkParam>) -> Result<HttpResponse> {
     
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
@@ -245,7 +245,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
     }
 }
 
-#[post("/private/api/setting/wirednetwork/dynamic")]
+#[post("/private/api/settings/wirednetwork/dynamic")]
 pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse> {
 
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
