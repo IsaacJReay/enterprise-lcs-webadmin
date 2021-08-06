@@ -18,7 +18,7 @@ pub fn comparedate(olddate: u64) -> bool {
 
     let elapse: u64 = newdate - olddate;
 
-    if elapse <= 1500 {
+    if elapse <= 150000 {
         true
     }
     else{
