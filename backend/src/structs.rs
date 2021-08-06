@@ -4,6 +4,11 @@ use serde::{
 };
 
 #[derive(Serialize)]
+pub struct UserName {
+    pub username: String,
+}
+
+#[derive(Serialize)]
 pub struct LoginResponse {
     pub operation_status: String,
     pub token: String,
