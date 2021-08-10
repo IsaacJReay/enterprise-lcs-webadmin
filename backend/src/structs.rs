@@ -211,15 +211,18 @@ pub struct TimeDate {
     pub time: String,
     pub date: String,
 }
+
 #[derive(Serialize, Deserialize)]
 pub struct PartUUID{
     pub drive_partuuid: String,
 }
+
 #[derive(Serialize, Deserialize)]
 pub struct ItemNamePath{
     pub item_name: String,
     pub parent_directory: String,
 }
+
 #[derive(Serialize)]
 pub struct DriveDescription {
     pub drive_label: String,

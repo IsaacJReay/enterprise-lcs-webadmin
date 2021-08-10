@@ -4,4 +4,4 @@ pub mod systemdnetworkd;
 pub mod systemsettings;
 pub mod timedatectl;
 pub mod users;
-
+pub mod storage;

@@ -3,7 +3,6 @@ use run_script::{
     ScriptOptions, 
     run_script
 };
-
 use crate::{
     db,
     structs::{
@@ -14,7 +13,7 @@ use crate::{
     }
 };
 
-pub fn get_partitions() -> (i32, String, String) {
+pub fn get_all_partitions() -> (i32, String, String) {
     let options = ScriptOptions::new();
 
     let command = 
@@ -77,10 +76,26 @@ printf "$part_uuid $mount_location"
 
     let splited_output: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
 
+    let (_code, partition_filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}", partition_name));
 
-    db::insert_into_storage_table(partition_name, splited_output[0], splited_output[1]);
+    db::insert_into_storage_table(partition_name, splited_output[0], splited_output[1], &partition_filesystem_type);
 
     (code, splited_output[1].to_string(), error)
+
+}
+
+pub fn get_partition_filesystem_type(password: &str, path: &str) -> (i32, String, String) {
+    let options = ScriptOptions::new();
+    let _command = r#"echo password | sudo -S blkid path | grep -o 'TYPE=......' | awk -F'=' '{printf $2}' | sed -e 's/^"//' -e 's/"$//'"#;
+    let _command = _command.replace("password", password);
+    let command = _command.replace("path", path);
+    let (code, output, error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    (code, output, error)
 
 }
 
@@ -160,10 +175,42 @@ pub fn query_file_in_partition(password: &str, path: &str) -> Vec<DriveItem> {
         });
         vec_items_length +=1;
     }
-    vec_items
+
+    if vec_items.is_empty() {
+        vec_items.insert(0, DriveItem {
+            item_name: ItemNamePath {
+                item_name: ".".to_string(),
+                parent_directory: path.to_string(),
+            },
+            item_date: "0000-00-00 00:00:00".to_string(),
+            item_type: "file".to_string(),
+            item_size: "0 Byte".to_string(),
+        });
+        vec_items
+    }
+    else {
+        vec_items
+    }
 
 
     
+
+}
+
+pub fn is_read_writeable(mount: &str) -> bool {
+    let options = ScriptOptions::new();
+    let _command = r#"grep "[[:space:]]rw[[:space:],]" /proc/mounts | grep mount"#;
+    let command = _command.replace("mount", mount);
+    let (_code, output, _error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    match !output.is_empty() {
+        true => true,
+        false => false,
+    } 
 
 }
 
@@ -328,7 +375,6 @@ pub fn query_ntp_status() -> (i32, String, String) {
 
     (code, output, error)
 }
-
 
 pub fn query_date_for_calculate() -> (i32, String, String){
 

@@ -356,7 +356,7 @@ r#"
 CREATE TABLE dnszones (id TXT, domain_name TXT, status TXT);
 CREATE TABLE logindata (variable TXT, value TXT);
 CREATE TABLE zonerecords(id TXT, subdomain_name TXT, type TXT, address TXT, foreign_key TXT);
-CREATE TABLE storagetable(path TXT, uuid TXT, mount TXT);
+CREATE TABLE storagetable(dev_path TXT, part_uuid TXT, mount_location TXT, filesystem_type TXT);
 CREATE TABLE tokentable(token TXT);
 
 INSERT INTO logindata VALUES ('username', 'NULL');
@@ -366,12 +366,12 @@ INSERT INTO logindata VALUES ('password', 'NULL');
     }
 }
 
-pub fn insert_into_storage_table(path: &str, uuid: &str, mount: &str) {
+pub fn insert_into_storage_table(path: &str, uuid: &str, mount: &str, filesystem_type: &str) {
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
     connection
         .execute(
-            format!("INSERT INTO storagetable VALUES ('{}', '{}', '{}');", path, uuid, mount)
+            format!("INSERT INTO storagetable VALUES ('{}', '{}', '{}', '{}');", path, uuid, mount, filesystem_type)
         )
             .unwrap();
 }
@@ -382,7 +382,7 @@ pub fn delete_from_storage_table(uuid: &str) {
 
     connection
         .execute(
-            format!("DELETE FROM storagetable WHERE uuid='{}';", uuid)
+            format!("DELETE FROM storagetable WHERE part_uuid='{}';", uuid)
         )
             .unwrap();
 
@@ -394,7 +394,7 @@ pub fn query_existence_from_storage_table_by_path(path: &str) -> bool {
 
     let mut check_empty_statement = connection
         .prepare(
-            format!("SELECT EXISTS(SELECT path FROM storagetable WHERE path='{}' LIMIT 1);", path)
+            format!("SELECT EXISTS(SELECT dev_path FROM storagetable WHERE dev_path='{}' LIMIT 1);", path)
         )
             .unwrap();
 
@@ -411,7 +411,7 @@ pub fn query_existence_from_storage_table_by_mount(mount: &str) -> bool {
 
     let mut check_empty_statement = connection
         .prepare(
-            format!("SELECT EXISTS(SELECT mount FROM storagetable WHERE mount='{}' LIMIT 1);", mount)
+            format!("SELECT EXISTS(SELECT mount_location FROM storagetable WHERE mount_location='{}' LIMIT 1);", mount)
         )
             .unwrap();
 
@@ -427,7 +427,7 @@ pub fn query_mount_by_path_from_storage_table(path: &str) -> String {
 
     let mut read_path_mount = connection
         .prepare(
-            format!("SELECT mount from storagetable WHERE path='{}';", path)
+            format!("SELECT mount_location from storagetable WHERE dev_path='{}';", path)
         )
             .unwrap();
 
@@ -443,7 +443,7 @@ pub fn query_mount_by_uuid_from_storage_table(uuid: &str) -> String {
 
     let mut read_path_mount = connection
         .prepare(
-            format!("SELECT mount from storagetable WHERE uuid='{}';", uuid)
+            format!("SELECT mount_location from storagetable WHERE part_uuid='{}';", uuid)
         )
             .unwrap();
 
