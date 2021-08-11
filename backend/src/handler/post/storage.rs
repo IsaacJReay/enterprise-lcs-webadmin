@@ -7,6 +7,7 @@ use actix_web::{
 };
 use crate::{
     db,
+    linux,
     security,
     tool,
     structs::{
@@ -23,13 +24,29 @@ pub async fn post_storage_device_rw_permission(req: HttpRequest, uuid_struct: we
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
         if db::query_token(auth){
             let olddate = security::extract_token(auth);
+            let (_username, password) = db::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                Ok(
-                    HttpResponse::Ok().json(
-                        "Test"
+                let path = db::query_path_by_uuid_from_storage_table(&uuid_struct.drive_partuuid);
+                let (code, output, error) = linux::mount_rw_partition(&password, &path, &uuid_struct.drive_partuuid);
+                match code {
+                    0 => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom {
+                                operation_status: "Success".to_string(),
+                                reason: output,
+                            }
+                        )
+                    ),
+                    _ => Ok(
+                        HttpResponse::InternalServerError().json(
+                            HttpResponseCustom {
+                                operation_status: "Failed".to_string(),
+                                reason: error,
+                            }
+                        )
                     )
-                )
+                }             
             }
             else {
                 db::delete_from_token_table(auth);
