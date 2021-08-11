@@ -84,9 +84,43 @@ printf "$part_uuid $mount_location"
 
 }
 
+pub fn mount_rw_partition(password: &str, partition_name: &str, uuid: &str) -> (i32, String, String) {
+
+    let options = ScriptOptions::new();
+    let full_path_name = format!("/dev/{}", partition_name);
+    let filesystem_type = db::query_filesystem_type_by_path_from_storage_table(&full_path_name);
+    let mut command: String;
+
+    if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
+        command = 
+r#"
+echo password | sudo -S umount partition_name;
+sudo mount -o -o gid=users,fmask=113,dmask=002 partition_name /tmp/uuid;
+"#.to_string();
+    }
+    else {
+        command = 
+r#"
+echo password | sudo -S umount partition_name;
+sudo mount partition_name /tmp/uuid;
+"#.to_string();
+    }
+
+    command = command.replace("password", password);
+    command = command.replacen("partition_name", partition_name, 2);
+    command = command.replace("uuid", uuid);
+    let (code, output, error) = run_script!(
+        &command,
+        &vec![],
+        &options
+    ).unwrap();
+
+    (code, output, error)
+}
+
 pub fn get_partition_filesystem_type(password: &str, path: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
-    let _command = r#"echo password | sudo -S blkid path | grep -o 'TYPE=......' | awk -F'=' '{printf $2}' | sed -e 's/^"//' -e 's/"$//'"#;
+    let _command = r#"echo password | sudo -S blkid path | grep -o 'TYPE=......' | head -1 | awk -F'=' '{printf $2}' | sed -e 's/^"//' -e 's/"$//'"#;
     let _command = _command.replace("password", password);
     let command = _command.replace("path", path);
     let (code, output, error) = run_script!(
@@ -191,10 +225,6 @@ pub fn query_file_in_partition(password: &str, path: &str) -> Vec<DriveItem> {
     else {
         vec_items
     }
-
-
-    
-
 }
 
 pub fn is_read_writeable(mount: &str) -> bool {
