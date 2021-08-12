@@ -78,6 +78,7 @@ async fn main() -> Result<()> {
                 .service(handler::post::timedatectl::post_set_time)                         // link: /private/api/settings/time/timedate
                 .service(handler::post::timedatectl::post_set_timezone)                     // link: /private/api/settings/time/timezone
                 .service(handler::post::storage::post_storage_device_rw_permission)         // link: /private/api/settings/storage/device/rwpermission/request
+                .service(handler::post::storage::post_storage_device_copy_or_move)
                                                             //handling DELETE request
                 .service(handler::delete::delete_delete_zone_record)                        // link: /private/api/settings/dns/zone_record/deletion
                 .service(handler::delete::delete_delete_domain_name)                        // link: /private/api/settings/dns/domain_name/deletion

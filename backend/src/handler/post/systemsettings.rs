@@ -146,7 +146,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                     _ => untar_status = false,
                 }
 
-                let (code, _output, _error) = linux::mvfile(&password, format!("{}/*", untar_location).as_str(), "/etc/");
+                let (code, _output, _error) = linux::move_filedir_root(&password, format!("{}/*", untar_location).as_str(), "/etc/");
                 match code {
                     0 => mv_etc_status = true,
                     _ => mv_etc_status = false,

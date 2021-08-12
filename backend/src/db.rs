@@ -427,7 +427,7 @@ pub fn query_mount_by_path_from_storage_table(path: &str) -> String {
 
     let mut read_path_mount = connection
         .prepare(
-            format!("SELECT mount_location from storagetable WHERE dev_path='{}';", path)
+            format!("SELECT mount_location FROM storagetable WHERE dev_path='{}';", path)
         )
             .unwrap();
 
@@ -443,7 +443,7 @@ pub fn query_mount_by_uuid_from_storage_table(uuid: &str) -> String {
 
     let mut read_path_mount = connection
         .prepare(
-            format!("SELECT mount_location from storagetable WHERE part_uuid='{}';", uuid)
+            format!("SELECT mount_location FROM storagetable WHERE part_uuid='{}';", uuid)
         )
             .unwrap();
 
@@ -459,7 +459,7 @@ pub fn query_path_by_uuid_from_storage_table(uuid: &str) -> String {
 
     let mut read_path_mount = connection
         .prepare(
-            format!("SELECT dev_path from storagetable WHERE part_uuid='{}';", uuid)
+            format!("SELECT dev_path FROM storagetable WHERE part_uuid='{}';", uuid)
         )
             .unwrap();
 
@@ -475,11 +475,12 @@ pub fn query_filesystem_type_by_path_from_storage_table(path: &str) -> String {
 
     let mut read_path_mount = connection
         .prepare(
-            format!("SELECT filesystem_type from storagetable WHERE dev_path='{}';", path)
+            format!("SELECT filesystem_type FROM storagetable WHERE dev_path='{}';", path)
         )
             .unwrap();
 
     read_path_mount.next().unwrap();
+
     let mount: String = read_path_mount.read::<String>(0).unwrap();
 
     mount
@@ -544,21 +545,21 @@ UPDATE logindata SET value = '{}' WHERE variable = 'password';
         .unwrap()
 }
 
-pub fn update_static_wan_networkd(internet_ip: &str, netmask: &str, gateway: &str, dns: &str) {
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+// pub fn update_static_wan_networkd(internet_ip: &str, netmask: &str, gateway: &str, dns: &str) {
+//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
-    connection
-        .execute(format!("
-UPDATE wan_networkd SET value = '{}' WHERE variable = 'connection_type';
-UPDATE wan_networkd SET value = '{}' WHERE variable = 'address';
-UPDATE wan_networkd SET value = '{}' WHERE variable = 'netmask';
-UPDATE wan_networkd SET value = '{}' WHERE variable = 'gateway';
-UPDATE wan_networkd SET value = '{}' WHERE variable = 'dns';
-        ", true, internet_ip, netmask, gateway, dns)
-    )
-        .unwrap()
+//     connection
+//         .execute(format!("
+// UPDATE wan_networkd SET value = '{}' WHERE variable = 'connection_type';
+// UPDATE wan_networkd SET value = '{}' WHERE variable = 'address';
+// UPDATE wan_networkd SET value = '{}' WHERE variable = 'netmask';
+// UPDATE wan_networkd SET value = '{}' WHERE variable = 'gateway';
+// UPDATE wan_networkd SET value = '{}' WHERE variable = 'dns';
+//         ", true, internet_ip, netmask, gateway, dns)
+//     )
+//         .unwrap()
 
-}
+// }
 
 pub fn query_logindata() -> (String, String){
     

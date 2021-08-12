@@ -13,6 +13,8 @@ use crate::{
     }
 };
 
+// pub fn copy
+
 pub fn get_all_partitions() -> (i32, String, String) {
     let options = ScriptOptions::new();
 
@@ -88,14 +90,14 @@ pub fn mount_rw_partition(password: &str, partition_name: &str, uuid: &str) -> (
 
     let options = ScriptOptions::new();
     let full_path_name = format!("/dev/{}", partition_name);
-    let filesystem_type = db::query_filesystem_type_by_path_from_storage_table(&full_path_name);
+    let filesystem_type = db::query_filesystem_type_by_path_from_storage_table(&partition_name);
     let mut command: String;
 
     if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
         command = 
 r#"
 echo password | sudo -S umount partition_name;
-sudo mount -o -o gid=users,fmask=113,dmask=002 partition_name /tmp/uuid;
+sudo mount -o gid=users,fmask=113,dmask=002 partition_name /tmp/uuid;
 "#.to_string();
     }
     else {
@@ -107,7 +109,7 @@ sudo mount partition_name /tmp/uuid;
     }
 
     command = command.replace("password", password);
-    command = command.replacen("partition_name", partition_name, 2);
+    command = command.replacen("partition_name", &full_path_name, 2);
     command = command.replace("uuid", uuid);
     let (code, output, error) = run_script!(
         &command,
@@ -118,11 +120,11 @@ sudo mount partition_name /tmp/uuid;
     (code, output, error)
 }
 
-pub fn get_partition_filesystem_type(password: &str, path: &str) -> (i32, String, String) {
+pub fn get_partition_filesystem_type(password: &str, full_path: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
-    let _command = r#"echo password | sudo -S blkid path | grep -o 'TYPE=......' | head -1 | awk -F'=' '{printf $2}' | sed -e 's/^"//' -e 's/"$//'"#;
+    let _command = r#"echo password | sudo -S blkid full_path | grep -o 'TYPE=......' | head -1 | awk -F'=' '{printf $2}' | sed 's/\"//g'"#;
     let _command = _command.replace("password", password);
-    let command = _command.replace("path", path);
+    let command = _command.replace("full_path", full_path);
     let (code, output, error) = run_script!(
         &format!("{}", command),
         &vec![],
@@ -229,8 +231,8 @@ pub fn query_file_in_partition(password: &str, path: &str) -> Vec<DriveItem> {
 
 pub fn is_read_writeable(mount: &str) -> bool {
     let options = ScriptOptions::new();
-    let _command = r#"grep "[[:space:]]rw[[:space:],]" /proc/mounts | grep mount"#;
-    let command = _command.replace("mount", mount);
+    let _command = r#"grep "[[:space:]]ro[[:space:],]" /proc/mounts | grep actual_mount"#;
+    let command = _command.replace("actual_mount", mount);
     let (_code, output, _error) = run_script!(
         &format!("{}", command),
         &vec![],
@@ -241,10 +243,9 @@ pub fn is_read_writeable(mount: &str) -> bool {
         true => true,
         false => false,
     } 
-
 }
 
-pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, String, String){
+pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, String, String) {
 
     let options = ScriptOptions::new();
 
@@ -264,14 +265,66 @@ pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, S
 
 }
 
-pub fn mvfile(password: &str, file: &str, path: &str) -> (i32, String, String){
+pub fn move_filedir(password: &str, source: &str, destination: &str, source_is_external: bool, source_uuid: &str,  destination_is_external: bool, destination_uuid: &str) -> (i32, String, String) {
+
+    if source_is_external || destination_is_external {
+
+        let mut source_user_rw_able: bool = false; 
+        let mut destination_user_rw_able: bool = false;
+
+        if source_is_external {
+            let path = db::query_path_by_uuid_from_storage_table(source_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
+                source_user_rw_able = true;
+            }
+            else {
+                source_user_rw_able = false;
+            }
+        }
+    
+        if destination_is_external {
+            let path = db::query_path_by_uuid_from_storage_table(destination_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
+                destination_user_rw_able = true;
+            }
+            else {
+                destination_user_rw_able = false;
+            }
+        }
+    
+        if source_user_rw_able && destination_user_rw_able {
+            let options = ScriptOptions::new();
+            let command = r#"mv source destination"#;
+            let _command = command.replace("source", source);
+            let command = _command.replace("destination", destination);
+
+            let (code, output, error) = run_script!(
+                &format!("{}", command),
+                &vec![],
+                &options
+            ).unwrap();
+            
+            (code, output, error)
+        }
+        else {
+            move_filedir_root(password, source, destination)
+        }
+    }
+    else {
+        move_filedir_root(password, source, destination)
+    }
+}
+
+pub fn move_filedir_root(password: &str, source: &str, destination: &str) -> (i32, String, String){
 
     let options = ScriptOptions::new();
 
-    let _command = r#"echo password | sudo -S mv file path"#;
+    let _command = r#"echo password | sudo -S mv source destination"#;
     let _command = _command.replace("password", password);
-    let _command = _command.replace("file", file);
-    let command = _command.replace("path", path);
+    let _command = _command.replace("source", source);
+    let command = _command.replace("destination", destination);
 
     let (code, output, error) = run_script!(
         &format!("{}", command),
@@ -342,7 +395,7 @@ echo password | sudo -S timedatectl set-timezone tvalue;"#;
     (code, output, error)
 }
 
-pub fn rmfile(password: &str, filepath: &str) -> (i32, String, String){
+pub fn remove_filedir_root(password: &str, filepath: &str) -> (i32, String, String){
 
     let options = ScriptOptions::new();
 

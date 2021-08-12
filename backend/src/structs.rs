@@ -238,3 +238,10 @@ pub struct DriveItem {
     pub item_size: String,
 }
 
+#[derive(Deserialize)]
+pub struct CopyOrMoveArgs {
+    pub operation: String,
+    pub source: Vec<ItemNamePath>,
+    pub destination: ItemNamePath,
+}
+
