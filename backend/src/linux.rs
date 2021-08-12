@@ -13,8 +13,6 @@ use crate::{
     }
 };
 
-// pub fn copy
-
 pub fn get_all_partitions() -> (i32, String, String) {
     let options = ScriptOptions::new();
 
@@ -265,6 +263,77 @@ pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, S
 
 }
 
+pub fn copy_filedir(password: &str, source: &str, destination: &str, source_is_external: bool, source_uuid: &str, destination_is_external: bool, destination_uuid: &str) -> (i32, String, String) {
+
+    if source_is_external || destination_is_external {
+
+        let mut source_user_rw_able: bool = false; 
+        let mut destination_user_rw_able: bool = false;
+
+        if source_is_external {
+            let path = db::query_path_by_uuid_from_storage_table(source_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
+                source_user_rw_able = true;
+            }
+            else {
+                source_user_rw_able = false;
+            }
+        }
+    
+        if destination_is_external {
+            let path = db::query_path_by_uuid_from_storage_table(destination_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
+                destination_user_rw_able = true;
+            }
+            else {
+                destination_user_rw_able = false;
+            }
+        }
+    
+        if source_user_rw_able && destination_user_rw_able {
+            let options = ScriptOptions::new();
+            let command = r#"cp -r source destination"#;
+            let _command = command.replace("source", source);
+            let command = _command.replace("destination", destination);
+
+            let (code, output, error) = run_script!(
+                &format!("{}", command),
+                &vec![],
+                &options
+            ).unwrap();
+            
+            (code, output, error)
+        }
+        else {
+            copy_filedir_root(password, source, destination)
+        }
+    }
+    else {
+        copy_filedir_root(password, source, destination)
+    }
+}
+
+pub fn copy_filedir_root(password: &str, source: &str, destination: &str) -> (i32, String, String){
+
+    let options = ScriptOptions::new();
+
+    let _command = r#"echo password | sudo -S cp -r source destination"#;
+    let _command = _command.replace("password", password);
+    let _command = _command.replace("source", source);
+    let command = _command.replace("destination", destination);
+
+    let (code, output, error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    (code, output, error)
+
+}
+
 pub fn move_filedir(password: &str, source: &str, destination: &str, source_is_external: bool, source_uuid: &str,  destination_is_external: bool, destination_uuid: &str) -> (i32, String, String) {
 
     if source_is_external || destination_is_external {
@@ -336,6 +405,24 @@ pub fn move_filedir_root(password: &str, source: &str, destination: &str) -> (i3
 
 }
 
+pub fn remove_filedir_root(password: &str, filepath: &str) -> (i32, String, String){
+
+    let options = ScriptOptions::new();
+
+    let _command = r#"echo password | sudo -S rm -f filepath"#;
+    let _command = _command.replace("password", password);
+    let command = _command.replace("filepath", filepath);
+
+    let (code, output, error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    (code, output, error)
+
+}
+
 pub fn restartservice(password: &str, servicename: &str) -> (i32, String, String){
 
     let options = ScriptOptions::new();
@@ -393,24 +480,6 @@ echo password | sudo -S timedatectl set-timezone tvalue;"#;
     ).unwrap();
 
     (code, output, error)
-}
-
-pub fn remove_filedir_root(password: &str, filepath: &str) -> (i32, String, String){
-
-    let options = ScriptOptions::new();
-
-    let _command = r#"echo password | sudo -S rm -f filepath"#;
-    let _command = _command.replace("password", password);
-    let command = _command.replace("filepath", filepath);
-
-    let (code, output, error) = run_script!(
-        &format!("{}", command),
-        &vec![],
-        &options
-    ).unwrap();
-
-    (code, output, error)
-
 }
 
 pub fn query_date_for_display() -> (i32, String, String) {

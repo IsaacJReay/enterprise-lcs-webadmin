@@ -162,12 +162,6 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
                 if write_networkd_status{
                     if move_networkd_status {
                         if restart_networkd_status {
-                            // db::update_static_wan_networkd(
-                            //     &staticwirednetworkparam.internet_ip, 
-                            //     &staticwirednetworkparam.netmask, 
-                            //     &staticwirednetworkparam.gateway, 
-                            //     &staticwirednetworkparam.dns
-                            // );
                             Ok(
                                 HttpResponse::Ok().json(
                                     HttpResponseCustom {

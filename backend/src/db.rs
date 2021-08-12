@@ -545,22 +545,6 @@ UPDATE logindata SET value = '{}' WHERE variable = 'password';
         .unwrap()
 }
 
-// pub fn update_static_wan_networkd(internet_ip: &str, netmask: &str, gateway: &str, dns: &str) {
-//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
-
-//     connection
-//         .execute(format!("
-// UPDATE wan_networkd SET value = '{}' WHERE variable = 'connection_type';
-// UPDATE wan_networkd SET value = '{}' WHERE variable = 'address';
-// UPDATE wan_networkd SET value = '{}' WHERE variable = 'netmask';
-// UPDATE wan_networkd SET value = '{}' WHERE variable = 'gateway';
-// UPDATE wan_networkd SET value = '{}' WHERE variable = 'dns';
-//         ", true, internet_ip, netmask, gateway, dns)
-//     )
-//         .unwrap()
-
-// }
-
 pub fn query_logindata() -> (String, String){
     
     let mut username: String = String::new();

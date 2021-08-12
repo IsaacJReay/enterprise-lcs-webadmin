@@ -127,7 +127,34 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                 let destination_string = format!("{}/{}", args_vec.destination.parent_directory, args_vec.destination.item_name);
 
                 if args_vec.operation == "copy" {
-                    
+                    let (code, output, error) = linux::copy_filedir(
+                        &password, 
+                        &source_string, 
+                        &destination_string, 
+                        source_is_external_prefix, 
+                        &source_uuid, 
+                        destination_is_external_prefix, 
+                        &destination_uuid
+                    );
+
+                    match code {
+                        0 => Ok(
+                            HttpResponse::Ok().json(
+                                HttpResponseCustom{
+                                    operation_status: "Success".to_string(),
+                                    reason: output.to_string(),
+                                }
+                            )
+                        ),
+                        _ => Ok(
+                            HttpResponse::Ok().json(
+                                HttpResponseCustom{
+                                    operation_status: "Failed".to_string(),
+                                    reason: error,
+                                }
+                            )
+                        )
+                    }
                     
                 }
                 else if args_vec.operation == "move" {
@@ -140,20 +167,36 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                         destination_is_external_prefix, 
                         &destination_uuid
                     );
+
+                    match code {
+                        0 => Ok(
+                            HttpResponse::Ok().json(
+                                HttpResponseCustom{
+                                    operation_status: "Success".to_string(),
+                                    reason: output,
+                                }
+                            )
+                        ),
+                        _ => Ok(
+                            HttpResponse::Ok().json(
+                                HttpResponseCustom{
+                                    operation_status: "Failed".to_string(),
+                                    reason: error,
+                                }
+                            )
+                        )
+                    }
                 }
                 else {
-
-                }
-
-
-                Ok(
-                    HttpResponse::Ok().json(
-                        HttpResponseCustom{
-                            operation_status: "Success".to_string(),
-                            reason: "".to_string(),
-                        }
+                    Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: "operation-not-supported".to_string(),
+                            }
+                        )
                     )
-                )
+                }
             }
             else {
                 db::delete_from_token_table(auth);
@@ -189,3 +232,4 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
         )
     }
 }
+
