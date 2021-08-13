@@ -5,17 +5,7 @@ use actix_web::{
     HttpResponse,
     Result,
 };
-use crate::{
-    tool, 
-    db, 
-    linux, 
-    security, 
-    structs::{
-        HttpResponseCustom, 
-        CopyOrMoveArgs, 
-        PartUUID
-    }
-};
+use crate::{db, linux, security, structs::{CopyOrMoveArgs, DeleteFileDir, HttpResponseCustom, ItemNamePath, PartUUID}, tool};
 
 #[post("/private/api/settings/storage/device/rwpermission/request")]
 pub async fn post_storage_device_rw_permission(req: HttpRequest, uuid_struct: web::Json<PartUUID>) -> Result<HttpResponse> {
@@ -233,3 +223,228 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
     }
 }
 
+#[post("/private/api/settings/storage/device/deletion")]
+pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web::Json<DeleteFileDir>) -> Result<HttpResponse> {
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth){
+            let olddate = security::extract_token(auth);
+            let (_username, password) = db::query_logindata();
+            let passwordstatus: bool = tool::comparedate(olddate);
+            if passwordstatus {
+                let mut items_string: String = String::new();
+
+                for each_items in &args_vec.selected_filedir {
+                    let full_path = format!("{}/{}", each_items.parent_directory, each_items.item_name);
+                    items_string = format!("{} {}", items_string, full_path);
+                }
+
+                let (code, output, error) = linux::remove_filedir_root(&password, &items_string);
+
+                match code {
+                    0 => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Success".to_string(),
+                                reason: output,
+                            }
+                        )
+                    ),
+                    _ => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: error,
+                            }
+                        )
+                    )
+                }
+            }
+            else {
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "failed".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom {
+                        operation_status: "Failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom {
+                    operation_status: "Failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    }
+}
+
+#[post("/private/api/settings/storage/device/directory/creation")]
+pub async fn post_storage_device_directory_creation(req: HttpRequest, item_info: web::Json<ItemNamePath>) -> Result<HttpResponse> {
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth){
+            let olddate = security::extract_token(auth);
+            let (_username, password) = db::query_logindata();
+            let passwordstatus: bool = tool::comparedate(olddate);
+            if passwordstatus {
+                let drive_uuid: String;
+                let drive_is_external_prefix = item_info.parent_directory.starts_with("/tmp/");
+                if drive_is_external_prefix {
+                    let splited_path = item_info.parent_directory.split("/").collect::<Vec<&str>>();
+
+                    drive_uuid = splited_path[2].to_string();
+                }
+                else  {
+                    drive_uuid = String::new();
+                }
+
+                let dir_location  = format!("{}/{}", item_info.parent_directory, item_info.item_name);
+
+                let (code, output, error) = linux::make_dir(&password, &dir_location, drive_is_external_prefix, &drive_uuid);
+
+
+                match code {
+                    0 => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Success".to_string(),
+                                reason: output,
+                            }
+                        )
+                    ),
+                    _ => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: error,
+                            }
+                        )
+                    )
+                }
+            }
+            else {
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "failed".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom {
+                        operation_status: "Failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom {
+                    operation_status: "Failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    }
+}
+
+#[post("/private/api/settings/storage/device/unmount")]
+pub async fn post_storage_device_unmount(req: HttpRequest, uuid_struct: web::Json<PartUUID>) -> Result<HttpResponse> {
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth){
+            let olddate = security::extract_token(auth);
+            let (_username, password) = db::query_logindata();
+            let passwordstatus: bool = tool::comparedate(olddate);
+            if passwordstatus {
+
+                let (code, output, error) = linux::unmount_partition(&password, &uuid_struct.drive_partuuid);
+
+                match code {
+                    0 => {
+                        db::delete_from_storage_table(&uuid_struct.drive_partuuid);
+                        Ok(
+                            HttpResponse::Ok().json(
+                                HttpResponseCustom{
+                                    operation_status: "Success".to_string(),
+                                    reason: output,
+                                }
+                            )
+                        )
+                    },
+                    _ => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: error,
+                            }
+                        )
+                    )
+                }                
+            }
+            else {
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "failed".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom {
+                        operation_status: "Failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom {
+                    operation_status: "Failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    }
+}

@@ -245,3 +245,7 @@ pub struct CopyOrMoveArgs {
     pub destination: ItemNamePath,
 }
 
+#[derive(Deserialize)]
+pub struct DeleteFileDir {
+    pub selected_filedir: Vec<ItemNamePath>,
+}
