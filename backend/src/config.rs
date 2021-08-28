@@ -494,7 +494,7 @@ fn gen_systemd_networkd_wireless(router_ip: &str, netmask: &str, range_start: &s
 
     let pool_offset = tool::to_binary(range_start.to_string()) - tool::to_binary(network_ip.to_string());
     let pool_size = tool::to_binary(range_end.to_string()) - tool::to_binary(range_start.to_string());
-    let router_dns = router_ip.to_owned() + dns;
+    let router_dns = router_ip.to_owned() + " " + dns;
 
     format!("[Match]
 Name=wlan0
