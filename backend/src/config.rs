@@ -209,7 +209,7 @@ pub fn config_named() -> (bool, bool) {
         Err(_e) => write_zones_status = false,
     }
 
-    let (code,_output,error) = linux::move_filedir_root(&password, "named.conf", "/etc/");
+    let (code, _output, _error) = linux::move_filedir_root(&password, "named.conf", "/etc/");
     match &code {
         0 => move_conf_status = true,
         _ => move_conf_status = false,
