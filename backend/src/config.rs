@@ -563,9 +563,9 @@ fn gen_named_conf_acl(router_ip: &str, netmask: &str) -> String {
         netmask.parse().unwrap()
         )
             .unwrap()
+            .network()
             .to_string();
-    format!(r#"
-acl local-networks {{
+    format!(r#"acl local-networks {{
     127.0.0.0/8;
     {};
 }};"#, gateway_address)
@@ -582,8 +582,7 @@ fn gen_named_conf_options(dns: &str)-> String {
         joint_dns = each_ip.to_owned() + "; " +  joint_dns.as_str();
     }
 
-    format!(r#"
-options {{
+    format!(r#"options {{
     directory "/var/named";
     pid-file "/run/named/named.pid";
     session-keyfile "/run/named/session.key";
@@ -608,8 +607,7 @@ options {{
 }
 
 fn gen_named_conf_internal_zones() -> String {
-    r#"
-zone "localhost" IN {
+    r#"zone "localhost" IN {
     type master;
     file "localhost.zone";
 };
@@ -632,8 +630,7 @@ zone "koompi.com" IN {
 }
 
 fn gen_named_conf_logging() -> String {
-    r#"
-logging {{
+    r#"logging {{
     channel xfer-log {{
         file "/var/log/named.log";
             print-category yes;
@@ -655,8 +652,7 @@ fn gen_named_conf_external_zones() -> String {
     for increments in 0..zones_vec.len(){
         if zones_vec[increments].status != false {
             let current_zone_info = format!(
-r#"
-zone "{}" IN {{
+r#"zone "{}" IN {{
     type master;
     file "{}.external.zone";
     allow-update {{ none; }};
@@ -667,8 +663,7 @@ zone "{}" IN {{
         }
         else {
             let current_zone_info = format!(
-r#"
-# zone "{}" IN {{
+r#"# zone "{}" IN {{
 #     type master;
 #     file "{}.external.zone";
 #     allow-update {{ none; }};
