@@ -558,17 +558,22 @@ include "/etc/named.conf.logging";"#.to_string()
 
 fn gen_named_conf_acl(router_ip: &str, netmask: &str) -> String {
 
-    let gateway_address = Ipv4Network::with_netmask(
+    let network_address = Ipv4Network::with_netmask(
         router_ip.parse().unwrap(),
         netmask.parse().unwrap()
         )
             .unwrap()
-            .network()
+            .network();
+    let full_network_address = Ipv4Network::with_netmask(
+        network_address,
+        netmask.parse().unwrap()
+        )
+            .unwrap()
             .to_string();
     format!(r#"acl local-networks {{
     127.0.0.0/8;
     {};
-}};"#, gateway_address)
+}};"#, full_network_address)
 }
 
 fn gen_named_conf_options(dns: &str)-> String {
