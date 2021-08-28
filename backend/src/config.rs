@@ -212,10 +212,7 @@ pub fn config_named() -> (bool, bool) {
     let (code,_output,error) = linux::move_filedir_root(&password, "named.conf", "/etc/");
     match &code {
         0 => move_conf_status = true,
-        _ => {
-            move_conf_status = false;
-            println!("{}", error);
-        },
+        _ => move_conf_status = false,
     }
 
     let (code,_output,_error) = linux::move_filedir_root(&password, "named.conf.logging", "/etc/");
@@ -224,7 +221,7 @@ pub fn config_named() -> (bool, bool) {
         _ => move_logging_status = false,
     }
     
-    let (code,_output,_error) = linux::move_filedir_root(&password, "named.conf.zones", "/etc/");
+    let (code,_output,_error) = linux::move_filedir_root(&password, "named.conf.internal.zones", "/etc/");
     match &code {
         0 => move_zones_status = true,
         _ => move_zones_status = false,
@@ -612,42 +609,41 @@ options {{
 
 fn gen_named_conf_internal_zones() -> String {
     r#"
-    zone "localhost" IN {
-        type master;
-        file "localhost.zone";
-    };
-    
-    zone "0.0.127.in-addr.arpa" IN {
-        type master;
-        file "127.0.0.zone";
-    };
-    
-    zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa" {
-        type master;
-        file "localhost.ip6.zone";
-    };
-    zone "koompi.com" IN {
-        type master;
-        file "koompi.zone";
-        allow-update { none; };
-        notify no;
-    };"#.to_string()
+zone "localhost" IN {
+    type master;
+    file "localhost.zone";
+};
+
+zone "0.0.127.in-addr.arpa" IN {
+    type master;
+    file "127.0.0.zone";
+};
+
+zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa" {
+    type master;
+    file "localhost.ip6.zone";
+};
+zone "koompi.com" IN {
+    type master;
+    file "koompi.zone";
+    allow-update { none; };
+    notify no;
+};"#.to_string()
 }
 
 fn gen_named_conf_logging() -> String {
     r#"
-    logging {{
-        channel xfer-log {{
-            file "/var/log/named.log";
-                print-category yes;
-                print-severity yes;
-                severity info;
-            }};
-            category xfer-in {{ xfer-log; }};
-            category xfer-out {{ xfer-log; }};
-            category notify {{ xfer-log; }};
-    }};
-    "#.to_string()
+logging {{
+    channel xfer-log {{
+        file "/var/log/named.log";
+            print-category yes;
+            print-severity yes;
+            severity info;
+        }};
+        category xfer-in {{ xfer-log; }};
+        category xfer-out {{ xfer-log; }};
+        category notify {{ xfer-log; }};
+}};"#.to_string()
 }
 
 fn gen_named_conf_external_zones() -> String {
