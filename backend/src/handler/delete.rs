@@ -45,7 +45,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -94,7 +94,7 @@ pub async fn delete_delete_domain_name(req: HttpRequest,dns_id_struct: web::Json
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

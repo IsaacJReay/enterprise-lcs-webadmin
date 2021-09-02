@@ -58,7 +58,7 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
                     Err(
                         HttpResponse::InternalServerError().json(
                             HttpResponseCustom{
-                                operation_status: "failed".to_string(),
+                                operation_status: "Failed".to_string(),
                                 reason: format!("tar-{}-failed", backup_name),
                             }
                         )
@@ -208,7 +208,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -356,7 +356,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

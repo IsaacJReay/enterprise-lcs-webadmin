@@ -93,7 +93,7 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

@@ -43,7 +43,7 @@ pub async fn post_create_domain_name(req: HttpRequest, domain_name_struct: web::
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -96,7 +96,7 @@ pub async fn post_add_zone_record(req: HttpRequest, zone_record_struct: web::Jso
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

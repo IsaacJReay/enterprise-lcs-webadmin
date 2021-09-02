@@ -94,7 +94,7 @@ pub async fn post_hostapd_settings(req: HttpRequest, hostapdparam: web::Json<Hos
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

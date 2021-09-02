@@ -103,7 +103,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -209,7 +209,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -309,7 +309,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

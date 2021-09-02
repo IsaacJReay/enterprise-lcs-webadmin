@@ -55,7 +55,7 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -125,7 +125,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

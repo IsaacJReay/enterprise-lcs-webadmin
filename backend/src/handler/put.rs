@@ -39,7 +39,7 @@ pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::
                 Ok(
                     HttpResponse::Ok().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -90,7 +90,7 @@ pub async fn put_rename_domain_name(req: HttpRequest, rename_domain_struct: web:
                 Ok(
                     HttpResponse::Ok().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )

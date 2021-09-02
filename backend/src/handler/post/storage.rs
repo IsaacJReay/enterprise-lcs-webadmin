@@ -44,7 +44,7 @@ pub async fn post_storage_device_rw_permission(req: HttpRequest, uuid_struct: we
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -193,7 +193,7 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -267,7 +267,7 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -348,7 +348,7 @@ pub async fn post_storage_device_directory_creation(req: HttpRequest, item_info:
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
@@ -419,7 +419,7 @@ pub async fn post_storage_device_unmount(req: HttpRequest, uuid_struct: web::Jso
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
-                            operation_status: "failed".to_string(),
+                            operation_status: "Failed".to_string(),
                             reason: "token-timeout".to_string(),
                         }
                     )
