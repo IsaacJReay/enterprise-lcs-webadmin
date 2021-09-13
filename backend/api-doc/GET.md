@@ -255,3 +255,159 @@
 >>    "reason": "missing-token"
 >>  }
 >> ```
+
+> ### - /private/api/settings/dns/domain_name/status
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>> - Body
+>> ```
+>> ```
+>> - Response 200 
+>> ```json
+>> [
+>>  {
+>>    "id": "1",
+>>    "domain_name": "website1.local",
+>>    "status": true
+>>  },
+>>  {
+>>    "id": "2",
+>>    "domain_name": "website2.local",
+>>    "status": false
+>>  }
+>> ]
+>> ```
+>>
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/dns/zone_records/status
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>> - Body
+>> ```
+>> {
+>>   "foreign_key": "1"
+>> }
+>> ```
+>> - Response 200 
+>> ```json
+>> [
+>>  {
+>>    "id_zonerecords": {
+>>      "id": "1"
+>>    },
+>>    "partial_zonerecords": {
+>>      "subdomain_name": "ns01",
+>>      "dns_type": "A",
+>>      "address": "10.100.100.1",
+>>      "foreign_key": "2"
+>>    }
+>>  },
+>>  {
+>>    "id_zonerecords": {
+>>      "id": "2"
+>>    },
+>>    "partial_zonerecords": {
+>>      "subdomain_name": "sala",
+>>      "dns_type": "CNAME",
+>>      "address": "ns01",
+>>      "foreign_key": "2"
+>>    }
+>>  },
+>> ]
+>> ```
+>>
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/time/status
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>> - Body
+>> ```
+>> ```
+>> - Response 200 
+>> ```json
+>> {
+>>  "ntp_status": {
+>>    "ntp_status": true
+>>  },
+>>  "timedatezone": {
+>>    "timezone": {
+>>      "timezone": "Asia/Phnom_Pen"
+>>    },
+>>    "timedate": {
+>>      "time": "18:09:09",
+>>      "date": "2021-46-13"
+>>    }
+>>  }
+>> }
+>> ```
+>>
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
