@@ -13,27 +13,27 @@
 >> - Response 200 
 >> ```json
 >>  {
->>    "operation": "Success",
+>>    "operation_status": "Success",
 >>    "reason": "token-valid"
 >>  }
 >> ``` 
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
@@ -58,20 +58,20 @@
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
@@ -107,20 +107,20 @@
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
@@ -151,20 +151,20 @@
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
@@ -194,20 +194,20 @@
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
@@ -238,20 +238,20 @@
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
