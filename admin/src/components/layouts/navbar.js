@@ -1,13 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Avatar, Popover, Row, Col } from "antd";
 import { Link } from "react-router-dom";
 import { HiLogout } from "react-icons/hi";
 import { FiSettings } from "react-icons/fi";
+import axios from "axios";
 import Avatar1 from "../../assets/images/avatar/avatar.png";
 
 const { Header } = Layout;
 
+const getToken = localStorage.getItem("token");
+
 const NavBar = () => {
+  const [currentUser, setCurrentUser] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const auth = {
+      Authorization: "Bearer " + getToken,
+    };
+    axios({
+      method: "GET",
+      url: "http://10.42.0.188:8080/private/api/user/query",
+      headers: {
+        "content-type": "application/json",
+        ...auth,
+      },
+    })
+      .then((res) => {
+        setCurrentUser(res.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <React.Fragment>
       <Header style={{ background: "#1B262C" }}>
@@ -31,8 +59,8 @@ const NavBar = () => {
                 </Col>
                 <Col span={20}>
                   <div>
-                    <div className="popover-text">Thith THIN</div>
-                    <span>thiththin762@gmail.com</span>
+                    <div className="popover-text">{currentUser.username}</div>
+                    {/* <span>thiththin762@gmail.com</span> */}
                   </div>
                 </Col>
               </Row>
@@ -44,29 +72,22 @@ const NavBar = () => {
                 <Col style={{ paddingTop: "6px" }} span={4}>
                   <FiSettings style={{ fontSize: "20px", color: "black" }} />
                 </Col>
-                <Link to="/logout">
-                  <Col
-                    className="logout"
-                    style={{ paddingTop: "4px", color: "black" }}
-                    span={20}
-                  >
-                    <p>Setting</p>
-                  </Col>
-                </Link>
+                <Col className="logout" span={20}>
+                  <Link to="/management/users-account">
+                    <p style={{ paddingTop: "4px", color: "black" }}>Setting</p>
+                  </Link>
+                </Col>
               </Row>
               <Row className="accountNavbarhover">
                 <Col style={{ paddingTop: "6px" }} span={4}>
                   <HiLogout style={{ fontSize: "20px", color: "black" }} />
                 </Col>
-                <Link to="/logout">
-                  <Col
-                    className="logout"
-                    style={{ paddingTop: "4px", color: "red" }}
-                    span={20}
-                  >
-                    <p>Logout</p>
-                  </Col>
-                </Link>
+
+                <Col className="logout" span={20}>
+                  <Link to="/logout">
+                    <p style={{ paddingTop: "4px", color: "red" }}>Logout</p>
+                  </Link>
+                </Col>
               </Row>
             </div>
           }

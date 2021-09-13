@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Layout, Col, Row, Select, Button, Input, Form } from "antd";
-import NavBar from "../layouts/navbar";
-import SideNavBar from "../layouts/side-navbar";
+import { Layout, Col, Row, Select, Form } from "antd";
+import WANStatic from "./wan-static";
+import WANDynamic from "./wan-dynamic";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -26,13 +26,13 @@ const WANSetting = () => {
       <Content>
         <Row gutter={[32, 32]}>
           <Col span={16}>
-            <Form {...layout}>
-              <div className="container">
-                <div className="container-header">
-                  <h1>WAN Setting</h1>
-                </div>
-                <hr />
-                <div className="desc-container-banner">
+            <div className="container">
+              <div className="container-header">
+                <h1>WAN Setting</h1>
+              </div>
+              <hr />
+              <div className="desc-container-banner">
+                <Form {...layout}>
                   <Form.Item label="WAN Connection type">
                     <Row gutter={[32, 32]}>
                       <Col>
@@ -46,114 +46,16 @@ const WANSetting = () => {
                           <Option value="Static">Static</Option>
                         </Select>
                       </Col>
-                      <Col>
-                        <Form.Item>
-                          {values === "Dynamic" && (
-                            <Button
-                              type="primary"
-                              size="large"
-                              className="detect-button"
-                            >
-                              Detect
-                            </Button>
-                          )}
-                          {values === "Static" && (
-                            <Button
-                              disabled
-                              type="primary"
-                              size="large"
-                              className="detect-button"
-                            >
-                              Detect
-                            </Button>
-                          )}
-                        </Form.Item>
-                      </Col>
                     </Row>
                   </Form.Item>
-                </div>
-                <div className="desc-container-banner">
-                  {values === "Dynamic" && (
-                    <React.Fragment>
-                      <Form.Item label="MAC Address">
-                        <Input
-                          disabled
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                      <Form.Item label="IP Address">
-                        <Input
-                          disabled
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                      <Form.Item label="Subnet Mask">
-                        <Input
-                          disabled
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                      <Form.Item label="Default Getway">
-                        <Input
-                          disabled
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                    </React.Fragment>
-                  )}
-                  {values === "Static" && (
-                    <React.Fragment>
-                      <Form.Item label="MAC Address">
-                        <Input
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                      <Form.Item label="IP Address">
-                        <Input
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                      <Form.Item label="Subnet Mask">
-                        <Input
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                      <Form.Item label="Default Getway">
-                        <Input
-                          size="large"
-                          placeholder="0.0.0.0"
-                          className="label-info"
-                        />
-                      </Form.Item>
-                    </React.Fragment>
-                  )}
-                </div>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="button"
-                    className="button-apply"
-                    size="large"
-                  >
-                    Apply
-                  </Button>
-                </Form.Item>
+                </Form>
               </div>
-            </Form>
+
+              {/* ----------form------ */}
+              <div className="desc-container-banner">
+                {values === "Dynamic" ? <WANDynamic /> : <WANStatic />}
+              </div>
+            </div>
           </Col>
           <Col span={8}>
             <div className="container">

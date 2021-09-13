@@ -25,7 +25,8 @@ html {
 }
 .popover-text {
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 500;
+  margin-top: 10px;
 }
 .accountNavbarhover:hover {
   background-color: rgb(230, 247, 255);
@@ -52,6 +53,7 @@ html {
 }
 .logo-content-server {
   width: 50px;
+  margin-left: 35px;
 }
 /* .ant-layout-sider-light {
   background: #f5f5f5 !important;
@@ -59,11 +61,23 @@ html {
 .ant-menu {
   background: #f5f5f5 !important;
 } */
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  height: 55px !important;
+}
+.ant-menu-inline.ant-menu-root .ant-menu-item,
+.ant-menu-inline.ant-menu-root .ant-menu-submenu-title {
+  padding-left: 40px !important;
+}
 .menu-navbar {
   background: #fff;
   padding: 10px;
   border-radius: 8px;
   width: 100%;
+}
+.ant-menu-sub.ant-menu-inline {
+  background: #fff !important;
+  padding: 0px 20px !important;
 }
 .ant-popover-inner {
   border-radius: 8px !important;
@@ -71,7 +85,7 @@ html {
 
 .ant-layout-sider {
   /* padding: 15px !important; */
-  padding-top: 15px;
+  padding-top: 20px;
 }
 
 /* .ant-menu .ant-menu-sub .ant-menu-inline {
@@ -245,12 +259,22 @@ html {
   vertical-align: middle;
   font-size: 13px;
 }
-.select-option {
+/* .select-option {
+  width: auto !important;
+} */
+.ant-form-item .ant-select,
+.ant-form-item .ant-cascader-picker {
   width: 255px !important;
-  margin-bottom: 6px !important;
 }
+
 .detect-button {
   width: 120px;
+}
+
+.spin {
+  margin: 20% 50%;
+  /* padding: 30px 50px; */
+  text-align: center;
 }
 
 .label-info {
@@ -263,10 +287,20 @@ html {
   margin-top: 30px;
   position: relative;
   left: 130% !important;
+  background: #0caedc !important;
+  border-color: #0caedc !important;
 }
 .button-apply2 {
   float: right;
   margin-top: 40px;
+  background: #0caedc !important;
+  border-color: #0caedc !important;
+  border-radius: 8px !important;
+}
+.button-update {
+  background: #0caedc !important;
+  border-color: #0caedc !important;
+  border-radius: 8px !important;
 }
 .select-option-wireless {
   width: 350px !important;
@@ -285,14 +319,14 @@ html {
 .dns-desc-container {
   margin-top: 30px;
 }
-.ant-btn-lg,
+/* .ant-btn-lg,
 .ant-btn {
   border-radius: 4px !important;
   min-width: 120px;
   background-color: #0caedc !important;
   border-color: #0caedc !important;
   color: #fff !important;
-}
+} */
 .dns-desc-container h2 {
   font-size: 25px;
   font-weight: 700;
@@ -324,7 +358,7 @@ html {
   float: right;
 }
 .add-button {
-  margin-right: 10px;
+  border-radius: 4px !important;
 }
 .container-adding-records {
   padding-top: 30px;
@@ -449,4 +483,84 @@ html {
 }
 .local-data-container {
   padding: 15px 20px;
+}
+.wireless-radios-options {
+  display: flex;
+  flex-direction: row;
+  column-gap: 30px;
+  position: relative;
+  left: 255px;
+}
+.sub-header {
+  background: #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 30px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 15px;
+  justify-content: end;
+}
+.icons-update {
+  font-weight: 600;
+}
+.updates {
+  margin-right: 5px;
+}
+.container-update {
+  padding: 30px 15px;
+  max-height: 250px;
+  height: 250px;
+  overflow-y: scroll;
+  margin-top: 20px;
+}
+.contaner-update-class {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+.container-update p {
+  font-size: 10px;
+}
+.container-manually {
+  padding: 30px 15px;
+}
+.user-account-contanier {
+  padding: 40px 15px;
+  display: grid;
+  place-items: center;
+}
+.browse-buttons {
+  border-radius: 8px !important;
+  background: none !important;
+  /* border-color: #000 !important; */
+}
+.browse-buttons:hover,
+.browse-buttons:active {
+  color: #000 !important;
+  border-color: #000 !important;
+}
+.restore-settting {
+  display: grid !important;
+  place-items: center !important;
+  margin-left: 15px !important;
+  margin-bottom: -1px !important;
+  margin-top: 30px !important;
+}
+.restore-checkbox {
+  position: relative;
+  left: 33vh;
+}
+.backup-container {
+  margin-top: 30px;
+}
+.reset-container {
+  padding: 30px 25px;
+}
+.date-time {
+  font-size: 18px;
+  font-weight: 500;
+}
+.time-pickup {
+  border-radius: 8px !important;
+  width: 250px !important;
 }

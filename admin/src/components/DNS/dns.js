@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Layout, Col, Row, Button, Form, Table, Checkbox, Tag } from "antd";
 
 import { Link } from "react-router-dom";
-import { FiPlus } from "react-icons/fi";
+import { PlusOutlined } from "@ant-design/icons";
 import CreateDomain from "./create-domain";
 
 const { Content } = Layout;
@@ -93,8 +93,12 @@ const DNSSetting = () => {
 
                 <div className="dns-desc-container">
                   <Form.Item>
-                    <Button type="primary" onClick={createDomain}>
-                      <FiPlus className="add-button" />
+                    <Button
+                      type="primary"
+                      className="add-button"
+                      onClick={createDomain}
+                    >
+                      <PlusOutlined />
                       Create Domain
                     </Button>
                   </Form.Item>

@@ -41,7 +41,7 @@ const CreateDomain = ({ handleCancel, handleOk, visible }) => {
               <Button
                 className="button-apply"
                 size="large"
-                htmlType="button"
+                htmlType="submit"
                 type="primary"
               >
                 Submit

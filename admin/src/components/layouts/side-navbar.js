@@ -5,9 +5,9 @@ import {
   SwitcherOutlined,
   ShareAltOutlined,
   WifiOutlined,
-  HddOutlined,
   UngroupOutlined,
   CloudServerOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 const { Sider } = Layout;
@@ -46,7 +46,7 @@ const SideNavBar = () => {
         breakpoint="lg"
         collapsedWidth="0"
       >
-        <Menu defaultSelectedKeys={["pathname"]} theme="light" mode="inline">
+        <Menu defaultSelectedKeys="/status" theme="light" mode="inline">
           {/* <Row gutter={[24, 12]}>
             <Col span={24}>
               <div className="menu-navbar" key="/dashboard/status">
@@ -163,7 +163,7 @@ const SideNavBar = () => {
             </Col>
           </Row> */}
 
-          <Menu.Item key="/tatus" icon={<SwitcherOutlined />}>
+          <Menu.Item key="/status" icon={<SwitcherOutlined />}>
             <Link to="/status">Status</Link>
           </Menu.Item>
           <SubMenu key="/network" icon={<ShareAltOutlined />} title="Network">
@@ -177,15 +177,34 @@ const SideNavBar = () => {
           <Menu.Item key="/wireless" icon={<WifiOutlined />}>
             <Link to="/wireless">Wireless</Link>
           </Menu.Item>
-          <Menu.Item key="/dhcp" icon={<HddOutlined />}>
-            <Link to="/dhcp">DHCP</Link>
-          </Menu.Item>
           <Menu.Item key="/dns" icon={<UngroupOutlined />}>
             <Link to="/dns">DNS</Link>
           </Menu.Item>
           <Menu.Item key="/storages" icon={<CloudServerOutlined />}>
             <Link to="/storages">Storages</Link>
           </Menu.Item>
+
+          <SubMenu
+            key="/management"
+            icon={<SettingOutlined />}
+            title="Management"
+          >
+            <Menu.Item key="/management/system-update">
+              <Link to="/management/system-update">System Updates</Link>
+            </Menu.Item>
+            <Menu.Item key="/management/users-account">
+              <Link to="/management/users-account">Users Account</Link>
+            </Menu.Item>
+            <Menu.Item key="/management/backup-restore">
+              <Link to="/management/backup-restore">Backup & Restore</Link>
+            </Menu.Item>
+            <Menu.Item key="/management/reset">
+              <Link to="/management/reset">Reset All</Link>
+            </Menu.Item>
+            <Menu.Item key="/management/time-setting">
+              <Link to="/management/time-setting">Time Settings</Link>
+            </Menu.Item>
+          </SubMenu>
 
           <Link to="/about-us">
             <a className="about-us">About US</a>

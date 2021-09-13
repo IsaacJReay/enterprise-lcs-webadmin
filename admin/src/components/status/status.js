@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Col, Row } from "antd";
+import { Layout, Col, Row, Spin } from "antd";
 import axios from "axios";
 
 const { Content } = Layout;
@@ -7,8 +7,8 @@ const { Content } = Layout;
 const getToken = localStorage.getItem("token");
 
 const StatusPage = () => {
-  const [, setLoading] = useState(false);
-  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -17,21 +17,28 @@ const StatusPage = () => {
     };
     axios({
       method: "GET",
-      url: "http://10.42.0.188:8002/private/api/settings/status",
+      url: "http://10.42.0.188:8080/private/api/settings/status",
       headers: {
         "content-type": "application/json",
         ...auth,
       },
     })
       .then((res) => {
-        setItems(res.data);
-
+        setStatus(res.data);
         setTimeout(() => {
           setLoading(false);
         }, 1000);
       })
       .catch((err) => console.log(err));
   }, []);
+
+  if (loading) {
+    return (
+      <div className="spin">
+        <Spin />
+      </div>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -64,7 +71,7 @@ const StatusPage = () => {
                 <h2>WAN</h2>
                 <div className="desc-container">
                   <Row gutter={[64, 0]}>
-                    {items && (
+                    {status && (
                       <React.Fragment>
                         <Col>
                           <div className="desc-details-left">
@@ -76,10 +83,10 @@ const StatusPage = () => {
                         </Col>
                         <Col>
                           <div className="desc-details-right">
-                            <p>{items.wan_macaddress} </p>
-                            <p>{items.wan_ip} </p>
-                            <p>{items.wan_netmask}</p>
-                            <p>{items.wan_gateway}</p>
+                            <p>{status.wan_macaddress} </p>
+                            <p>{status.wan_ip} </p>
+                            <p>{status.wan_netmask}</p>
+                            <p>{status.wan_gateway}</p>
                           </div>
                         </Col>
                       </React.Fragment>
@@ -92,7 +99,7 @@ const StatusPage = () => {
                 <h2>WLAN</h2>
                 <div className="desc-container">
                   <Row gutter={[64, 0]}>
-                    {items && (
+                    {status && (
                       <React.Fragment>
                         <Col>
                           <div className="desc-details-left">
@@ -109,15 +116,15 @@ const StatusPage = () => {
                         </Col>
                         <Col>
                           <div className="desc-details-right">
-                            <p>{items.wlan_macaddress} </p>
-                            <p>{items.wlan_ip} </p>
-                            <p>{items.wlan_netmask} </p>
-                            <p>{items.wlan_dns} </p>
-                            <p>{items.wlan_ssid} </p>
-                            <p>{items.wlan_hw_mode} </p>
-                            <p>{items.wlan_channel} </p>
-                            <p>{items.wlan_hw_n_mode ? "true" : "false"} </p>
-                            <p>{items.wlan_qos ? "true" : "false"} </p>
+                            <p>{status.wlan_macaddress} </p>
+                            <p>{status.wlan_ip} </p>
+                            <p>{status.wlan_netmask} </p>
+                            <p>{status.wlan_dns} </p>
+                            <p>{status.wlan_ssid} </p>
+                            <p>{status.wlan_hw_mode} </p>
+                            <p>{status.wlan_channel} </p>
+                            <p>{status.wlan_hw_n_mode ? "true" : "false"} </p>
+                            <p>{status.wlan_qos ? "true" : "false"} </p>
                           </div>
                         </Col>
                       </React.Fragment>
@@ -125,30 +132,6 @@ const StatusPage = () => {
                   </Row>
                 </div>
               </div>
-              {/* <hr />
-              <div className="container-details">
-                <h2>Wireless</h2>
-                <div className="desc-container">
-                  <Row gutter={[64, 0]}>
-                    <Col>
-                      <div className="desc-details-left">
-                        <p>MAC Address : </p>
-                        <p>IP Address : </p>
-                        <p>Subnet Mask : </p>
-                        <p>Default Getway : </p>
-                      </div>
-                    </Col>
-                    <Col>
-                      <div className="desc-details-right">
-                        <p>F8-F8-F8-F8-F8-F8-F8 </p>
-                        <p>192.168.0.10 </p>
-                        <p>255.255.255.0.10 </p>
-                        <p>192.168.0.1 </p>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-              </div> */}
             </div>
           </Col>
           <Col span={8}>

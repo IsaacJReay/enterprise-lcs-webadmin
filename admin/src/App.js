@@ -7,7 +7,6 @@ import StatusPage from "./components/status/status";
 import WANSetting from "./components/network/WAN";
 import WLANSetting from "./components/network/WLAN";
 import WirelessSetting from "./components/wireless/wireless";
-import DHCPSetting from "./components/DHPC/dhcp";
 import DNSSetting from "./components/DNS/dns";
 import DNSManagement from "./components/DNS/manage-dns";
 import PrivateRoute from "./privateRoute";
@@ -16,6 +15,11 @@ import Storages from "./components/storage/storage";
 import Logout from "./components/logout";
 import AboutUs from "./components/about";
 import LocalStorage from "./components/storage/local-storage";
+import SystemUpdates from "./components/management/updates/system-updates";
+import UserAccount from "./components/management/user";
+import BackupSetting from "./components/management/backup/backup-restore";
+import ResetAll from "./components/management/reset-all";
+import TimeSetting from "./components/management/times/time-setting";
 
 function App() {
   return (
@@ -29,7 +33,6 @@ function App() {
           <PrivateRoute exact path="/network/wan" component={WANSetting} />
           <PrivateRoute exact path="/network/wlan" component={WLANSetting} />
           <PrivateRoute exact path="/wireless" component={WirelessSetting} />
-          <PrivateRoute exact path="/dhcp" component={DHCPSetting} />
           <PrivateRoute exact path="/dns" component={DNSSetting} />
           <PrivateRoute
             exact
@@ -39,6 +42,27 @@ function App() {
           <PrivateRoute exact path="/storages" component={Storages} />
           <PrivateRoute exact path="/storages/local" component={LocalStorage} />
           <PrivateRoute exact path="/about-us" component={AboutUs} />
+          <PrivateRoute
+            exact
+            path="/management/system-update"
+            component={SystemUpdates}
+          />
+          <PrivateRoute
+            exact
+            path="/management/users-account"
+            component={UserAccount}
+          />
+          <PrivateRoute
+            exact
+            path="/management/backup-restore"
+            component={BackupSetting}
+          />
+          <PrivateRoute exact path="/management/reset" component={ResetAll} />
+          <PrivateRoute
+            exact
+            path="/management/time-setting"
+            component={TimeSetting}
+          />
         </Switch>
       </Router>
     </React.Fragment>

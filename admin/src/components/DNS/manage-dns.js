@@ -10,7 +10,7 @@ import {
   Tag,
   Popover,
 } from "antd";
-import dataDns from "./data.json";
+import dataDns from "./api/data.json";
 import { FiEdit, FiPlus } from "react-icons/fi";
 import DNSRename from "./rename";
 import { Link } from "react-router-dom";

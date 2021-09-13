@@ -6,7 +6,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = (data) => {
-    console.log("Success:", data);
     const adminLogin = {
       username: data.username,
       password: data.password,
@@ -14,13 +13,13 @@ const Login = () => {
 
     axios
       .post(
-        "http://10.42.0.188:8002/private/api/user/login",
+        "http://10.42.0.188:8080/private/api/user/login",
         adminLogin,
         setLoading(true)
       )
 
       .then(async (res) => {
-        await localStorage.setItem("token", res.data.reason);
+        await localStorage.setItem("token", res.data.token);
         if (res.data.operation_status === "Success") {
           setLoading(true);
           message.success("Successful!");
