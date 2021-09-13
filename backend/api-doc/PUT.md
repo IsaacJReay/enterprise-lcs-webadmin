@@ -19,34 +19,34 @@
 >> - Response 200 
 >> ```json
 >>  {
->>    "operation": "Success",
+>>    "operation_status": "Success",
 >>    "reason": ""
 >>  }
 >> ``` 
 >> - Response 500 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "actual_reason_goes_here"
 >>  }
 >> ``` 
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
@@ -70,34 +70,34 @@
 >> - Response 200 
 >> ```json
 >>  {
->>    "operation": "Success",
+>>    "operation_status": "Success",
 >>    "reason": ""
 >>  }
 >> ``` 
 >> - Response 500 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "actual_reason_goes_here"
 >>  }
 >> ``` 
 >> - Response 410 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "token-timeout"
 >>  }
 >> ```
 >> - Response 401 
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "incorrect-token"
 >>  }
 >> ```
 >> ```json
 >>  {
->>    "operation": "Failed",
+>>    "operation_status": "Failed",
 >>    "reason": "missing-token"
 >>  }
 >> ```
