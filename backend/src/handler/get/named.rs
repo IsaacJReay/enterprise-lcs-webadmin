@@ -5,15 +5,7 @@ use actix_web::{
     web,
     HttpRequest,
 };
-use crate::{
-    db, 
-    security, 
-    tool,
-    structs::{
-        ForeignKey, 
-        HttpResponseCustom, 
-    }, 
-};
+use crate::{db, security, structs::{ForeignKey, HttpResponseCustom, ZoneRecordsWithDomainName}, tool};
 
 #[get("/private/api/settings/dns/domain_name/status")]
 pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
@@ -80,10 +72,13 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let record_vec = db::read_zonerecords_by_foreign_key(&foreign_key.foreign_key);
-
+                let current_domain_name = db::query_domain_name_by_foreign_key(&foreign_key.foreign_key);
                 Ok(
                     HttpResponse::Ok().json(
-                        record_vec
+                        ZoneRecordsWithDomainName{
+                            domain_name: current_domain_name,
+                            record_table: record_vec
+                        }
                     )
                 )
             }

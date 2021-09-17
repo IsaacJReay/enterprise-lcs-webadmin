@@ -865,3 +865,19 @@ pub fn update_domain_name_by_foreign_key(foreign_key: &str, domain_name: &str) {
         .unwrap();
 }
 
+pub fn query_domain_name_by_foreign_key(foreign_key: &str) -> String {
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+    let mut domain_name: String = String::new();
+    let mut statement = connection
+        .prepare(
+            format!("SELECT domain_name FROM dnszones WHERE id = '{}'", foreign_key)
+        )
+        .unwrap();
+
+    while let State::Row = statement.next().unwrap() {
+        domain_name = statement.read::<String>(0).unwrap();
+    }
+    
+    domain_name
+
+}
