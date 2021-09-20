@@ -2,10 +2,9 @@ use actix_web::{
     HttpResponse, 
     Result, 
     get, 
-    web,
     HttpRequest,
 };
-use crate::{db, security, structs::{ForeignKey, HttpResponseCustom, ZoneRecordsWithDomainName}, tool};
+use crate::{db, security, structs::{HttpResponseCustom, ZoneRecordsWithDomainName}, tool};
 
 #[get("/private/api/settings/dns/domain_name/status")]
 pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
@@ -61,8 +60,8 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
     }   
 }
 
-#[get("/private/api/settings/dns/zone_records/status")]
-pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<ForeignKey>) -> Result<HttpResponse> {
+#[get("/private/api/settings/dns/zone_records/status/{foreign_key}")]
+pub async fn get_zone_record_page(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -71,8 +70,10 @@ pub async fn get_zone_record_page(req: HttpRequest, foreign_key: web::Json<Forei
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let record_vec = db::read_zonerecords_by_foreign_key(&foreign_key.foreign_key);
-                let current_domain_name = db::query_domain_name_by_foreign_key(&foreign_key.foreign_key);
+                let foreign_key = req.match_info().get("foreign_key").unwrap();
+
+                let record_vec = db::read_zonerecords_by_foreign_key(&foreign_key);
+                let current_domain_name = db::query_domain_name_by_foreign_key(&foreign_key);
                 Ok(
                     HttpResponse::Ok().json(
                         ZoneRecordsWithDomainName{
