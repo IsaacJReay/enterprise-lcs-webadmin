@@ -320,59 +320,25 @@
 >>   "domain_name": "website1.local",
 >>   "record_table": [
 >>     {
->>       "id_zonerecords": {
->>         "id": "1"
->>       },
->>       "partial_zonerecords": {
->>         "subdomain_name": "ns01",
->>         "dns_type": "A",
->>         "address": "10.100.100.1",
->>         "foreign_key": "1"
->>       }
+>>       "id": "1",
+>>       "subdomain_name": "ns01",
+>>       "dns_type": "A",
+>>       "address": "10.100.100.1",
+>>       "foreign_key": "1"
 >>     },
 >>     {
->>       "id_zonerecords": {
->>         "id": "2"
->>       },
->>       "partial_zonerecords": {
->>         "subdomain_name": "sala",
->>         "dns_type": "CNAME",
->>         "address": "ns01",
->>         "foreign_key": "1"
->>       }
+>>       "id": "2",
+>>       "subdomain_name": "ns01",
+>>       "dns_type": "A",
+>>       "address": "10.100.100.1",
+>>       "foreign_key": "1"
 >>     },
 >>     {
->>       "id_zonerecords": {
->>         "id": "3"
->>       },
->>       "partial_zonerecords": {
->>         "subdomain_name": "salabackend",
->>         "dns_type": "CNAME",
->>         "address": "ns01",
->>         "foreign_key": "1"
->>       }
->>     },
->>     {
->>       "id_zonerecords": {
->>         "id": "4"
->>       },
->>       "partial_zonerecords": {
->>        "subdomain_name": "rachel",
->>         "dns_type": "CNAME",
->>         "address": "ns01",
->>         "foreign_key": "1"
->>       }
->>     },
->>     {
->>       "id_zonerecords": {
->>         "id": "5"
->>       },
->>       "partial_zonerecords": {
->>         "subdomain_name": "admin",
->>         "dns_type": "CNAME",
->>         "address": "ns01",
->>         "foreign_key": "1"
->>       }
+>>       "id": "3",
+>>       "subdomain_name": "ns01",
+>>       "dns_type": "A",
+>>       "address": "10.100.100.1",
+>>       "foreign_key": "1"
 >>     }
 >>   ]
 >> }

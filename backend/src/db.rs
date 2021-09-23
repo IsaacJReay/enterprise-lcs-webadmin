@@ -8,6 +8,7 @@ use crate::{
     structs::{
         DnsZones,
         ZoneRecords,
+        CustomZoneRecords,
         PartialZoneRecords,
         DnsId,
     }, 
@@ -634,6 +635,36 @@ pub fn read_zonerecords_by_foreign_key(foreign_key: &str) -> Vec<ZoneRecords> {
                     address: current_address,
                     foreign_key: current_foriegn_key
                 },
+            }
+        );
+        records_vec_size += 1;
+    }
+    records_vec
+    
+}
+
+pub fn read_zonerecords_for_get_by_foreign_key(foreign_key: &str) -> Vec<CustomZoneRecords> {
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+    let mut records_vec: Vec<CustomZoneRecords> = Vec::new();
+    let mut records_vec_size: usize = 0;
+    let mut read_statement = connection
+        .prepare(format!("SELECT * FROM zonerecords WHERE foreign_key = '{}';", foreign_key))
+        .unwrap();
+    while let State::Row = read_statement.next().unwrap() {
+        let current_id: String = read_statement.read::<String>(0).unwrap();
+        let current_subdomain_name: String = read_statement.read::<String>(1).unwrap();
+        let current_type: String = read_statement.read::<String>(2).unwrap();
+        let current_address: String = read_statement.read::<String>(3).unwrap();
+        let current_foriegn_key: String = read_statement.read::<String>(4).unwrap();
+        
+        records_vec.insert(
+            records_vec_size,
+            CustomZoneRecords{
+                id: current_id,
+                subdomain_name: current_subdomain_name,
+                dns_type: current_type,
+                address: current_address,
+                foreign_key: current_foriegn_key
             }
         );
         records_vec_size += 1;

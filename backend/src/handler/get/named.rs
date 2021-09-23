@@ -4,7 +4,7 @@ use actix_web::{
     get, 
     HttpRequest,
 };
-use crate::{db, security, structs::{HttpResponseCustom, ZoneRecordsWithDomainName}, tool};
+use crate::{db, security, structs::{GetZoneRecords, HttpResponseCustom}, tool};
 
 #[get("/private/api/settings/dns/domain_name/status")]
 pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
@@ -72,11 +72,11 @@ pub async fn get_zone_record_page(req: HttpRequest) -> Result<HttpResponse> {
             if passwordstatus {
                 let foreign_key = req.match_info().get("foreign_key").unwrap();
 
-                let record_vec = db::read_zonerecords_by_foreign_key(&foreign_key);
+                let record_vec = db::read_zonerecords_for_get_by_foreign_key(&foreign_key);
                 let current_domain_name = db::query_domain_name_by_foreign_key(&foreign_key);
                 Ok(
                     HttpResponse::Ok().json(
-                        ZoneRecordsWithDomainName{
+                        GetZoneRecords{
                             domain_name: current_domain_name,
                             record_table: record_vec
                         }

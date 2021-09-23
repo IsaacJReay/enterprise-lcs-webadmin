@@ -144,10 +144,20 @@ pub struct ZoneRecords {
 }
 
 #[derive(Serialize)]
-pub struct ZoneRecordsWithDomainName {
+pub struct GetZoneRecords {
     pub domain_name: String,
-    pub record_table: Vec<ZoneRecords>,
+    pub record_table: Vec<CustomZoneRecords>,
 }
+
+#[derive(Serialize)]
+pub struct CustomZoneRecords {
+    pub id: String,
+    pub subdomain_name: String,
+    pub dns_type: String,
+    pub address: String,
+    pub foreign_key: String,
+}
+
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct PartialZoneRecords {
