@@ -30,8 +30,8 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let foreign_key = &delete_record_struct.foreign_key.foreign_key.to_owned();
-                let id = &delete_record_struct.id.id.to_owned();
+                let foreign_key = &delete_record_struct.foreign_key.to_owned();
+                let id = &delete_record_struct.id.to_owned();
 
                 db::delete_from_zonerecords_by_id(
                     id, 

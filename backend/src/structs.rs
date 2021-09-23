@@ -179,8 +179,8 @@ pub struct ForeignKey {
 
 #[derive(Deserialize)]
 pub struct DeleteRecord {
-    pub id: DnsId,
-    pub foreign_key: ForeignKey,
+    pub id: String,
+    pub foreign_key: String,
 }
 
 #[derive(Deserialize)]
