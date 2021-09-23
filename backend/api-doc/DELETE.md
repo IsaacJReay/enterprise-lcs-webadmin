@@ -13,7 +13,7 @@
 >>     "id": "1"
 >>   },
 >>   "foreign_key": {
->>     "foreign_key": "1",
+>>     "foreign_key": "1"
 >>   }
 >>  }
 >> ```
