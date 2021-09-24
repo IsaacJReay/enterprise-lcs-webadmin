@@ -611,8 +611,6 @@ pub fn read_dnszones() -> Vec<DnsZones> {
 
 pub fn query_status_by_foreign_key(foreign_key: &str) -> bool {
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
-    let mut zones_vec: Vec<DnsZones> = Vec::new();
-    let mut zones_vec_size: usize = 0;
     let mut current_status: bool = false;
     let mut check_empty_statement = connection
         .prepare("SELECT COUNT(*) FROM dnszones;")
