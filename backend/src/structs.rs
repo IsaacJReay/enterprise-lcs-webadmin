@@ -146,6 +146,7 @@ pub struct ZoneRecords {
 #[derive(Serialize)]
 pub struct GetZoneRecords {
     pub domain_name: String,
+    pub status: bool,
     pub record_table: Vec<CustomZoneRecords>,
 }
 

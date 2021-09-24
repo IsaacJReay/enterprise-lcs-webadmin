@@ -318,6 +318,7 @@
 >> ```json
 >> {
 >>   "domain_name": "website1.local",
+>>   "status": false,
 >>   "record_table": [
 >>     {
 >>       "id": "1",

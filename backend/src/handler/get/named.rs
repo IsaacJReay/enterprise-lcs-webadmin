@@ -74,10 +74,12 @@ pub async fn get_zone_record_page(req: HttpRequest) -> Result<HttpResponse> {
 
                 let record_vec = db::read_zonerecords_for_get_by_foreign_key(&foreign_key);
                 let current_domain_name = db::query_domain_name_by_foreign_key(&foreign_key);
+                let domain_status = db::query_status_by_foreign_key(&foreign_key);
                 Ok(
                     HttpResponse::Ok().json(
                         GetZoneRecords{
                             domain_name: current_domain_name,
+                            status: domain_status,
                             record_table: record_vec
                         }
                     )

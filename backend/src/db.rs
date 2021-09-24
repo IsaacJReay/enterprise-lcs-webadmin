@@ -609,6 +609,32 @@ pub fn read_dnszones() -> Vec<DnsZones> {
     zones_vec 
 }
 
+pub fn query_status_by_foreign_key(foreign_key: &str) -> bool {
+    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+    let mut zones_vec: Vec<DnsZones> = Vec::new();
+    let mut zones_vec_size: usize = 0;
+    let mut current_status: bool = false;
+    let mut check_empty_statement = connection
+        .prepare("SELECT COUNT(*) FROM dnszones;")
+        .unwrap();
+    
+    check_empty_statement.next().unwrap();
+    let line_count: u64 = check_empty_statement.read::<i64>(0).unwrap().try_into().unwrap();
+
+    if line_count != 0 {
+        let mut read_statement = connection
+            .prepare(
+                format!("SELECT status FROM dnszones WHERE id = '{}';", foreign_key)
+            )
+            .unwrap();
+        
+        while let State::Row = read_statement.next().unwrap() {
+            current_status = read_statement.read::<String>(0).unwrap().parse().unwrap();
+        }
+    }
+    current_status 
+}
+
 pub fn read_zonerecords_by_foreign_key(foreign_key: &str) -> Vec<ZoneRecords> {
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
     let mut records_vec: Vec<ZoneRecords> = Vec::new();
