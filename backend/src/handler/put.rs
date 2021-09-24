@@ -27,7 +27,7 @@ pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let id = update_status_struct.id.id.clone();
+                let id = update_status_struct.id.clone();
                 let status = update_status_struct.status;
 
                 db::insert_status_into_dnszone_by_id(id.as_str(), status);

@@ -191,7 +191,7 @@ pub struct RenameDomain {
 
 #[derive(Deserialize)]
 pub struct UpdateStatus {
-    pub id: DnsId,
+    pub id: String,
     pub status: bool,
 }
 
