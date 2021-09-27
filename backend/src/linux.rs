@@ -503,7 +503,7 @@ pub fn restartservice(password: &str, servicename: &str) -> (i32, String, String
 
 }
 
-pub fn set_time(password: &str, current_time: &str) -> (i32, String, String) {
+pub fn set_time(password: &str, current_time: &str, current_date: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
 
     let _command = 

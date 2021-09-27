@@ -97,10 +97,10 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
             let (_username, password) = db::query_logindata();
             let password_status: bool = tool::comparedate(olddate);
 
-            let timedate = format!("{} {}", time_struct.date, time_struct.time);
+            // let timedate = format!("{} {}", time_struct.date, time_struct.time);
 
             if password_status{
-                let (code, _output, error) = linux::set_time(&password, &timedate);
+                let (code, _output, error) = linux::set_time(&password, &time_struct.date, &time_struct.time);
                 match code {
                     0 => Ok(
                             HttpResponse::Ok().json(
