@@ -508,11 +508,12 @@ pub fn set_time(password: &str, current_time: &str, current_date: &str) -> (i32,
 
     let _command = 
 r#"echo password | sudo -S timedatectl set-ntp 0;
-echo password | sudo -S timedatectl set-time tvalue;"#;
+echo password | sudo -S timedatectl set-time tvalue;
+echo password | sudo -S timedatectl set-time dvalue;"#;
 
-    let _command = _command.replace("password", password);
-    let _command = _command.replace("password", password);
+    let _command = _command.replacen("password", password, 3);
     let command = _command.replace("tvalue", current_time);
+    let command = _command.replace("dvalue", current_date);
 
     let (code, output, error) = run_script!(
         &format!("{}", command),
