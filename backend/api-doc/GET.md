@@ -378,18 +378,10 @@
 >> - Response 200 
 >> ```json
 >> {
->>  "ntp_status": {
->>    "ntp_status": true
->>  },
->>  "timedatezone": {
->>    "timezone": {
->>      "timezone": "Asia/Phnom_Pen"
->>    },
->>    "timedate": {
->>      "time": "18:09:09",
->>      "date": "2021-46-13"
->>    }
->>  }
+>>    "ntp_status": true,
+>>    "timezone": "Asia/Phnom_Penh",
+>>    "time": "18:09:09",
+>>    "date": "2021-46-13"
 >> }
 >> ```
 >>

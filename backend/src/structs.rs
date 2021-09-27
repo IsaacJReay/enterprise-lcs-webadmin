@@ -212,15 +212,13 @@ pub struct TimeDateZone {
     pub timedate: TimeDate,
 }
 
-#[derive(Serialize)]
-pub struct NTPStatus {
-    pub ntp_status: bool,
-}
 
 #[derive(Serialize)]
 pub struct TimeDateZoneNTP {
-    pub ntp_status: NTPStatus,
-    pub timedatezone: TimeDateZone,
+    pub ntp_status: bool,
+    pub time: String,
+    pub date: String,
+    pub timezone: String,
 }
 
 #[derive(Serialize, Deserialize)]

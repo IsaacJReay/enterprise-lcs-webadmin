@@ -11,11 +11,7 @@ use crate::{
     tool,
     structs::{
         HttpResponseCustom, 
-        NTPStatus, 
-        TimeDate, 
-        TimeDateZone, 
         TimeDateZoneNTP, 
-        Timezone, 
     }, 
 };
 
@@ -45,18 +41,10 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
                 Ok(
                     HttpResponse::Ok().json(
                         TimeDateZoneNTP{
-                            ntp_status: NTPStatus {
-                                ntp_status: status,
-                            },
-                            timedatezone: TimeDateZone{
-                                timedate: TimeDate{
-                                    time: current_time.to_string(),
-                                    date: current_date.to_string(),
-                                },
-                                timezone: Timezone {
-                                    timezone: current_timezone.to_string(),
-                                }
-                            }
+                            ntp_status: status,
+                            time: current_time.to_string(),
+                            date: current_date.to_string(),
+                            timezone: current_timezone.to_string(),
                         }
                     )
                 )
