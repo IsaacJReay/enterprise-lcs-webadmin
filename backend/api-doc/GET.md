@@ -591,6 +591,13 @@
 >>  "reason": "rw"
 >> }
 >> ```
+>> Or,
+>> ```json
+>> {
+>>   "operation_status": "Failed",
+>>   "reason": "ro"
+>> }
+>> ```
 >>
 >> - Response 410 
 >> ```json
