@@ -76,7 +76,7 @@ printf "$part_uuid $mount_location"
 
     let splited_output: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
 
-    let (_code, partition_filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}", partition_name));
+    let (_code, partition_filesystem_type, _error) = get_partition_filesystem_type(partition_name);
 
     db::insert_into_storage_table(partition_name, splited_output[0], splited_output[1], &partition_filesystem_type);
 
@@ -140,11 +140,11 @@ pub fn unmount_partition(password: &str, full_path: &str) -> (i32, String, Strin
     (code, output, error)    
 }
 
-pub fn get_partition_filesystem_type(password: &str, full_path: &str) -> (i32, String, String) {
+pub fn get_partition_filesystem_type(dev_path: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
-    let _command = r#"echo password | sudo -S blkid full_path | grep -o 'TYPE=......' | head -1 | awk -F'=' '{printf $2}' | sed 's/\"//g'"#;
-    let _command = _command.replace("password", password);
-    let command = _command.replace("full_path", full_path);
+    let _command = r#"lsblk -f | grep drive_path | awk -F' ' '{printf $2}'"#;
+    // let _command = _command.replace("password", password);
+    let command = _command.replace("drive_path", dev_path);
     let (code, output, error) = run_script!(
         &format!("{}", command),
         &vec![],
@@ -296,8 +296,8 @@ pub fn copy_filedir(password: &str, source: &str, destination: &str, source_is_e
         let mut destination_user_rw_able: bool = false;
 
         if source_is_external {
-            let path = db::query_path_by_uuid_from_storage_table(source_uuid);
-            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            let device_path = db::query_path_by_uuid_from_storage_table(source_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(&device_path);
             if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
                 source_user_rw_able = true;
             }
@@ -307,8 +307,8 @@ pub fn copy_filedir(password: &str, source: &str, destination: &str, source_is_e
         }
     
         if destination_is_external {
-            let path = db::query_path_by_uuid_from_storage_table(destination_uuid);
-            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            let device_path = db::query_path_by_uuid_from_storage_table(destination_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(&device_path);
             if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
                 destination_user_rw_able = true;
             }
@@ -367,8 +367,8 @@ pub fn move_filedir(password: &str, source: &str, destination: &str, source_is_e
         let mut destination_user_rw_able: bool = false;
 
         if source_is_external {
-            let path = db::query_path_by_uuid_from_storage_table(source_uuid);
-            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            let device_path = db::query_path_by_uuid_from_storage_table(source_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(&device_path);
             if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
                 source_user_rw_able = true;
             }
@@ -378,8 +378,8 @@ pub fn move_filedir(password: &str, source: &str, destination: &str, source_is_e
         }
     
         if destination_is_external {
-            let path = db::query_path_by_uuid_from_storage_table(destination_uuid);
-            let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+            let device_path = db::query_path_by_uuid_from_storage_table(destination_uuid);
+            let (_code, filesystem_type, _error) = get_partition_filesystem_type(&device_path);
             if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
                 destination_user_rw_able = true;
             }
@@ -433,8 +433,8 @@ pub fn move_filedir_root(password: &str, source: &str, destination: &str) -> (i3
 pub fn make_dir(password: &str, dir_location: &str, drive_is_external: bool, drive_uuid: &str) -> (i32, String, String) {
     if drive_is_external {
         // let user_rw_able: bool;
-        let path = db::query_path_by_uuid_from_storage_table(drive_uuid);
-        let (_code, filesystem_type, _error) = get_partition_filesystem_type(password, &format!("/dev/{}",  path));
+        let device_path = db::query_path_by_uuid_from_storage_table(drive_uuid);
+        let (_code, filesystem_type, _error) = get_partition_filesystem_type(&device_path);
         if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
             let options = ScriptOptions::new();
             let command = r#"mkdir dir_location"#;
