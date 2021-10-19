@@ -406,3 +406,63 @@
 >>  }
 >> ```
 
+> ### - /private/api/settings/storage/status
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>> - Body
+>> ```
+>> ```
+>> - Response 200 
+>> ```json
+>> [
+>>   {
+>>     "drive_label": "Local Content Storage",
+>>     "drive_partuuid": {
+>>       "drive_partuuid": "kmp"
+>>     },
+>>     "free_space": "3.4T",
+>>     "total_space": "3.6T"
+>>   },
+>>   {
+>>     "drive_label": "Removeable Device",
+>>     "drive_partuuid": {
+>>       "drive_partuuid": "2021-10-06-15-49-55-00"
+>>     },
+>>     "free_space": "0",
+>>     "total_space": "2.3G"
+>>   },
+>>   {
+>>     "drive_label": "Removeable Device",
+>>     "drive_partuuid": {
+>>       "drive_partuuid": "5B0C-9920"
+>>     },
+>>     "free_space": "1.6M",
+>>     "total_space": "50M"
+>>   }
+>> ]
+>> ```
+>>
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
