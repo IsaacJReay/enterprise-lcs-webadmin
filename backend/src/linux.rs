@@ -257,7 +257,7 @@ pub fn is_read_writeable(mount: &str) -> bool {
 
     println!("Condition: {}", !output.is_empty());
 
-    match !output.is_empty() {
+    match output.is_empty() {
         true => true,
         false => false,
     } 
