@@ -247,16 +247,21 @@ pub fn is_read_writeable(mount: &str) -> bool {
     let options = ScriptOptions::new();
     let _command = r#"grep "[[:space:]]ro[[:space:],]" /proc/mounts | grep actual_mount"#;
     let command = _command.replace("actual_mount", mount);
+    println!("Command: {}", &command);
     let (_code, output, _error) = run_script!(
         &format!("{}", command),
         &vec![],
         &options
     ).unwrap();
+    println!("Output: {}", &output);
+
+    println!("Condition: {}", !output.is_empty());
 
     match !output.is_empty() {
         true => true,
         false => false,
     } 
+
 }
 
 pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, String, String) {
