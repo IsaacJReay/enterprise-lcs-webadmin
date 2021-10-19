@@ -44,8 +44,8 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 let mut drives_description_length: usize = drives_description.len();
                 let mut mount_operation_status: bool = true;
                 for each_partition in all_partitions {
-                    let partition_full_path = format!("/dev/{}", each_partition);
-                    let (_code, partition_filesystem_type, _error) = linux::get_partition_filesystem_type(&password, &partition_full_path);
+                    // let partition_full_path = format!("/dev/{}", each_partition);
+                    let (_code, partition_filesystem_type, _error) = linux::get_partition_filesystem_type(&each_partition);
                     
                     if partition_filesystem_type != "swap" {
                         let is_mounted = db::query_existence_from_storage_table_by_path(each_partition);
