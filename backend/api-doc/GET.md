@@ -466,3 +466,149 @@
 >>  }
 >> ```
 
+> ### - /private/api/settings/storage/device/status
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>> - Body
+>> ```json
+>> {
+>>   "drive_partuuid": "kmp"
+>> }
+>> ```
+>> - Response 200 
+>> ```json
+>> [
+>>   {
+>>     "item_name": {
+>>       "item_name": "file",
+>>       "parent_directory": "/kmp/webadmin"
+>>     },
+>>     "item_date": "2021-10-15 14:18:56",
+>>     "item_type": "directory",
+>>     "item_size": "4.1 KB"
+>>   },
+>>   {
+>>     "item_name": {
+>>       "item_name": "www",
+>>       "parent_directory": "/kmp/webadmin"
+>>     },
+>>     "item_date": "2021-10-15 14:18:56",
+>>     "item_type": "directory",
+>>     "item_size": "4.1 KB"
+>>   }
+>> ]
+>> ```
+>>
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/storage/device/directory/status
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>> - Body
+>> ```json
+>> {
+>>   "item_name": "file",
+>>   "parent_directory": "/kmp/webadmin"
+>> }
+>> ```
+>> - Response 200 
+>> ```json
+>> [
+>>   {
+>>     "item_name": {
+>>       "item_name": ".",
+>>       "parent_directory": "/kmp/webadmin/file"
+>>     },
+>>     "item_date": "0000-00-00 00:00:00",
+>>     "item_type": "file",
+>>     "item_size": "0 Byte"
+>>   }
+>> ]
+>> ```
+>>
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/storage/device/rwpermission/status
+>>
+>> | Header Parameter | Data Type |
+>> | --------- | --------- |
+>> | Authorization | `String` |
+>> 
+>> - Body
+>> ```json
+>> {
+>>   "drive_partuuid": "2021-10-06-15-49-55-00"
+>> }
+>> ```
+>> - Response 200 
+>> ```json
+>> {
+>>  "operation_status": "Success",
+>>  "reason": "rw"
+>> }
+>> ```
+>>
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
