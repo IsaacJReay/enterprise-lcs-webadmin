@@ -91,6 +91,8 @@ pub fn mount_rw_partition(password: &str, partition_name: &str, uuid: &str) -> (
     let filesystem_type = db::query_filesystem_type_by_path_from_storage_table(&partition_name);
     let mut command: String;
 
+
+
     if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
         command = 
 r#"
@@ -109,11 +111,15 @@ sudo mount partition_name /tmp/uuid;
     command = command.replace("password", password);
     command = command.replacen("partition_name", &full_path_name, 2);
     command = command.replace("uuid", uuid);
+    println!("Type: {}\nPath: {}\nCommand: {}", &filesystem_type, &full_path_name, &command);
+
     let (code, output, error) = run_script!(
         &command,
         &vec![],
         &options
     ).unwrap();
+
+    println!("Output: {}", &output);
 
     (code, output, error)
 }
