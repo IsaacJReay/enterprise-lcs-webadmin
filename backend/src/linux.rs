@@ -111,7 +111,7 @@ sudo mount partition_name /tmp/uuid;
     command = command.replace("password", password);
     command = command.replacen("partition_name", &full_path_name, 2);
     command = command.replace("uuid", uuid);
-    println!("Type: {}\nPath: {}\nCommand: {}", &filesystem_type, &full_path_name, &command);
+    // println!("Type: {}\nPath: {}\nCommand: {}", &filesystem_type, &full_path_name, &command);
 
     let (code, output, error) = run_script!(
         &command,
@@ -119,7 +119,7 @@ sudo mount partition_name /tmp/uuid;
         &options
     ).unwrap();
 
-    println!("Output: {}", &output);
+    // println!("Output: {}", &output);
 
     (code, output, error)
 }
@@ -150,6 +150,8 @@ pub fn get_partition_filesystem_type(password: &str, full_path: &str) -> (i32, S
         &vec![],
         &options
     ).unwrap();
+
+    println!("Command: {}\nOutput: {}", &command, &output);
 
     (code, output, error)
 
