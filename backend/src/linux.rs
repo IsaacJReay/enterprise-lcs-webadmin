@@ -60,14 +60,15 @@ pub fn mount_ro_partition(password: &str, partition_name: &str) -> (i32, String,
     let options = ScriptOptions::new();
     let _command = 
 r#"
+echo password | sudo -S umount /dev/partition_name;
 part_uuid=$(ls -lha /dev/disk/by-uuid | grep partition_name | awk -F' ' '{printf $9}');
 mount_location="/tmp/$part_uuid";
 mkdir $mount_location -p;
 echo password | sudo -S mount -o ro /dev/partition_name $mount_location;
 printf "$part_uuid $mount_location"
 "#;
-    let _command = _command.replace("password", password);
-    let command = _command.replacen("partition_name", partition_name,2);
+    let _command = _command.replacen("password", password, 2);
+    let command = _command.replacen("partition_name", partition_name,3);
     let (code, output, error) = run_script!(
         &format!("{}", command),
         &vec![],
@@ -151,8 +152,6 @@ pub fn get_partition_filesystem_type(dev_path: &str) -> (i32, String, String) {
         &options
     ).unwrap();
 
-    println!("Command: {}\nOutput: {}", &command, &output);
-
     (code, output, error)
 
 }
@@ -167,10 +166,10 @@ partition_name=$(echo $part_information | awk -F' ' '{printf $1}' | awk -F'/' '{
 part_uuid=$(ls -lha /dev/disk/by-uuid | grep $partition_name | awk -F' ' '{printf $9}');
 total_size=$(echo $part_information | awk -F' ' '{printf $2}');
 free_space=$(echo $part_information | awk -F' ' '{printf $4}');
-used_space=$(( $total_size-$free_space ))
-printf "$part_uuid $total_size $free_space"
+percentage=$(df -h | grep mount_location | awk -F' ' '{printf $5}' | awk -F'%' '{printf $1}')
+printf "$part_uuid $total_size $free_space $percentage"
 "#;
-    let command = _command.replace("mount_location", mount_location);
+    let command = _command.replacen("mount_location", mount_location, 2);
     let (_code, output, _error) = run_script!(
         &format!("{}", command),
         &vec![],
@@ -178,10 +177,6 @@ printf "$part_uuid $total_size $free_space"
     ).unwrap();
 
     let splited_output = output.split_whitespace().collect::<Vec<&str>>();
-    let total_space_in_byte: f32 = Byte::from_str(splited_output[1]).unwrap().get_bytes() as f32;
-    let free_space_in_byte: f32 = Byte::from_str(splited_output[2]).unwrap().get_bytes() as f32;
-    let used_space_in_percentage = 100.0 - (free_space_in_byte*100.0)/total_space_in_byte;
-
     let drive_struct = DriveDescription{
         drive_label: "Removeable Device".to_string(),
         drive_partuuid: PartUUID{
@@ -189,7 +184,7 @@ printf "$part_uuid $total_size $free_space"
         },
         total_space: splited_output[1].to_string(),
         free_space: splited_output[2].to_string(),
-        percentage: used_space_in_percentage
+        percentage: splited_output[3].parse::<f32>().unwrap()
     };
     
     drive_struct
@@ -667,7 +662,7 @@ rm -r /tmp/lcs-import/lcs-export
         &options
     ).unwrap();
 
-    // let filepath: String = format!("/tmp/{}.tar.zst", filename);
+    
     (code, output, error, "/tmp/lcs-import".to_string())
 }
 
