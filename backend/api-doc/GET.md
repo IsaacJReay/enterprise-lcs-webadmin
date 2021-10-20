@@ -418,29 +418,50 @@
 >> - Response 200 
 >> ```json
 >> [
->>   {
+>>  {
 >>     "drive_label": "Local Content Storage",
 >>     "drive_partuuid": {
 >>       "drive_partuuid": "kmp"
 >>     },
->>     "free_space": "3.4T",
->>     "total_space": "3.6T"
+>>     "free_space": "3.3T",
+>>     "total_space": "3.6T",
+>>     "percentage": 4
 >>   },
 >>   {
 >>     "drive_label": "Removeable Device",
 >>     "drive_partuuid": {
->>       "drive_partuuid": "2021-10-06-15-49-55-00"
+>>       "drive_partuuid": "7df645f6-2912-4f6f-bc80-6e823e75e8cb"
 >>     },
->>     "free_space": "0",
->>     "total_space": "2.3G"
+>>     "free_space": "3.7G",
+>>     "total_space": "3.9G",
+>>     "percentage": 1
 >>   },
 >>   {
 >>     "drive_label": "Removeable Device",
 >>     "drive_partuuid": {
->>       "drive_partuuid": "5B0C-9920"
+>>       "drive_partuuid": "3EB7-DF9A"
 >>     },
->>     "free_space": "1.6M",
->>     "total_space": "50M"
+>>     "free_space": "4.0G",
+>>     "total_space": "4.0G",
+>>     "percentage": 1
+>>   },
+>>   {
+>>     "drive_label": "Removeable Device",
+>>     "drive_partuuid": {
+>>        "drive_partuuid": "3FA1-D350"
+>>      },
+>>     "free_space": "4.0G",
+>>     "total_space": "4.0G",
+>>     "percentage": 1
+>>   },
+>>   {
+>>     "drive_label": "Removeable Device",
+>>     "drive_partuuid": {
+>>       "drive_partuuid": "3EB010966E49278D"
+>>     },
+>>     "free_space": "2.8G",
+>>     "total_space": "2.8G",
+>>     "percentage": 1
 >>   }
 >> ]
 >> ```
