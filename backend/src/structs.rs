@@ -244,6 +244,7 @@ pub struct DriveDescription {
     pub drive_partuuid: PartUUID,
     pub free_space: String,
     pub total_space: String,
+    pub percentage: f32
 }
 #[derive(Serialize)]
 pub struct DriveItem {
