@@ -13,7 +13,6 @@ use crate::{
     structs::{
         DriveDescription, 
         HttpResponseCustom, 
-        ItemNamePath, 
         PartUUID, 
         DriveItemExtended,
     }, 
@@ -208,8 +207,8 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
-#[get("/private/api/settings/storage/device/directory/status")]
-pub async fn get_storage_device_directory_page(req: HttpRequest, item_info_struct: web::Json<ItemNamePath>) -> Result<HttpResponse> {
+#[get("/private/api/settings/storage/device/directory/status/{parent_directory}/{item_name}")]
+pub async fn get_storage_device_directory_page(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -219,14 +218,17 @@ pub async fn get_storage_device_directory_page(req: HttpRequest, item_info_struc
             let passwordstatus: bool = tool::comparedate(olddate);
             let (_username, password) = db::query_logindata();
             if passwordstatus {
+                
+                let parent_directory = req.match_info().get("parent_directory").unwrap();
+                let item_name = req.match_info().get("item_name").unwrap();
 
-                if item_info_struct.item_name.is_empty() {
+                if item_name.is_empty() {
 
                     // cd ..
 
-                    if item_info_struct.parent_directory == "/kmp/webadmin" || db::query_existence_from_storage_table_by_mount(&item_info_struct.parent_directory) {
+                    if parent_directory == "/kmp/webadmin" || db::query_existence_from_storage_table_by_mount(parent_directory) {
 
-                        let all_file = linux::query_file_in_partition(&password, &item_info_struct.parent_directory);
+                        let all_file = linux::query_file_in_partition(&password, parent_directory);
                         Ok(
                             HttpResponse::Ok().json(
                                 DriveItemExtended {
@@ -237,8 +239,8 @@ pub async fn get_storage_device_directory_page(req: HttpRequest, item_info_struc
                         )
                     }
                     else {
-                        let splited_parent_directory = item_info_struct.parent_directory.split("/").collect::<Vec<&str>>();
-                        let previous_directory = item_info_struct.parent_directory.strip_suffix(&format!("/{}", splited_parent_directory[splited_parent_directory.len()-1])).unwrap();
+                        let splited_parent_directory = parent_directory.split("/").collect::<Vec<&str>>();
+                        let previous_directory = parent_directory.strip_suffix(&format!("/{}", splited_parent_directory[splited_parent_directory.len()-1])).unwrap();
 
                         let all_file = linux::query_file_in_partition(&password, &previous_directory);
                         Ok(
@@ -252,7 +254,7 @@ pub async fn get_storage_device_directory_page(req: HttpRequest, item_info_struc
 
                     // cd $forward_directory
 
-                    let directory_path = format!("{}/{}", item_info_struct.parent_directory, item_info_struct.item_name);
+                    let directory_path = format!("{}/{}", parent_directory, item_name);
 
                     let all_file = linux::query_file_in_partition(&password, &directory_path);
                     Ok(
