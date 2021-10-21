@@ -487,7 +487,7 @@
 >>  }
 >> ```
 
-> ### - /private/api/settings/storage/device/status
+> ### - /private/api/settings/storage/device/status/{drive_partuuid}
 >>
 >> | Header Parameter | Data Type |
 >> | --------- | --------- |
@@ -495,9 +495,6 @@
 >> 
 >> - Body
 >> ```json
->> {
->>   "drive_partuuid": "kmp"
->> }
 >> ```
 >> - Response 200 
 >> ```json
