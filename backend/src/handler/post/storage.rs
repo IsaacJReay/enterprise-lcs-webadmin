@@ -74,7 +74,7 @@ pub async fn post_storage_device_rw_permission(req: HttpRequest, uuid_struct: we
     }
 }
 
-#[post("/private/api/settings/storage/device/copy")]
+#[post("/private/api/settings/storage/device/copy_or_move")]
 pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::Json<CopyOrMoveArgs>) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
@@ -389,8 +389,9 @@ pub async fn post_storage_device_unmount(req: HttpRequest, uuid_struct: web::Jso
             let (_username, password) = db::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
+                let full_dev_path = format!("/dev/{}", db::query_path_by_uuid_from_storage_table(&uuid_struct.drive_partuuid));
 
-                let (code, output, error) = linux::unmount_partition(&password, &uuid_struct.drive_partuuid);
+                let (code, output, error) = linux::unmount_partition(&password, &full_dev_path);
 
                 match code {
                     0 => {
