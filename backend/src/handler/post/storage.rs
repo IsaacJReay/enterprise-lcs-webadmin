@@ -390,6 +390,7 @@ pub async fn post_storage_device_unmount(req: HttpRequest, uuid_struct: web::Jso
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let full_dev_path = format!("/dev/{}", db::query_path_by_uuid_from_storage_table(&uuid_struct.drive_partuuid));
+                println!("{}", &full_dev_path);
 
                 let (code, output, error) = linux::unmount_partition(&password, &full_dev_path);
 
