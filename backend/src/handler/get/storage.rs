@@ -15,6 +15,7 @@ use crate::{
         HttpResponseCustom, 
         ItemNamePath, 
         PartUUID, 
+        DriveItemExtended,
     }, 
 };
 
@@ -152,7 +153,11 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
                     let all_file = linux::query_file_in_partition(&password, &path);
                     Ok(
                         HttpResponse::Ok().json(
-                            all_file
+                            DriveItemExtended {
+                                drive_label: "Local Content Storage".to_string(),
+                                item_list: all_file,
+                            }
+
                         )
                     )
                 }
@@ -160,7 +165,10 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
                     let all_file = linux::query_file_in_partition(&password, "/kmp/webadmin");
                     Ok(
                         HttpResponse::Ok().json(
-                            all_file
+                            DriveItemExtended {
+                                drive_label: "Removeable Device".to_string(),
+                                item_list: all_file,
+                            }
                         )
                     )
                 }

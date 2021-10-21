@@ -226,10 +226,8 @@ pub fn query_file_in_partition(password: &str, path: &str) -> Vec<DriveItem> {
         let last_modify: &str = last_modify_split[0];
 
         vec_items.insert(vec_items_length, DriveItem {
-            item_name: ItemNamePath {
-                item_name: filename.to_string(),
-                parent_directory: path.to_string(),
-            },
+            item_name: filename.to_string(),
+            parent_directory: path.to_string(),
             item_date: last_modify.to_string(),
             item_type: item_type.to_string(),
             item_size: Byte::from_bytes(split_each_line[3].parse::<u128>().unwrap()).get_appropriate_unit(false).format(1),
@@ -239,10 +237,8 @@ pub fn query_file_in_partition(password: &str, path: &str) -> Vec<DriveItem> {
 
     if vec_items.is_empty() {
         vec_items.insert(0, DriveItem {
-            item_name: ItemNamePath {
-                item_name: ".".to_string(),
-                parent_directory: path.to_string(),
-            },
+            item_name: ".".to_string(),
+            parent_directory: path.to_string(),
             item_date: "0000-00-00 00:00:00".to_string(),
             item_type: "file".to_string(),
             item_size: "0 Byte".to_string(),

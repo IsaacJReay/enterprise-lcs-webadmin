@@ -556,17 +556,25 @@
 >> ```
 >> - Response 200 
 >> ```json
->> [
->>   {
->>     "item_name": {
->>       "item_name": ".",
->>       "parent_directory": "/kmp/webadmin/file"
->>     },
->>     "item_date": "0000-00-00 00:00:00",
->>     "item_type": "file",
->>     "item_size": "0 Byte"
->>   }
->> ]
+>> {
+>>   "drive_label": "Local Content Server",
+>>   "item_list": [
+>>      {
+>>        "item_name": "AAA",
+>>        "parent_directory": "/kmp/webadmin/file",
+>>        "item_date": "0000-00-00 00:00:00",
+>>        "item_type": "file",
+>>         "item_size": "0 Byte"
+>>      },
+>>      {
+>>        "item_name": "ABA",
+>>        "parent_directory": "/kmp/webadmin/file",
+>>        "item_date": "0000-00-00 00:00:00",
+>>        "item_type": "file",
+>>         "item_size": "0 Byte"
+>>      }
+>>   ]
+>> }
 >> ```
 >>
 >> - Response 410 

@@ -248,10 +248,17 @@ pub struct DriveDescription {
 }
 #[derive(Serialize)]
 pub struct DriveItem {
-    pub item_name: ItemNamePath,
+    pub item_name: String,
+    pub parent_directory: String,
     pub item_date: String,
     pub item_type: String,
     pub item_size: String,
+}
+
+#[derive(Serialize)]
+pub struct DriveItemExtended {
+    pub drive_label: String,
+    pub item_list: Vec<DriveItem>
 }
 
 #[derive(Deserialize)]
