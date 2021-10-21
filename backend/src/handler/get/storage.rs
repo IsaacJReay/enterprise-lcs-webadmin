@@ -1,8 +1,7 @@
 use actix_web::{
     HttpResponse, 
     Result, 
-    get, 
-    web,
+    get,
     HttpRequest,
 };
 use crate::{
@@ -302,8 +301,8 @@ pub async fn get_storage_device_directory_page(req: HttpRequest) -> Result<HttpR
     } 
 }
 
-#[get("/private/api/settings/storage/device/rwpermission/status")]
-pub async fn get_storage_device_rw_permission(req: HttpRequest, uuid_struct: web::Json<PartUUID>) -> Result<HttpResponse> {
+#[get("/private/api/settings/storage/device/rwpermission/status/{drive_partuuid}")]
+pub async fn get_storage_device_rw_permission(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -313,7 +312,8 @@ pub async fn get_storage_device_rw_permission(req: HttpRequest, uuid_struct: web
             let passwordstatus: bool = tool::comparedate(olddate);
             
             if passwordstatus {
-                let mount = db::query_mount_by_uuid_from_storage_table(&uuid_struct.drive_partuuid);
+                let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
+                let mount = db::query_mount_by_uuid_from_storage_table(drive_partuuid);
                 let is_mount_rw = linux::is_read_writeable(&mount);
 
                 match is_mount_rw {
