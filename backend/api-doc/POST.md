@@ -651,3 +651,236 @@
 >>  }
 >> ```
 >> **Note:** `timezone` must be a valid timezone from website https://en.wikipedia.org/wiki/List_of_tz_database_time_zones;
+
+> ### - /private/api/settings/storage/device/rwpermission/request
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>    "drive_partuuid": "7df645f6-2912-4f6f-bc80-6e823e75e8cb"
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/storage/device/copy_or_move
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>     "operation": "move",
+>>     "source": [{
+>>       "item_name": "testing.txt",
+>>       "parent_directory": "/kmp/webadmin/file"
+>>     }],
+>>     "destination": {
+>>       "item_name": "",
+>>       "parent_directory": "/tmp/3EB010966E49278D"
+>>     }
+>>  }
+>> ```
+>> Or,
+>> ```json
+>> {
+>>     "operation": "copy",
+>>     "source": [{
+>>       "item_name": "folder123",
+>>       "parent_directory": "/kmp/webadmin/file"
+>>     },
+>>     {
+>>       "item_name": "testing.txtwww",
+>>       "parent_directory": "/kmp/webadmin/file"
+>>     }],
+>>     "destination": {
+>>       "item_name": "",
+>>       "parent_directory": "/tmp/3EB010966E49278D"
+>>     }
+>> }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/storage/device/deletion
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>       "selected_filedir": [{
+>>       "item_name": "testing.txtwww",
+>>       "parent_directory": "/tmp/3EB010966E49278D"
+>>     },
+>>     {
+>>       "item_name": "folder123",
+>>       "parent_directory": "/tmp/3EB010966E49278D"
+>>     }]
+>> }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
+> ### - /private/api/settings/storage/device/directory/creation
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>       "selected_filedir": [{
+>>       "item_name": "testing.txtwww",
+>>       "parent_directory": "/tmp/3EB010966E49278D"
+>>     },
+>>     {
+>>       "item_name": "folder123",
+>>       "parent_directory": "/tmp/3EB010966E49278D"
+>>     }]
+>> }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
+
