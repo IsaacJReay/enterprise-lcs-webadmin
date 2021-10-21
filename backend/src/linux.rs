@@ -128,7 +128,7 @@ sudo mount partition_name /tmp/uuid;
 pub fn unmount_partition(password: &str, full_path: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
 
-    let _command = r#"echo password | sudo -S umount full_path username"#;
+    let _command = r#"echo password | sudo -S umount full_path"#;
     let _command = _command.replace("password", password);
     let command = _command.replace("full_path", full_path);
 
@@ -175,6 +175,8 @@ printf "$part_uuid $total_size $free_space $percentage"
         &vec![],
         &options
     ).unwrap();
+
+    println!("Command: {}\nOutput: {}", command, output);
 
     let splited_output = output.split_whitespace().collect::<Vec<&str>>();
     let drive_struct = DriveDescription{
