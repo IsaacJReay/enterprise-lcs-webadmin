@@ -135,8 +135,8 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
-#[get("/private/api/settings/storage/device/status")]
-pub async fn get_storage_device_page(req: HttpRequest, uuid_struct: web::Json<PartUUID>) -> Result<HttpResponse> {
+#[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
+pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -146,8 +146,9 @@ pub async fn get_storage_device_page(req: HttpRequest, uuid_struct: web::Json<Pa
             let passwordstatus: bool = tool::comparedate(olddate);
             let (_username, password) = db::query_logindata();
             if passwordstatus {
-                if &uuid_struct.drive_partuuid != "kmp" {
-                    let path = db::query_mount_by_uuid_from_storage_table(&uuid_struct.drive_partuuid);
+                let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
+                if drive_partuuid != "kmp" {
+                    let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
                     let all_file = linux::query_file_in_partition(&password, &path);
                     Ok(
                         HttpResponse::Ok().json(
