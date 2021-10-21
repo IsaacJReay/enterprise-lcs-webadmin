@@ -710,10 +710,12 @@
 >> ```json
 >>  {
 >>     "operation": "move",
->>     "source": [{
->>       "item_name": "testing.txt",
->>       "parent_directory": "/kmp/webadmin/file"
->>     }],
+>>     "source": [
+>>       {
+>>         "item_name": "testing.txt",
+>>         "parent_directory": "/kmp/webadmin/file"
+>>       }
+>>     ],
 >>     "destination": {
 >>       "item_name": "",
 >>       "parent_directory": "/tmp/3EB010966E49278D"
@@ -783,14 +785,16 @@
 >>  - Body
 >> ```json
 >>  {
->>       "selected_filedir": [{
->>       "item_name": "testing.txtwww",
->>       "parent_directory": "/tmp/3EB010966E49278D"
->>     },
->>     {
->>       "item_name": "folder123",
->>       "parent_directory": "/tmp/3EB010966E49278D"
->>     }]
+>>     "selected_filedir": [
+>>       {
+>>         "item_name": "testing.txtwww",
+>>         "parent_directory": "/tmp/3EB010966E49278D"
+>>       },
+>>       {
+>>         "item_name": "folder123",
+>>         "parent_directory": "/tmp/3EB010966E49278D"
+>>       }
+>>     ]
 >> }
 >> ```
 >>
