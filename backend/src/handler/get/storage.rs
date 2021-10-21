@@ -229,7 +229,10 @@ pub async fn get_storage_device_directory_page(req: HttpRequest, item_info_struc
                         let all_file = linux::query_file_in_partition(&password, &item_info_struct.parent_directory);
                         Ok(
                             HttpResponse::Ok().json(
-                                all_file
+                                DriveItemExtended {
+                                    drive_label: "Local Content Storage".to_string(),
+                                    item_list: all_file,
+                                }
                             )
                         )
                     }
@@ -254,7 +257,10 @@ pub async fn get_storage_device_directory_page(req: HttpRequest, item_info_struc
                     let all_file = linux::query_file_in_partition(&password, &directory_path);
                     Ok(
                         HttpResponse::Ok().json(
-                            all_file
+                            DriveItemExtended {
+                                drive_label: "Removeable Device".to_string(),
+                                item_list: all_file,
+                            }
                         )
                     )
                 }
