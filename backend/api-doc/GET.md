@@ -540,7 +540,7 @@
 >>  }
 >> ```
 
-> ### - /private/api/settings/storage/device/directory/status/{parent_directory}/{item_name}
+> ### - /private/api/settings/storage/device/directory/status
 >>
 >> | Header Parameter | Data Type |
 >> | --------- | --------- |
@@ -548,6 +548,10 @@
 >> 
 >> - Body
 >> ```json
+>> {
+>>   "item_name": "AAA",
+>>   "parent_directory": "/kmp/webadmin/file"
+>> }
 >> ```
 >> - Response 200 
 >> ```json
