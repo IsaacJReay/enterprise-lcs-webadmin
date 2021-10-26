@@ -208,7 +208,7 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
-#[get("/private/api/settings/storage/device/directory/status")]
+#[get("/private/api/settings/storage/device/directory/status/{parent_directory}-{item_name}")]
 pub async fn get_storage_device_directory_page(req: HttpRequest, item_struct: web::Json<ItemNamePath>) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
@@ -220,10 +220,10 @@ pub async fn get_storage_device_directory_page(req: HttpRequest, item_struct: we
             let (_username, password) = db::query_logindata();
             if passwordstatus {
                 
-                // let parent_directory = req.match_info().get("parent_directory").unwrap();
-                // let item_name = req.match_info().get("item_name").unwrap();
-                let parent_directory = item_struct.parent_directory.as_str();
-                let item_name = item_struct.item_name.as_str();
+                let parent_directory = req.match_info().get("parent_directory").unwrap();
+                let item_name = req.match_info().get("item_name").unwrap();
+                // let parent_directory = item_struct.parent_directory.as_str();
+                // let item_name = item_struct.item_name.as_str();
 
                 if item_name.is_empty() {
 
