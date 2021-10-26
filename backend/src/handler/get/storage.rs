@@ -208,7 +208,7 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
-#[get("/private/api/settings/storage/device/directory/status/{parent_directory}/{item_name}")]
+#[get("/private/api/settings/storage/device/directory/status")]
 pub async fn get_storage_device_directory_page(req: HttpRequest, item_struct: web::Query<ItemNamePath>) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
