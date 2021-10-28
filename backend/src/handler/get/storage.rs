@@ -16,6 +16,7 @@ use crate::{
         PartUUID, 
         DriveItemExtended,
         ItemNamePath,
+        ItemListExtended,
     }, 
 };
 
@@ -136,6 +137,78 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
+// #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
+// pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
+//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+//     if !auth_is_empty{
+//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+//         if db::query_token(auth){
+//             let olddate = security::extract_token(auth);
+//             let passwordstatus: bool = tool::comparedate(olddate);
+//             let (_username, password) = db::query_logindata();
+//             if passwordstatus {
+//                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
+//                 if drive_partuuid != "kmp" {
+//                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
+//                     let all_file = linux::query_file_in_partition(&password, &path);
+//                     Ok(
+//                         HttpResponse::Ok().json(
+//                             DriveItemExtended {
+//                                 drive_label: "Local Content Storage".to_string(),
+//                                 item_list: all_file,
+//                             }
+
+//                         )
+//                     )
+//                 }
+//                 else{
+//                     let all_file = linux::query_file_in_partition(&password, "/kmp/webadmin");
+//                     Ok(
+//                         HttpResponse::Ok().json(
+//                             DriveItemExtended {
+//                                 drive_label: "Removeable Device".to_string(),
+//                                 item_list: all_file,
+//                             }
+//                         )
+//                     )
+//                 }
+//             }
+//             else {
+//                 db::delete_from_token_table(auth);
+//                 Ok(
+//                     HttpResponse::Gone().json(
+//                         HttpResponseCustom{
+//                             operation_status: "Failed".to_string(),
+//                             reason: "token-timeout".to_string(),
+//                         }
+//                     )
+//                 )
+//             }
+//         }
+//         else{
+//             Ok(
+//                 HttpResponse::Unauthorized().json(
+//                     HttpResponseCustom {
+//                         operation_status: "Failed".to_string(),
+//                         reason: "incorrect-token".to_string(),
+//                     }
+//                 )
+//             )
+//         }
+//     }
+//     else{
+//         Ok(
+//             HttpResponse::Unauthorized().json(
+//                 HttpResponseCustom {
+//                     operation_status: "Failed".to_string(),
+//                     reason: "missing-token".to_string(),
+//                 }
+//             )
+//         )
+//     } 
+// }
+
 #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
 pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
@@ -150,11 +223,11 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
                 if drive_partuuid != "kmp" {
                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
-                    let all_file = linux::query_file_in_partition(&password, &path);
+                    let all_file = linux::query_all_file_in_partition(&password, &path);
                     Ok(
                         HttpResponse::Ok().json(
-                            DriveItemExtended {
-                                drive_label: "Local Content Storage".to_string(),
+                            ItemListExtended {
+                                drive_label: "Removeable Device".to_string(),
                                 item_list: all_file,
                             }
 
@@ -166,7 +239,7 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
                     Ok(
                         HttpResponse::Ok().json(
                             DriveItemExtended {
-                                drive_label: "Removeable Device".to_string(),
+                                drive_label: "Local Content Storage".to_string(),
                                 item_list: all_file,
                             }
                         )
@@ -207,6 +280,8 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
         )
     } 
 }
+
+
 
 #[get("/private/api/settings/storage/device/directory/status")]
 pub async fn get_storage_device_directory_page(req: HttpRequest, item_struct: web::Query<ItemNamePath>) -> Result<HttpResponse> {

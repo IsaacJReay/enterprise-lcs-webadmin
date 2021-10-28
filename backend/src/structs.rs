@@ -246,6 +246,21 @@ pub struct DriveDescription {
     pub total_space: String,
     pub percentage: f32
 }
+
+#[derive(Serialize)]
+pub struct ItemList {
+    pub item_path: String,
+    pub item_date: String,
+    pub item_type: String,
+    pub item_size: String,
+}
+
+#[derive(Serialize)]
+pub struct ItemListExtended {
+    pub drive_label: String,
+    pub item_list: Vec<ItemList>,
+}
+
 #[derive(Serialize)]
 pub struct DriveItem {
     pub item_name: String,

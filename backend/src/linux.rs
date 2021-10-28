@@ -9,6 +9,7 @@ use crate::{
         DriveDescription,
         DriveItem,
         PartUUID,
+        ItemList,
     }
 };
 
@@ -264,6 +265,64 @@ pub fn is_read_writeable(mount: &str) -> bool {
         false => false,
     } 
 
+}
+
+pub fn query_all_file_in_partition(password: &str, file_path: &str) -> Vec<ItemList> {
+    let options = ScriptOptions::new();
+    let command = format!(r#"echo {} | sudo -S find {} -printf '%TF %TH:%TM|%y|%s|%p\n'"#, password, file_path);
+    let (_code, output, _error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    let mut vec_items: Vec<ItemList> = Vec::new();
+    let mut vec_items_length: usize = 0;
+
+    let splited_output = output.trim_end();
+
+    for each_line in splited_output.lines() {
+        let split_each_line: Vec<&str> = each_line.split("|").collect::<Vec<&str>>();
+
+        let current_modify_date = split_each_line[0].to_string();
+        
+        let current_item_type = match split_each_line[1]{
+            "d" => "directory",
+            "f" => "file",
+            _ => "unknown"
+        }
+            .to_string();
+
+        let current_file_size = Byte::from_bytes(
+            split_each_line[2].parse::<u128>()
+                .unwrap()
+            )
+            .get_appropriate_unit(false)
+            .format(1);
+        
+        let current_full_file_path = split_each_line[3].to_string();
+
+        vec_items.insert(vec_items_length, ItemList {
+            item_path: current_full_file_path,
+            item_date: current_modify_date,
+            item_size: current_file_size,
+            item_type: current_item_type
+        });
+        vec_items_length+=1;
+    }
+
+    if vec_items.is_empty() {
+        vec_items.insert(0, ItemList {
+            item_path: "".to_string(),
+            item_date: "".to_string(),
+            item_size: "".to_string(),
+            item_type: "".to_string(),
+        });
+        vec_items
+    }
+    else {
+        vec_items
+    }
 }
 
 pub fn passwd(username: &str, old_password: &str, new_password: &str) -> (i32, String, String) {
