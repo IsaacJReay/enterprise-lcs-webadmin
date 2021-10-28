@@ -235,10 +235,10 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
                     )
                 }
                 else{
-                    let all_file = linux::query_file_in_partition(&password, "/kmp/webadmin");
+                    let all_file = linux::query_all_file_in_partition(&password, "/kmp/webadmin");
                     Ok(
                         HttpResponse::Ok().json(
-                            DriveItemExtended {
+                            ItemListExtended {
                                 drive_label: "Local Content Storage".to_string(),
                                 item_list: all_file,
                             }
