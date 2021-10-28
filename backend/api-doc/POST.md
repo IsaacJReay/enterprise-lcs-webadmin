@@ -711,33 +711,22 @@
 >>  {
 >>     "operation": "move",
 >>     "source": [
->>       {
->>         "item_name": "testing.txt",
->>         "parent_directory": "/kmp/webadmin/file"
->>       }
+>>       "/kmp/webadmin/file",
+>>       "/kmp/webadmin/www/abc.txt"
 >>     ],
->>     "destination": {
->>       "item_name": "",
->>       "parent_directory": "/tmp/3EB010966E49278D"
->>     }
+>>     "destination": "/tmp/3ABC-AAA"
 >>  }
 >> ```
 >> Or,
 >> ```json
 >> {
 >>     "operation": "copy",
->>     "source": [{
->>       "item_name": "folder123",
->>       "parent_directory": "/kmp/webadmin/file"
->>     },
->>     {
->>       "item_name": "testing.txtwww",
->>       "parent_directory": "/kmp/webadmin/file"
->>     }],
->>     "destination": {
->>       "item_name": "",
->>       "parent_directory": "/tmp/3EB010966E49278D"
->>     }
+>>     "source": [
+>>       "/kmp/webadmin/file",
+>>       "/kmp/webadmin/www/abc.txt"
+>>     ],
+>>     "destination": "/tmp/3ABC-AAA"
+>>  }
 >> }
 >> ```
 >>
@@ -786,14 +775,8 @@
 >> ```json
 >>  {
 >>     "selected_filedir": [
->>       {
->>         "item_name": "testing.txtwww",
->>         "parent_directory": "/tmp/3EB010966E49278D"
->>       },
->>       {
->>         "item_name": "folder123",
->>         "parent_directory": "/tmp/3EB010966E49278D"
->>       }
+>>       "/tmp/3EB010966E49278D/testing.txtwww",
+>>       "/tmp/3EB010966E49278Dfolder123"
 >>     ]
 >> }
 >> ```
@@ -842,7 +825,7 @@
 >>  - Body
 >> ```json
 >>  {
->>     "item_name": "newfolder1234",
+>>     "directory_name": "newfolder1234",
 >>     "parent_directory": "/tmp/3EB010966E49278D"
 >>  }
 >> ```

@@ -2,7 +2,6 @@ use actix_web::{
     HttpResponse, 
     Result, 
     get,
-    web,
     HttpRequest,
 };
 use crate::{
@@ -14,8 +13,6 @@ use crate::{
         DriveDescription, 
         HttpResponseCustom, 
         PartUUID, 
-        DriveItemExtended,
-        ItemNamePath,
         ItemListExtended,
     }, 
 };
@@ -137,78 +134,6 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
-// #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
-// pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
-//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
-
-//     if !auth_is_empty{
-//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-//         if db::query_token(auth){
-//             let olddate = security::extract_token(auth);
-//             let passwordstatus: bool = tool::comparedate(olddate);
-//             let (_username, password) = db::query_logindata();
-//             if passwordstatus {
-//                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
-//                 if drive_partuuid != "kmp" {
-//                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
-//                     let all_file = linux::query_file_in_partition(&password, &path);
-//                     Ok(
-//                         HttpResponse::Ok().json(
-//                             DriveItemExtended {
-//                                 drive_label: "Local Content Storage".to_string(),
-//                                 item_list: all_file,
-//                             }
-
-//                         )
-//                     )
-//                 }
-//                 else{
-//                     let all_file = linux::query_file_in_partition(&password, "/kmp/webadmin");
-//                     Ok(
-//                         HttpResponse::Ok().json(
-//                             DriveItemExtended {
-//                                 drive_label: "Removeable Device".to_string(),
-//                                 item_list: all_file,
-//                             }
-//                         )
-//                     )
-//                 }
-//             }
-//             else {
-//                 db::delete_from_token_table(auth);
-//                 Ok(
-//                     HttpResponse::Gone().json(
-//                         HttpResponseCustom{
-//                             operation_status: "Failed".to_string(),
-//                             reason: "token-timeout".to_string(),
-//                         }
-//                     )
-//                 )
-//             }
-//         }
-//         else{
-//             Ok(
-//                 HttpResponse::Unauthorized().json(
-//                     HttpResponseCustom {
-//                         operation_status: "Failed".to_string(),
-//                         reason: "incorrect-token".to_string(),
-//                     }
-//                 )
-//             )
-//         }
-//     }
-//     else{
-//         Ok(
-//             HttpResponse::Unauthorized().json(
-//                 HttpResponseCustom {
-//                     operation_status: "Failed".to_string(),
-//                     reason: "missing-token".to_string(),
-//                 }
-//             )
-//         )
-//     } 
-// }
-
 #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
 pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
@@ -282,103 +207,6 @@ pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
 }
 
 
-
-#[get("/private/api/settings/storage/device/directory/status")]
-pub async fn get_storage_device_directory_page(req: HttpRequest, item_struct: web::Query<ItemNamePath>) -> Result<HttpResponse> {
-    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
-
-    if !auth_is_empty{
-        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
-            let olddate = security::extract_token(auth);
-            let passwordstatus: bool = tool::comparedate(olddate);
-            let (_username, password) = db::query_logindata();
-            if passwordstatus {
-                
-                // let parent_directory = req.match_info().get("parent_directory").unwrap();
-                // let item_name = req.match_info().get("item_name").unwrap();
-                let parent_directory = item_struct.parent_directory.as_str();
-                let item_name = item_struct.item_name.as_str();
-
-                if item_name.is_empty() {
-
-                    // cd ..
-
-                    if parent_directory == "/kmp/webadmin" || db::query_existence_from_storage_table_by_mount(parent_directory) {
-
-                        let all_file = linux::query_file_in_partition(&password, parent_directory);
-                        Ok(
-                            HttpResponse::Ok().json(
-                                DriveItemExtended {
-                                    drive_label: "Local Content Storage".to_string(),
-                                    item_list: all_file,
-                                }
-                            )
-                        )
-                    }
-                    else {
-                        let splited_parent_directory = parent_directory.split("/").collect::<Vec<&str>>();
-                        let previous_directory = parent_directory.strip_suffix(&format!("/{}", splited_parent_directory[splited_parent_directory.len()-1])).unwrap();
-
-                        let all_file = linux::query_file_in_partition(&password, &previous_directory);
-                        Ok(
-                            HttpResponse::Ok().json(
-                                all_file
-                            )
-                        )
-                    }
-                }
-                else {
-
-                    // cd $forward_directory
-
-                    let directory_path = format!("{}/{}", parent_directory, item_name);
-
-                    let all_file = linux::query_file_in_partition(&password, &directory_path);
-                    Ok(
-                        HttpResponse::Ok().json(
-                            DriveItemExtended {
-                                drive_label: "Removeable Device".to_string(),
-                                item_list: all_file,
-                            }
-                        )
-                    )
-                }
-            }
-            else {
-                db::delete_from_token_table(auth);
-                Ok(
-                    HttpResponse::Gone().json(
-                        HttpResponseCustom{
-                            operation_status: "Failed".to_string(),
-                            reason: "token-timeout".to_string(),
-                        }
-                    )
-                )
-            }
-        }
-        else{
-            Ok(
-                HttpResponse::Unauthorized().json(
-                    HttpResponseCustom {
-                        operation_status: "Failed".to_string(),
-                        reason: "incorrect-token".to_string(),
-                    }
-                )
-            )
-        }
-    }
-    else{
-        Ok(
-            HttpResponse::Unauthorized().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "missing-token".to_string(),
-                }
-            )
-        )
-    } 
-}
 
 #[get("/private/api/settings/storage/device/rwpermission/status/{drive_partuuid}")]
 pub async fn get_storage_device_rw_permission(req: HttpRequest) -> Result<HttpResponse> {

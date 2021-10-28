@@ -7,7 +7,6 @@ use crate::{
     db,
     structs::{
         DriveDescription,
-        DriveItem,
         PartUUID,
         ItemList,
     }
@@ -191,63 +190,6 @@ printf "$part_uuid $total_size $free_space $percentage"
     
     drive_struct
 
-}
-
-pub fn query_file_in_partition(password: &str, path: &str) -> Vec<DriveItem> {
-    let options = ScriptOptions::new();
-    let _command = r#"echo password | sudo -S stat -c ''%n'|'%F'|'%y'|'%s'|' path/*"#;
-    let _command = _command.replace("path", path);
-    let command = _command.replace("password", password);
-    let (_code, output, _error) = run_script!(
-        &format!("{}", command),
-        &vec![],
-        &options
-    ).unwrap();
-
-    let mut vec_items: Vec<DriveItem> = Vec::new();
-    let mut vec_items_length: usize = 0;
-
-    let splited_output = output.trim_end();
-
-    for each_line in splited_output.lines() {
-
-        let split_each_line: Vec<&str> = each_line.split("|").collect::<Vec<&str>>();
-
-        let filename_vec = split_each_line[0].split("/").collect::<Vec<&str>>();
-        let filename = filename_vec[filename_vec.len()-1];
-
-
-        let item_type = match split_each_line[1] {
-            "directory" => "directory",
-            _ => "file",
-        };
-
-        let last_modify_split: Vec<&str> = split_each_line[2].split('.').collect::<Vec<&str>>();
-        let last_modify: &str = last_modify_split[0];
-
-        vec_items.insert(vec_items_length, DriveItem {
-            item_name: filename.to_string(),
-            parent_directory: path.to_string(),
-            item_date: last_modify.to_string(),
-            item_type: item_type.to_string(),
-            item_size: Byte::from_bytes(split_each_line[3].parse::<u128>().unwrap()).get_appropriate_unit(false).format(1),
-        });
-        vec_items_length +=1;
-    }
-
-    if vec_items.is_empty() {
-        vec_items.insert(0, DriveItem {
-            item_name: ".".to_string(),
-            parent_directory: path.to_string(),
-            item_date: "0000-00-00 00:00:00".to_string(),
-            item_type: "file".to_string(),
-            item_size: "0 Byte".to_string(),
-        });
-        vec_items
-    }
-    else {
-        vec_items
-    }
 }
 
 pub fn is_read_writeable(mount: &str) -> bool {

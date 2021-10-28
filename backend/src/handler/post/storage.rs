@@ -5,7 +5,7 @@ use actix_web::{
     HttpResponse,
     Result,
 };
-use crate::{db, linux, security, structs::{CopyOrMoveArgs, DeleteFileDir, HttpResponseCustom, ItemNamePath, PartUUID}, tool};
+use crate::{db, linux, security, structs::{MakeDirectoryArgs, DeleteArgs, MoveOrCopyArgs, HttpResponseCustom, PartUUID}, tool};
 
 #[post("/private/api/settings/storage/device/rwpermission/request")]
 pub async fn post_storage_device_rw_permission(req: HttpRequest, uuid_struct: web::Json<PartUUID>) -> Result<HttpResponse> {
@@ -75,7 +75,7 @@ pub async fn post_storage_device_rw_permission(req: HttpRequest, uuid_struct: we
 }
 
 #[post("/private/api/settings/storage/device/copy_or_move")]
-pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::Json<CopyOrMoveArgs>) -> Result<HttpResponse> {
+pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::Json<MoveOrCopyArgs>) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -87,14 +87,14 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
             if passwordstatus {
 
                 let mut source_string: String = String::new();
-                // let mut destination_string: String = String::new();
-                let source_is_external_prefix = args_vec.source[0].parent_directory.starts_with("/tmp/");
-                let destination_is_external_prefix = args_vec.destination.parent_directory.starts_with("/tmp/");
+
+                let source_is_external_prefix = args_vec.source[0].starts_with("/tmp/");
+                let destination_is_external_prefix = args_vec.destination.starts_with("/tmp/");
                 let source_uuid: String;
                 let destination_uuid: String;
 
                 if source_is_external_prefix {
-                    let splited_mount = args_vec.source[0].parent_directory.split("/").collect::<Vec<&str>>();
+                    let splited_mount = args_vec.source[0].split("/").collect::<Vec<&str>>();
                     source_uuid = splited_mount[2].to_string();
                 }
                 else {
@@ -102,7 +102,7 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                 }
 
                 if destination_is_external_prefix {
-                    let splited_mount = args_vec.destination.parent_directory.split("/").collect::<Vec<&str>>();
+                    let splited_mount = args_vec.destination.split("/").collect::<Vec<&str>>();
                     destination_uuid = splited_mount[2].to_string();
                 }
                 else {
@@ -110,17 +110,14 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                 }
                 
                 for each_items in &args_vec.source {
-                    let fullpath = format!("{}/{}", each_items.parent_directory, each_items.item_name);
-                    source_string = format!("{} {}", source_string, fullpath);
+                    source_string = format!("{} {}", source_string, each_items);
                 }
-
-                let destination_string = format!("{}/{}", args_vec.destination.parent_directory, args_vec.destination.item_name);
 
                 if args_vec.operation == "copy" {
                     let (code, output, error) = linux::copy_filedir(
                         &password, 
                         &source_string, 
-                        &destination_string, 
+                        &args_vec.destination, 
                         source_is_external_prefix, 
                         &source_uuid, 
                         destination_is_external_prefix, 
@@ -151,7 +148,7 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                     let (code, output, error) = linux::move_filedir(
                         &password, 
                         &source_string, 
-                        &destination_string, 
+                        &args_vec.destination, 
                         source_is_external_prefix, 
                         &source_uuid, 
                         destination_is_external_prefix, 
@@ -224,7 +221,7 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
 }
 
 #[post("/private/api/settings/storage/device/deletion")]
-pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web::Json<DeleteFileDir>) -> Result<HttpResponse> {
+pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web::Json<DeleteArgs>) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -237,8 +234,8 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
                 let mut items_string: String = String::new();
 
                 for each_items in &args_vec.selected_filedir {
-                    let full_path = format!("{}/{}", each_items.parent_directory, each_items.item_name);
-                    items_string = format!("{} {}", items_string, full_path);
+                    // let full_path = format!("{}/{}", each_items.parent_directory, each_items.item_name);
+                    items_string = format!("{} {}", items_string, each_items);
                 }
 
                 let (code, output, error) = linux::remove_filedir_root(&password, &items_string);
@@ -298,7 +295,7 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
 }
 
 #[post("/private/api/settings/storage/device/directory/creation")]
-pub async fn post_storage_device_directory_creation(req: HttpRequest, item_info: web::Json<ItemNamePath>) -> Result<HttpResponse> {
+pub async fn post_storage_device_directory_creation(req: HttpRequest, directory_info: web::Json<MakeDirectoryArgs>) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -309,9 +306,9 @@ pub async fn post_storage_device_directory_creation(req: HttpRequest, item_info:
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let drive_uuid: String;
-                let drive_is_external_prefix = item_info.parent_directory.starts_with("/tmp/");
+                let drive_is_external_prefix = directory_info.parent_directory.starts_with("/tmp/");
                 if drive_is_external_prefix {
-                    let splited_path = item_info.parent_directory.split("/").collect::<Vec<&str>>();
+                    let splited_path = directory_info.parent_directory.split("/").collect::<Vec<&str>>();
 
                     drive_uuid = splited_path[2].to_string();
                 }
@@ -319,7 +316,7 @@ pub async fn post_storage_device_directory_creation(req: HttpRequest, item_info:
                     drive_uuid = String::new();
                 }
 
-                let dir_location  = format!("{}/{}", item_info.parent_directory, item_info.item_name);
+                let dir_location  = format!("{}/{}", directory_info.parent_directory, directory_info.directory_name);
 
                 let (code, output, error) = linux::make_dir(&password, &dir_location, drive_is_external_prefix, &drive_uuid);
 

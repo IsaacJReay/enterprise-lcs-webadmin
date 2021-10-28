@@ -231,12 +231,12 @@ pub struct TimeDate {
 pub struct PartUUID{
     pub drive_partuuid: String,
 }
-
-#[derive(Serialize, Deserialize)]
-pub struct ItemNamePath{
-    pub item_name: String,
+#[derive(Deserialize)]
+pub struct MakeDirectoryArgs {
+    pub directory_name: String,
     pub parent_directory: String,
 }
+
 
 #[derive(Serialize)]
 pub struct DriveDescription {
@@ -261,29 +261,15 @@ pub struct ItemListExtended {
     pub item_list: Vec<ItemList>,
 }
 
-#[derive(Serialize)]
-pub struct DriveItem {
-    pub item_name: String,
-    pub parent_directory: String,
-    pub item_date: String,
-    pub item_type: String,
-    pub item_size: String,
-}
-
-#[derive(Serialize)]
-pub struct DriveItemExtended {
-    pub drive_label: String,
-    pub item_list: Vec<DriveItem>
-}
-
 #[derive(Deserialize)]
-pub struct CopyOrMoveArgs {
+pub struct MoveOrCopyArgs {
     pub operation: String,
-    pub source: Vec<ItemNamePath>,
-    pub destination: ItemNamePath,
+    pub source: Vec<String>,
+    pub destination: String,
 }
 
 #[derive(Deserialize)]
-pub struct DeleteFileDir {
-    pub selected_filedir: Vec<ItemNamePath>,
+pub struct DeleteArgs {
+    pub selected_filedir: Vec<String>,
 }
+

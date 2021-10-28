@@ -499,22 +499,44 @@
 >> - Response 200 
 >> ```json
 >> {
->>   "drive_label": "Local Content Server",
+>>   "drive_label": "Local Content Storage",
 >>   "item_list": [
->>      {
->>        "item_name": "AAA",
->>        "parent_directory": "/kmp/webadmin",
->>        "item_date": "0000-00-00 00:00:00",
->>        "item_type": "file",
->>         "item_size": "0 Byte"
->>      },
->>      {
->>        "item_name": "ABA",
->>        "parent_directory": "/kmp/webadmin",
->>        "item_date": "0000-00-00 00:00:00",
->>        "item_type": "file",
->>         "item_size": "0 Byte"
->>      }
+>>     {
+>>       "item_path": "/kmp/webadmin",
+>>       "item_date": "2021-10-15 14:18",
+>>       "item_type": "directory",
+>>       "item_size": "4.1 KB"
+>>     },
+>>     {
+>>       "item_path": "/kmp/webadmin/file",
+>>       "item_date": "2021-10-21 12:50",
+>>       "item_type": "directory",
+>>       "item_size": "4.1 KB"
+>>     },
+>>     {
+>>       "item_path": "/kmp/webadmin/file/folder123",
+>>       "item_date": "2021-10-21 12:43",
+>>       "item_type": "directory",
+>>       "item_size": "4.1 KB"
+>>     },
+>>     {
+>>       "item_path": "/kmp/webadmin/file/folder123/esting.txt",
+>>       "item_date": "2021-10-21 12:43",
+>>       "item_type": "file",
+>>       "item_size": "8 B"
+>>     },
+>>     {
+>>       "item_path": "/kmp/webadmin/file/testing.txtwww",
+>>       "item_date": "2021-10-21 12:47",
+>>       "item_type": "file",
+>>       "item_size": "8 B"
+>>     },
+>>     {
+>>       "item_path": "/kmp/webadmin/www",
+>>       "item_date": "2021-10-15 14:18",
+>>       "item_type": "directory",
+>>       "item_size": "4.1 KB"
+>>     }
 >>   ]
 >> }
 >> ```
@@ -540,7 +562,7 @@
 >>  }
 >> ```
 
-> ### - /private/api/settings/storage/device/directory/status
+> ### - /private/api/settings/storage/device/rwpermission/status/{drive_partuuid}
 >>
 >> | Header Parameter | Data Type |
 >> | --------- | --------- |
@@ -548,66 +570,6 @@
 >> 
 >> - Body
 >> ```json
->> {
->>   "item_name": "AAA",
->>   "parent_directory": "/kmp/webadmin/file"
->> }
->> ```
->> - Response 200 
->> ```json
->> {
->>   "drive_label": "Local Content Server",
->>   "item_list": [
->>      {
->>        "item_name": "AAA",
->>        "parent_directory": "/kmp/webadmin/file",
->>        "item_date": "0000-00-00 00:00:00",
->>        "item_type": "file",
->>         "item_size": "0 Byte"
->>      },
->>      {
->>        "item_name": "ABA",
->>        "parent_directory": "/kmp/webadmin/file",
->>        "item_date": "0000-00-00 00:00:00",
->>        "item_type": "file",
->>         "item_size": "0 Byte"
->>      }
->>   ]
->> }
->> ```
->>
->> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
-
-> ### - /private/api/settings/storage/device/rwpermission/status
->>
->> | Header Parameter | Data Type |
->> | --------- | --------- |
->> | Authorization | `String` |
->> 
->> - Body
->> ```json
->> {
->>   "drive_partuuid": "2021-10-06-15-49-55-00"
->> }
 >> ```
 >> - Response 200 
 >> ```json

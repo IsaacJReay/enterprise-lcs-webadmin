@@ -406,23 +406,6 @@ pub fn query_existence_from_storage_table_by_path(path: &str) -> bool {
     
 }
 
-pub fn query_existence_from_storage_table_by_mount(mount: &str) -> bool {
-
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
-
-    let mut check_empty_statement = connection
-        .prepare(
-            format!("SELECT EXISTS(SELECT mount_location FROM storagetable WHERE mount_location='{}' LIMIT 1);", mount)
-        )
-            .unwrap();
-
-    check_empty_statement.next().unwrap();
-    let output: u64 = check_empty_statement.read::<i64>(0).unwrap().try_into().unwrap();
-
-    output!=0
-    
-}
-
 pub fn query_mount_by_path_from_storage_table(path: &str) -> String {
     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
