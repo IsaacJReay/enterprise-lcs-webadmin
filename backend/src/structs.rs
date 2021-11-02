@@ -247,19 +247,19 @@ pub struct DriveDescription {
     pub percentage: f32
 }
 
-#[derive(Serialize)]
-pub struct ItemList {
-    pub item_path: String,
-    pub item_date: String,
-    pub item_type: String,
-    pub item_size: String,
-}
+// #[derive(Serialize)]
+// pub struct ItemList {
+//     pub item_path: String,
+//     pub item_date: String,
+//     pub item_type: String,
+//     pub item_size: String,
+// }
 
-#[derive(Serialize)]
-pub struct ItemListExtended {
-    pub drive_label: String,
-    pub item_list: Vec<ItemList>,
-}
+// #[derive(Serialize)]
+// pub struct ItemListExtended {
+//     pub drive_label: String,
+//     pub item_list: Vec<ItemList>,
+// }
 
 #[derive(Deserialize)]
 pub struct MoveOrCopyArgs {
@@ -288,19 +288,19 @@ impl Path {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Metadata {
-    pub isFile: bool,
-    pub isDir: bool,
+    pub is_file: bool,
+    pub is_dir: bool,
     pub size: u64,
 }
 
 impl Metadata {
     pub fn new(meta: std::fs::Metadata) -> Self {
         let size = meta.clone().len();
-        let isFile = meta.clone().is_file();
-        let isDir = meta.clone().is_dir();
+        let is_file = meta.clone().is_file();
+        let is_dir = meta.clone().is_dir();
         Self {
-            isFile,
-            isDir,
+            is_file,
+            is_dir,
             size,
         }
     }

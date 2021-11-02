@@ -13,14 +13,9 @@ use crate::{
     structs::{
         DriveDescription, 
         HttpResponseCustom, 
-        PartUUID, 
-        ItemListExtended,
-        Metadata,
-        Dir,
-        Path,
+        PartUUID,
     }, 
 };
-use walkdir::WalkDir;
 
 #[get("/private/api/settings/storage/status")]
 pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
@@ -139,77 +134,77 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
     } 
 }
 
-#[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
-pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
-    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+// #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
+// pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
+//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
-    if !auth_is_empty{
-        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
-            let olddate = security::extract_token(auth);
-            let passwordstatus: bool = tool::comparedate(olddate);
-            let (_username, password) = db::query_logindata();
-            if passwordstatus {
-                let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
-                if drive_partuuid != "kmp" {
-                    let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
-                    let all_file = linux::query_all_file_in_partition(&password, &path);
-                    Ok(
-                        HttpResponse::Ok().json(
-                            ItemListExtended {
-                                drive_label: "Removeable Device".to_string(),
-                                item_list: all_file,
-                            }
+//     if !auth_is_empty{
+//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+//         if db::query_token(auth){
+//             let olddate = security::extract_token(auth);
+//             let passwordstatus: bool = tool::comparedate(olddate);
+//             let (_username, password) = db::query_logindata();
+//             if passwordstatus {
+//                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
+//                 if drive_partuuid != "kmp" {
+//                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
+//                     let all_file = linux::query_all_file_in_partition(&password, &path);
+//                     Ok(
+//                         HttpResponse::Ok().json(
+//                             ItemListExtended {
+//                                 drive_label: "Removeable Device".to_string(),
+//                                 item_list: all_file,
+//                             }
 
-                        )
-                    )
-                }
-                else{
-                    let all_file = linux::query_all_file_in_partition(&password, "/kmp/webadmin");
-                    Ok(
-                        HttpResponse::Ok().json(
-                            ItemListExtended {
-                                drive_label: "Local Content Storage".to_string(),
-                                item_list: all_file,
-                            }
-                        )
-                    )
-                }
-            }
-            else {
-                db::delete_from_token_table(auth);
-                Ok(
-                    HttpResponse::Gone().json(
-                        HttpResponseCustom{
-                            operation_status: "Failed".to_string(),
-                            reason: "token-timeout".to_string(),
-                        }
-                    )
-                )
-            }
-        }
-        else{
-            Ok(
-                HttpResponse::Unauthorized().json(
-                    HttpResponseCustom {
-                        operation_status: "Failed".to_string(),
-                        reason: "incorrect-token".to_string(),
-                    }
-                )
-            )
-        }
-    }
-    else{
-        Ok(
-            HttpResponse::Unauthorized().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "missing-token".to_string(),
-                }
-            )
-        )
-    } 
-}
+//                         )
+//                     )
+//                 }
+//                 else{
+//                     let all_file = linux::query_all_file_in_partition(&password, "/kmp/webadmin");
+//                     Ok(
+//                         HttpResponse::Ok().json(
+//                             ItemListExtended {
+//                                 drive_label: "Local Content Storage".to_string(),
+//                                 item_list: all_file,
+//                             }
+//                         )
+//                     )
+//                 }
+//             }
+//             else {
+//                 db::delete_from_token_table(auth);
+//                 Ok(
+//                     HttpResponse::Gone().json(
+//                         HttpResponseCustom{
+//                             operation_status: "Failed".to_string(),
+//                             reason: "token-timeout".to_string(),
+//                         }
+//                     )
+//                 )
+//             }
+//         }
+//         else{
+//             Ok(
+//                 HttpResponse::Unauthorized().json(
+//                     HttpResponseCustom {
+//                         operation_status: "Failed".to_string(),
+//                         reason: "incorrect-token".to_string(),
+//                     }
+//                 )
+//             )
+//         }
+//     }
+//     else{
+//         Ok(
+//             HttpResponse::Unauthorized().json(
+//                 HttpResponseCustom {
+//                     operation_status: "Failed".to_string(),
+//                     reason: "missing-token".to_string(),
+//                 }
+//             )
+//         )
+//     } 
+// }
 
 
 
@@ -297,35 +292,20 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
                 if drive_partuuid != "kmp" {
                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
-                    let root_path = WalkDir::new(&path);
-
-                    let mut top = Dir::new(&path, None);
-                    for path in root_path {
-                        let entry_path = path.as_ref().unwrap().path();
-                        let metadata = Metadata::new(entry_path.metadata().unwrap());
-                        let path_str = entry_path.clone().to_str().unwrap();
-                        let path = Path::new(path_str);
-                        config::build_tree(&mut top, &path.parts, Some(metadata), 0);
-                    }
+                    let top = config::generate_file_system_struct(&path);
                     Ok(
                         HttpResponse::Ok()
                             .json(top)
                     )
                 }
                 else{
-                    let root_path = WalkDir::new("/kmp/webadmin");
-
-                    let mut top = Dir::new("/kmp/webadmin", None);
-                    for path in root_path {
-                        let entry_path = path.as_ref().unwrap().path();
-                        let metadata = Metadata::new(entry_path.metadata().unwrap());
-                        let path_str = entry_path.clone().to_str().unwrap();
-                        let path = Path::new(path_str);
-                        config::build_tree(&mut top, &path.parts, Some(metadata), 0);
-                    }
+                    let top = config::generate_file_system_struct("/kmp/webadmin");
+                    
                     Ok(
                         HttpResponse::Ok()
-                            .json(top)
+                            .json(
+                                top
+                            )
                     )
                 }
             }

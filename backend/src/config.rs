@@ -16,13 +16,28 @@ use crate::{
         ZoneRecords,
         Dir,
         Metadata,
+        Path,
     }, 
     linux, 
     tool,
 };
+use walkdir::WalkDir;
 
+pub fn generate_file_system_struct(path: &str) -> Dir {
+    let root_path = WalkDir::new(&path);
 
-pub fn build_tree(node: &mut Dir, parts: &Vec<String>, metadata: Option<Metadata>, depth: usize) {
+    let mut top = Dir::new(&path, None);
+    for path in root_path {
+        let entry_path = path.as_ref().unwrap().path();
+        let metadata = Metadata::new(entry_path.metadata().unwrap());
+        let path_str = entry_path.clone().to_str().unwrap();
+        let path = Path::new(path_str);
+        build_tree(&mut top, &path.parts, Some(metadata), 0);
+    }
+    top
+}
+
+fn build_tree(node: &mut Dir, parts: &Vec<String>, metadata: Option<Metadata>, depth: usize) {
     if depth < parts.len() {
         let item = &parts[depth];
 
