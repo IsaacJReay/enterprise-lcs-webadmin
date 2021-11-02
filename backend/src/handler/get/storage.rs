@@ -309,7 +309,7 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
                     }
                     Ok(
                         HttpResponse::Ok()
-                            .json(serde_json::to_string_pretty(&top).unwrap()                             )
+                            .json(top)
                     )
                 }
                 else{
@@ -325,7 +325,7 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
                     }
                     Ok(
                         HttpResponse::Ok()
-                            .json(serde_json::to_string_pretty(&top).unwrap()                             )
+                            .json(top)
                     )
                 }
             }
