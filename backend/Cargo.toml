@@ -19,11 +19,13 @@ ipnetwork = "*"
 pam = "*"
 run_script = "*"
 sanitize-filename = "*"
-serde = "*"
+serde = {version = "*", features = ["derive"]}
+serde_json = "*"
 sqlite = "*"
 wildmatch = "*"
 rand="0.8.4"
 base64="*"
+walkdir = "*"
 
 [dependencies.byte-unit]
 version = "*"

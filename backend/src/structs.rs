@@ -273,3 +273,69 @@ pub struct DeleteArgs {
     pub selected_filedir: Vec<String>,
 }
 
+
+#[derive(Debug)]
+pub struct Path {
+    pub parts: Vec<String>,
+}
+impl Path {
+    pub fn new(path: &str) -> Path {
+        Path {
+            parts: path.to_string().split("/").map(|s| s.to_string()).collect(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Metadata {
+    pub isFile: bool,
+    pub isDir: bool,
+    pub size: u64,
+}
+
+impl Metadata {
+    pub fn new(meta: std::fs::Metadata) -> Self {
+        let size = meta.clone().len();
+        let isFile = meta.clone().is_file();
+        let isDir = meta.clone().is_dir();
+        Self {
+            isFile,
+            isDir,
+            size,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Dir {
+    name: String,
+    meta: Option<Metadata>,
+    children: Vec<Box<Dir>>,
+}
+
+impl Dir {
+    pub fn new(name: &str, meta: Option<Metadata>) -> Dir {
+        Dir {
+            meta,
+            name: name.to_string(),
+            children: Vec::<Box<Dir>>::new(),
+        }
+    }
+
+    pub fn find_child(&mut self, name: &str) -> Option<&mut Dir> {
+        for c in self.children.iter_mut() {
+            if c.name == name {
+                return Some(c);
+            }
+        }
+        None
+    }
+
+    pub fn add_child<T>(&mut self, leaf: T) -> &mut Self
+    where
+        T: Into<Dir>,
+    {
+        self.children.push(Box::new(leaf.into()));
+        self
+    }
+}

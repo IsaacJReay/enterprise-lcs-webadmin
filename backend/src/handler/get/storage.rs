@@ -9,13 +9,18 @@ use crate::{
     linux, 
     security, 
     tool,
+    config,
     structs::{
         DriveDescription, 
         HttpResponseCustom, 
         PartUUID, 
         ItemListExtended,
+        Metadata,
+        Dir,
+        Path,
     }, 
 };
+use walkdir::WalkDir;
 
 #[get("/private/api/settings/storage/status")]
 pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
@@ -277,3 +282,94 @@ pub async fn get_storage_device_rw_permission(req: HttpRequest) -> Result<HttpRe
     } 
 }
 
+#[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
+pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpResponse> {
+
+    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+    if !auth_is_empty{
+        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+        if db::query_token(auth){
+            let olddate = security::extract_token(auth);
+            let passwordstatus: bool = tool::comparedate(olddate);
+            // let (_username, _password) = db::query_logindata();
+            if passwordstatus {
+                let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
+                if drive_partuuid != "kmp" {
+                    let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
+                    let root_path = WalkDir::new(&path);
+
+                    let mut top = Dir::new(&path, None);
+                    for path in root_path {
+                        let entry_path = path.as_ref().unwrap().path();
+                        let metadata = Metadata::new(entry_path.metadata().unwrap());
+                        let path_str = entry_path.clone().to_str().unwrap();
+                        let path = Path::new(path_str);
+                        config::build_tree(&mut top, &path.parts, Some(metadata), 0);
+                    }
+                    Ok(
+                        HttpResponse::Ok()
+                            .json(serde_json::to_string_pretty(&top).unwrap()                             )
+                    )
+                }
+                else{
+                    let root_path = WalkDir::new("/kmp/webadmin");
+
+                    let mut top = Dir::new("/kmp/webadmin", None);
+                    for path in root_path {
+                        let entry_path = path.as_ref().unwrap().path();
+                        let metadata = Metadata::new(entry_path.metadata().unwrap());
+                        let path_str = entry_path.clone().to_str().unwrap();
+                        let path = Path::new(path_str);
+                        config::build_tree(&mut top, &path.parts, Some(metadata), 0);
+                    }
+                    Ok(
+                        HttpResponse::Ok()
+                            .json(serde_json::to_string_pretty(&top).unwrap()                             )
+                    )
+                }
+            }
+            else {
+                db::delete_from_token_table(auth);
+                Ok(
+                    HttpResponse::Gone().json(
+                        HttpResponseCustom{
+                            operation_status: "Failed".to_string(),
+                            reason: "token-timeout".to_string(),
+                        }
+                    )
+                )
+            }
+        }
+        else{
+            Ok(
+                HttpResponse::Unauthorized().json(
+                    HttpResponseCustom {
+                        operation_status: "Failed".to_string(),
+                        reason: "incorrect-token".to_string(),
+                    }
+                )
+            )
+        }
+    }
+    else{
+        Ok(
+            HttpResponse::Unauthorized().json(
+                HttpResponseCustom {
+                    operation_status: "Failed".to_string(),
+                    reason: "missing-token".to_string(),
+                }
+            )
+        )
+    } 
+
+    
+    // std::fs::write("data.json", serde_json::to_string_pretty(&top).unwrap()).unwrap();
+    // Ok(
+    //     HttpResponse::Ok().json(
+    //         serde_json::to_string_pretty(&top).unwrap()
+    //     )
+    // )
+
+
+}

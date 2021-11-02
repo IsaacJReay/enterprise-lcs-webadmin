@@ -14,10 +14,32 @@ use crate::{
         WirelessNetworkParam,
         PartialZoneRecords,
         ZoneRecords,
+        Dir,
+        Metadata,
     }, 
     linux, 
     tool,
 };
+
+
+pub fn build_tree(node: &mut Dir, parts: &Vec<String>, metadata: Option<Metadata>, depth: usize) {
+    if depth < parts.len() {
+        let item = &parts[depth];
+
+        let mut dir = match node.find_child(&item) {
+            Some(d) => d,
+            None => {
+                let d = Dir::new(&item, metadata.clone());
+                node.add_child(d);
+                match node.find_child(&item) {
+                    Some(d2) => d2,
+                    None => panic!("Got here!"),
+                }
+            }
+        };
+        build_tree(&mut dir, parts, metadata.clone(), depth + 1);
+    }
+}
 
 pub fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
     let mut f = File::open(&filename).expect("no file found");
