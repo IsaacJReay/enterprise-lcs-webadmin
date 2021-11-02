@@ -63,6 +63,7 @@ async fn main() -> Result<()> {
                 .service(handler::get::storage::get_storage_device_page)                    // link: /private/api/settings/storage/device/status
                 // .service(handler::get::storage::get_storage_device_directory_page)          // link: /private/api/settings/storage/device/directory/status
                 .service(handler::get::storage::get_storage_device_rw_permission)           // link: /private/api/settings/storage/device/rwpermission/status
+                .service(handler::get::storage::get_storage_device_page_test)
                                                             //handling POST request
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password
