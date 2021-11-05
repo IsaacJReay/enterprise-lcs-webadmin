@@ -4,18 +4,7 @@ use actix_web::{
     get,
     HttpRequest,
 };
-use crate::{
-    db, 
-    linux, 
-    security, 
-    tool,
-    config,
-    structs::{
-        DriveDescription, 
-        HttpResponseCustom, 
-        PartUUID,
-    }, 
-};
+use crate::{config, db, linux, security, structs::{DriveDescription, HttpResponseCustom, Metadata, PartUUID}, tool};
 
 #[get("/private/api/settings/storage/status")]
 pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
@@ -299,7 +288,9 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
                     )
                 }
                 else{
-                    let top = config::generate_file_system_struct("/kmp/webadmin");
+                    let  top = config::generate_file_system_struct("/kmp/webadmin");
+                    // println!("{}", top.meta.to_string());
+                    
                     
                     Ok(
                         HttpResponse::Ok()

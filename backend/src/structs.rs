@@ -308,9 +308,9 @@ impl Metadata {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Dir {
-    name: String,
-    meta: Option<Metadata>,
-    children: Vec<Box<Dir>>,
+    pub name: String,
+    pub meta: Option<Metadata>,
+    pub children: Vec<Box<Dir>>,
 }
 
 impl Dir {
