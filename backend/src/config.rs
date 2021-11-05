@@ -26,11 +26,11 @@ use walkdir::WalkDir;
 pub fn generate_file_system_struct(path: &str) -> Dir {
     let root_path = WalkDir::new(&path);
 
-    let mut top = Dir::new(&path, Metadata{
+    let mut top = Dir::new(&path, Some(Metadata{
         is_file: false,
         is_dir: true,
         size: 4096
-    });
+    }));
     for path in root_path {
         let entry_path = path.as_ref().unwrap().path();
         let metadata = Metadata::new(entry_path.metadata().unwrap());
