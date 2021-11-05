@@ -202,10 +202,10 @@ const WirelessSetting = () => {
                   </Form.Item>
                   <div className="wireless-radios-options">
                     <Form.Item name="qos" valuePropName="checked">
-                      <Radio value="QOS">QOS</Radio>
+                      <Checkbox value="QOS">QOS</Checkbox>
                     </Form.Item>
                     <Form.Item name="hw_n_mode" valuePropName="checked">
-                      <Radio value="802.11N">802.11N</Radio>
+                      <Checkbox value="802.11N">802.11N</Checkbox>
                     </Form.Item>
                   </div>
                 </div>

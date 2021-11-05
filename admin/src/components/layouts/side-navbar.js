@@ -8,6 +8,7 @@ import {
   UngroupOutlined,
   CloudServerOutlined,
   SettingOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
 
 const { Sider } = Layout;
@@ -203,6 +204,18 @@ const SideNavBar = () => {
             </Menu.Item>
             <Menu.Item key="/management/time-setting">
               <Link to="/management/time-setting">Time Settings</Link>
+            </Menu.Item>
+          </SubMenu>
+
+          <SubMenu key="/website" icon={<GlobalOutlined />} title="Website">
+            <Menu.Item key="/website/internal">
+              <Link to="/website/internal">Internal Website</Link>
+            </Menu.Item>
+            <Menu.Item key="/website/custom">
+              <Link to="/website/custom">Custom Hosting</Link>
+            </Menu.Item>
+            <Menu.Item key="/website/download">
+              <Link to="/website/download">Download Website</Link>
             </Menu.Item>
           </SubMenu>
 

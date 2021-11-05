@@ -1,10 +1,22 @@
-import React from "react";
-import { Row, Col, Layout, Form, Avatar, Input, Button } from "antd";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Layout, Form, Avatar, Input, Button, message } from "antd";
 import Avatar1 from "../../assets/images/avatar/avatar.png";
+import axios from "axios";
 
 const { Content } = Layout;
 
 const UserAccount = () => {
+  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+  const [user, setUser] = useState({});
+
+  // ------token ------
+
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
+
   // ------layot form ---------
   const layout = {
     labelCol: {
@@ -14,6 +26,57 @@ const UserAccount = () => {
       span: 16,
     },
   };
+
+  // -----------on Apply ----------
+
+  const handleApply = (data) => {
+    const inputData = {
+      old_password: data.current_password,
+      new_password: data.new_password,
+    };
+
+    axios
+      .post("http://10.42.0.188:8080/private/api/user/password", inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
+
+      .then((res) => {
+        if (res.data.operation_status === "Failed") {
+          setLoading(true);
+          message.error("Operation Failed! ");
+          setLoading(false);
+        } else {
+          setLoading(true);
+          message.success("Successful!");
+          window.location.replace("/logout");
+          setLoading(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  // ------query user -----------
+  useEffect(() => {
+    setLoading(true);
+    axios({
+      method: "GET",
+      url: "http://10.42.0.188:8080/private/api/user/query",
+      headers: {
+        "content-type": "application/json",
+        ...auth,
+      },
+    })
+      .then((res) => {
+        setUser(res.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <React.Fragment>
@@ -25,11 +88,17 @@ const UserAccount = () => {
                 <h1>Change Password</h1>
               </div>
               <hr />
-              <Form {...layout}>
+              <div className="user-information">
+                <span>
+                  After the password is up to date the site will logout!
+                </span>
+              </div>
+              <Form {...layout} form={form} onFinish={handleApply}>
                 <div className="user-account-contanier">
                   <Avatar size={100} className="navbar-avatar" src={Avatar1} />
-                  <h2>Hello world</h2>
+                  <h2>{user.username}</h2>
                 </div>
+
                 <Form.Item
                   label="Current Password"
                   name="current_password"

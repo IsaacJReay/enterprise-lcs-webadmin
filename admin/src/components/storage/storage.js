@@ -1,13 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Col, Row, Collapse, Progress } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
-import myImage from "../../assets/images/storages.png";
+import myImage from "../../assets/images/Hard-Drive3.png";
+import driver from "../../assets/images/Hard-Drive.png";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
 
 const Storages = () => {
+  // -------state management ---------------
+
+  const [loading, setLoading] = useState(false);
+  const [storages, setStorages] = useState([]);
+
+  // -------token ----------
+
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    axios({
+      method: "GET",
+      url: "http://10.42.0.188:8080/private/api/settings/storage/status",
+      headers: {
+        "content-type": "application/json",
+        ...auth,
+      },
+    })
+      .then((res) => {
+        setStorages(res.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <React.Fragment>
       <Content>
@@ -18,6 +51,7 @@ const Storages = () => {
                 <h1>File Storages</h1>
               </div>
               <hr />
+
               <Collapse
                 bordered={false}
                 defaultActiveKey={["1"]}
@@ -25,61 +59,86 @@ const Storages = () => {
                   <CaretRightOutlined rotate={isActive ? 90 : 0} />
                 )}
               >
-                <Panel header="All devices (2)" key="1">
-                  <div className="storages-container">
-                    <div className="item-storages">
-                      <Link to="storages/local">
-                        <Row gutter={24}>
-                          <Col span={3}>
-                            <img
-                              src={myImage}
-                              className="storages-icon"
-                              alt="storages picture"
-                            />
-                          </Col>
-                          <Col span={21}>
-                            <p>Local Content Storage</p>
-                            <Progress
-                              percent={70}
-                              showInfo={false}
-                              strokeWidth={25}
-                              status="active"
-                              strokeColor={{
-                                "0%": "#65DDFF",
-                                "100%": "#E2F516",
-                              }}
-                            />
-                            <p>3T free of 4T</p>
-                          </Col>
-                        </Row>
-                      </Link>
-                    </div>
-                    <div className="item-storages">
-                      <Row gutter={24}>
-                        <Col span={3}>
-                          <img
-                            src={myImage}
-                            className="storages-icon"
-                            alt="storages picture"
-                          />
-                        </Col>
-                        <Col span={21}>
-                          <p>Removeable Device</p>
-                          <Progress
-                            percent={30}
-                            showInfo={false}
-                            strokeWidth={25}
-                            status="active"
-                            strokeColor={{
-                              "0%": "#65DDFF",
-                              "100%": "#E2F516",
-                            }}
-                          />
-                          <p>3T free of 4T</p>
-                        </Col>
-                      </Row>
-                    </div>
-                  </div>
+                <Panel
+                  className="storage-header"
+                  header={<span>All devices ({storages.length})</span>}
+                  key="1"
+                >
+                  {storages.map((res, index) => {
+                    if (index === 0) {
+                      return (
+                        <div className="storages-container">
+                          <div className="item-storages">
+                            <Link
+                              to={`/storages/setting/${res.drive_partuuid.drive_partuuid}`}
+                            >
+                              <Row gutter={24}>
+                                <Col span={3}>
+                                  <img
+                                    src={myImage}
+                                    className="storages-icon"
+                                    alt="storages picture"
+                                  />
+                                </Col>
+                                <Col span={21}>
+                                  <p>{res.drive_label}</p>
+                                  <Progress
+                                    percent={res.percentage}
+                                    showInfo={false}
+                                    strokeWidth={25}
+                                    status="active"
+                                    strokeColor={{
+                                      "0%": "#65DDFF",
+                                      "100%": "#E2F516",
+                                    }}
+                                  />
+                                  <p>
+                                    {res.free_space} free of {res.total_space}
+                                  </p>
+                                </Col>
+                              </Row>
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="storages-container">
+                          <div className="item-storages">
+                            <Link
+                              to={`/storages/setting/${res.drive_partuuid.drive_partuuid}`}
+                            >
+                              <Row gutter={24}>
+                                <Col span={3}>
+                                  <img
+                                    src={driver}
+                                    className="storages-icon2"
+                                    alt="storages picture"
+                                  />
+                                </Col>
+                                <Col span={21}>
+                                  <p>{res.drive_label}</p>
+                                  <Progress
+                                    percent={res.percentage}
+                                    showInfo={false}
+                                    strokeWidth={25}
+                                    status="active"
+                                    strokeColor={{
+                                      "0%": "#65DDFF",
+                                      "100%": "#E2F516",
+                                    }}
+                                  />
+                                  <p>
+                                    {res.free_space} free of {res.total_space}
+                                  </p>
+                                </Col>
+                              </Row>
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    }
+                  })}
                 </Panel>
               </Collapse>
             </div>

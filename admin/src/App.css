@@ -8,6 +8,12 @@ html {
 .h3 {
   font-weight: 700;
 }
+* {
+  scrollbar-width: thin;
+}
+b {
+  color: red !important;
+}
 .ant-layout.ant-layout-has-sider > .ant-layout,
 .ant-layout.ant-layout-has-sider > .ant-layout-content {
   overflow-x: hidden;
@@ -216,6 +222,9 @@ html {
   padding: 10px 20px;
   border-radius: 8px;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 .container-header h1 {
   color: #fff;
@@ -259,9 +268,9 @@ html {
   vertical-align: middle;
   font-size: 13px;
 }
-/* .select-option {
-  width: auto !important;
-} */
+.select-option {
+  min-width: 40% !important;
+}
 .ant-form-item .ant-select,
 .ant-form-item .ant-cascader-picker {
   width: 255px !important;
@@ -355,7 +364,11 @@ html {
   margin-bottom: -20px;
 }
 .container-buttons {
-  float: right;
+  /* float: right; */
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  column-gap: 20px;
 }
 .add-button {
   border-radius: 4px !important;
@@ -368,7 +381,7 @@ html {
 .content-padding {
   padding: 30px 50px;
 }
-.ant-collapse-header {
+.storage-header .ant-collapse-header {
   font-size: 20px;
 }
 .storages-container {
@@ -388,6 +401,11 @@ html {
 .storages-icon {
   width: 80px;
   margin: 0;
+  display: block;
+}
+.storages-icon2 {
+  width: 80px;
+  margin-top: 20px;
   display: block;
 }
 .ant-progress-inner,
@@ -461,6 +479,8 @@ html {
 }
 .ant-btn-circle {
   border-radius: 50px !important;
+  background-color: #0caedc !important;
+  border: 1px solid #0caedc !important;
 }
 .back-btn {
   font-size: 25px;
@@ -470,7 +490,7 @@ html {
   padding: 8px 20px;
   font-size: 20px;
   font-weight: 700;
-  background-color: bisque;
+  background-color: #e0e0e0;
   width: 100%;
 }
 .btn-options-storages {
@@ -483,6 +503,10 @@ html {
 }
 .local-data-container {
   padding: 15px 20px;
+  max-width: 100%;
+  overflow: scroll;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 .wireless-radios-options {
   display: flex;
@@ -540,10 +564,6 @@ html {
   border-color: #000 !important;
 }
 .restore-settting {
-  display: grid !important;
-  place-items: center !important;
-  margin-left: 15px !important;
-  margin-bottom: -1px !important;
   margin-top: 30px !important;
 }
 .restore-checkbox {
@@ -563,4 +583,111 @@ html {
 .time-pickup {
   border-radius: 8px !important;
   width: 250px !important;
+}
+.domain_name {
+  font-size: 20px;
+  font-weight: bold;
+}
+.refresh-page {
+  font-size: 25px;
+  color: #fff !important;
+  position: relative;
+  top: 10px;
+}
+.website-logo {
+  width: 10%;
+}
+.website-form {
+  margin-top: 15px;
+  padding: 0 150px;
+}
+.advance-search-button {
+  border-radius: 8px !important;
+  border: 2px solid #0caedc !important;
+  color: #0caedc !important;
+}
+.advance-search-button:hover {
+  color: #fff !important;
+  background-color: #0caedc !important;
+}
+.container-advance-search {
+  padding: 20px 30px;
+  border-radius: 8px;
+  background-color: #c4c4c4;
+}
+.ant-collapse-borderless > .ant-collapse-item {
+  border-bottom: none !important;
+}
+.ant-collapse > .ant-collapse-item {
+  border-bottom: none !important;
+}
+.time-container {
+  margin-top: 10px;
+}
+.time-container2 {
+  margin-top: 90px;
+}
+.custom-radio {
+  position: absolute !important;
+  top: 270px !important;
+  left: 0px !important;
+}
+/* .ant-upload-list {
+  position: absolute;
+  left: -325px;
+  top: 0px;
+} */
+
+.upload-list-inline .ant-upload-list-item {
+  float: left;
+  width: 315px;
+  margin-right: 8px;
+  border-radius: 8px !important;
+}
+
+.upload-list-inline [class*="-upload-list-rtl"] .ant-upload-list-item {
+  float: right;
+}
+.user-information {
+  width: 100%;
+  padding: 30px 20px;
+  justify-content: center;
+  text-align: center;
+  color: red;
+  border-radius: 8px;
+  border: 2px solid red;
+  background-color: rgba(255, 0, 0, 0.137);
+}
+.icons-table {
+  margin-right: 10px;
+}
+.file-name {
+  margin-top: 7px;
+}
+.file-container {
+  list-style: none;
+}
+.list-file {
+  width: 100%;
+  display: block;
+}
+.selected-file {
+  background-color: #4dd8ff42;
+  padding: 5px 15px 0px 5px;
+  border-radius: 8px;
+}
+.file-container li {
+  padding: 0 0 0 5px;
+}
+.header-file-manager {
+  background-color: #e0e0e0;
+  padding: 15px 15px 0px 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+.file-size {
+  margin-top: 10px;
+}
+.folder-icon {
+  margin-top: 5px;
 }

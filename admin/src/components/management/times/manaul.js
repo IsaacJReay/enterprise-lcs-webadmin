@@ -1,55 +1,111 @@
 import React, { useState } from "react";
-import { Form, Button, DatePicker, TimePicker } from "antd";
+import {
+  Form,
+  Button,
+  DatePicker,
+  TimePicker,
+  message,
+  ConfigProvider,
+  Modal,
+} from "antd";
+import axios from "axios";
+import "moment/locale/zh-cn";
+import locale from "antd/lib/locale/en_US";
+import moment from "moment";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const CustomeTime = ({ pick }) => {
-  const [value, setValue] = useState(null);
+  const [loading, setLoading] = useState(false);
+  let now = new Date();
 
-  const onChange = (time) => {
-    setValue(time);
+  // const onChange = (time) => {
+  //   setValue(time);
+  // };
+
+  // ------token ------
+
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
   };
+
+  // ------- apply button ---------
+
+  const handleApply = (data) => {
+    const inputData = {
+      time: data.time,
+      date: data.date,
+    };
+
+    axios
+      .post(
+        "http://10.42.0.188:8080/private/api/settings/time/timedate",
+        inputData,
+        {
+          headers: {
+            "content-type": "application/json",
+            ...auth,
+          },
+        }
+      )
+
+      .then((res) => {
+        if (res.data.operation_status === "Success") {
+          setLoading(true);
+          showPromiseConfirm();
+          setLoading(false);
+        } else {
+          setLoading(true);
+          message.error("Operation Failed! ");
+          setLoading(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  function showPromiseConfirm() {
+    Modal.confirm({
+      title: "Are you sure?",
+      icon: <ExclamationCircleOutlined />,
+      content: "When clicked the OK button, this dialog will be logout!",
+      onOk() {
+        return window.location.replace("/logout");
+      },
+      onCancel() {},
+    });
+  }
 
   return (
     <React.Fragment>
-      <Form>
-        {pick === "manual" ? (
+      <Form onFinish={handleApply}>
+        {pick === false ? (
           <React.Fragment>
-            <Form.Item
-              label="Time"
-              name="time"
-              rules={[
-                {
-                  required: true,
-                  message: "Time is required!",
-                },
-              ]}
-            >
+            <Form.Item label="Time" name="time">
               <TimePicker
-                value={value}
-                onChange={onChange}
+                defaultValue={moment(now, "HH:mm:ss")}
+                defaultOpen={moment(now, "HH:mm:ss")}
                 size="large"
                 className="time-pickup"
                 use12Hours
                 format="h:mm:ss A"
+                showNow={true}
               />
             </Form.Item>
-            <Form.Item
-              label="Date"
-              name="date"
-              rules={[
-                {
-                  required: true,
-                  message: "Date is required!",
-                },
-              ]}
-            >
-              <DatePicker className="time-pickup" size="large" />
+            <Form.Item label="Date" name="date">
+              <DatePicker
+                showToday
+                className="time-pickup"
+                size="large"
+                defaultValue={moment(now, " YYYY/MM/DD")}
+                defaultPickerValue={moment(now, " YYYY/MM/DD")}
+              />
             </Form.Item>
             <Form.Item>
               <Button
                 size="large"
                 className="button-update"
                 type="primary"
-                htmlType="button"
+                htmlType="submit"
               >
                 Apply
               </Button>
@@ -57,42 +113,35 @@ const CustomeTime = ({ pick }) => {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <Form.Item
-              label="Time"
-              name="time"
-              rules={[
-                {
-                  required: true,
-                  message: "Time is required!",
-                },
-              ]}
-            >
+            <Form.Item label="Time" name="time">
               <TimePicker
-                value={value}
-                onChange={onChange}
-                disabled
-                className="time-pickup"
+                defaultValue={moment(now, "HH:mm:ss")}
+                defaultOpen={moment(now, "HH:mm:ss")}
                 size="large"
+                className="time-pickup"
+                use12Hours
+                format="h:mm:ss A"
+                disabled
               />
             </Form.Item>
-            <Form.Item
-              label="Date"
-              name="date"
-              rules={[
-                {
-                  required: true,
-                  message: "Date is required!",
-                },
-              ]}
-            >
-              <DatePicker className="time-pickup" size="large" disabled />
+            <Form.Item label="Date" name="date">
+              <ConfigProvider locale={locale}>
+                <DatePicker
+                  defaultValue={moment(now, " YYYY/MM/DD")}
+                  defaultPickerValue={moment(now, " YYYY/MM/DD")}
+                  showToday
+                  className="time-pickup"
+                  size="large"
+                  disabled
+                />
+              </ConfigProvider>
             </Form.Item>
             <Form.Item>
               <Button
                 size="large"
                 className="button-update"
                 type="primary"
-                htmlType="button"
+                htmlType="submit"
                 disabled
               >
                 Apply

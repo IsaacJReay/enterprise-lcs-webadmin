@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.8.3",
     "antd": "^4.16.2",
     "axios": "^0.21.1",
+    "js-file-download": "^0.4.12",
     "jsonwebtoken": "^8.5.1",
     "moment-timezone": "^0.5.33",
     "react": "^17.0.2",

@@ -1,25 +1,25 @@
 [
   {
     "id": "1",
-    "sub-domain": "nso1",
+    "sub_domain": "nso1",
     "types": "",
     "address": "192.168.0.101"
   },
   {
     "id": "2",
-    "sub-domain": "sala",
+    "sub_domain": "sala",
     "types": "",
     "address": "sno1"
   },
   {
     "id": "3",
-    "sub-domain": "@",
+    "sub_domain": "@",
     "types": "",
     "address": "mail"
   },
   {
-    "id": "3",
-    "sub-domain": "mail",
+    "id": "4",
+    "sub_domain": "mail",
     "types": "",
     "address": "192.168.0.101"
   }

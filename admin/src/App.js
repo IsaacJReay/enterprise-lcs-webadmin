@@ -1,4 +1,11 @@
 import React from "react";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
 import "./App.css";
 import "antd/dist/antd.css";
 import { BrowserRouter as Router, Switch } from "react-router-dom";
@@ -8,19 +15,22 @@ import WANSetting from "./components/network/WAN";
 import WLANSetting from "./components/network/WLAN";
 import WirelessSetting from "./components/wireless/wireless";
 import DNSSetting from "./components/DNS/dns";
-import DNSManagement from "./components/DNS/manage-dns";
+import DNSManagement from "./components/DNS/dns-management/manage-dns";
 import PrivateRoute from "./privateRoute";
 import PublicRoute from "./publicRoute";
 import Storages from "./components/storage/storage";
 import Logout from "./components/logout";
 import AboutUs from "./components/about";
-import LocalStorage from "./components/storage/local-storage";
+import StoragesManagement from "./components/storage/storages-management";
 import SystemUpdates from "./components/management/updates/system-updates";
 import UserAccount from "./components/management/user";
 import BackupSetting from "./components/management/backup/backup-restore";
 import ResetAll from "./components/management/reset-all";
 import TimeSetting from "./components/management/times/time-setting";
-
+import InternalWebsite from "./components/website/internal";
+import CustomWebsite from "./components/website/custom";
+import DownloadWebsite from "./components/website/download-website/download";
+const queryClient = new QueryClient();
 function App() {
   return (
     <React.Fragment>
@@ -36,11 +46,15 @@ function App() {
           <PrivateRoute exact path="/dns" component={DNSSetting} />
           <PrivateRoute
             exact
-            path="/dns-management"
+            path="/dns-management/:id"
             component={DNSManagement}
           />
           <PrivateRoute exact path="/storages" component={Storages} />
-          <PrivateRoute exact path="/storages/local" component={LocalStorage} />
+          <PrivateRoute
+            exact
+            path="/storages/setting/:id"
+            component={StoragesManagement}
+          />
           <PrivateRoute exact path="/about-us" component={AboutUs} />
           <PrivateRoute
             exact
@@ -62,6 +76,21 @@ function App() {
             exact
             path="/management/time-setting"
             component={TimeSetting}
+          />
+          <PrivateRoute
+            exact
+            path="/website/internal"
+            component={InternalWebsite}
+          />
+          <PrivateRoute
+            exact
+            path="/website/custom"
+            component={CustomWebsite}
+          />
+          <PrivateRoute
+            exact
+            path="/website/download"
+            component={DownloadWebsite}
           />
         </Switch>
       </Router>

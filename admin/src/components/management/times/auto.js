@@ -1,27 +1,77 @@
 import React, { useState } from "react";
-import { Form, Select, Button, Row, Col } from "antd";
+import { Form, Select, Button, Row, Col, message, Modal } from "antd";
+import axios from "axios";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const moment = require("moment-timezone");
 
-const Automaticaly = ({ pick }) => {
+const Automaticaly = ({ pick, items }) => {
   const moments = moment.tz.names();
   const defalutTime = moment.tz.guess();
-  //   const [pickValue, setPickValue] = useState(defalutTime);
+  const [loading, setLoading] = useState(false);
 
-  //   const onChange = (value) => {
-  //     setPickValue(value);
-  //   };
+  // ------token ------
+
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
+
+  // ------- apply button ---------
+
+  const handleApply = () => {
+    const inputData = {
+      timezone: defalutTime,
+    };
+
+    axios
+      .post(
+        "http://10.42.0.188:8080/private/api/settings/time/timezone",
+        inputData,
+        {
+          headers: {
+            "content-type": "application/json",
+            ...auth,
+          },
+        }
+      )
+
+      .then((res) => {
+        if (res.data.operation_status === "Success") {
+          setLoading(true);
+          showPromiseConfirm();
+          setLoading(false);
+        } else {
+          setLoading(true);
+          message.error("Operation Failed! ");
+          setLoading(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  function showPromiseConfirm() {
+    Modal.confirm({
+      title: "Are you sure?",
+      icon: <ExclamationCircleOutlined />,
+      content: "When clicked the OK button, this dialog will be logout!",
+      onOk() {
+        return window.location.replace("/logout");
+      },
+      onCancel() {},
+    });
+  }
 
   return (
     <React.Fragment>
-      <Form>
+      <Form onFinish={handleApply}>
         <Form.Item>
-          {pick === "auto" ? (
+          {pick === true ? (
             <div>
               <Row gutter={[12, 12]}>
-                <Col span={20}>
-                  <Form.Item label="Zone">
+                <Col span={10}>
+                  <Form.Item label="Zone" name="zone">
                     <Select
                       defaultValue={defalutTime}
                       size="large"
@@ -35,12 +85,12 @@ const Automaticaly = ({ pick }) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={14}>
                   <Form.Item>
                     <Button
                       size="large"
                       type="primary"
-                      typeof="button"
+                      htmlType="submit"
                       className="button-update"
                     >
                       Update
@@ -51,7 +101,7 @@ const Automaticaly = ({ pick }) => {
             </div>
           ) : (
             <Row gutter={[12, 12]}>
-              <Col span={20}>
+              <Col span={10}>
                 <Form.Item label="Zone">
                   <Select
                     defaultValue={defalutTime}
@@ -67,12 +117,12 @@ const Automaticaly = ({ pick }) => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col span={14}>
                 <Form.Item>
                   <Button
                     size="large"
                     type="primary"
-                    typeof="button"
+                    htmlType="submit"
                     className="button-update"
                     disabled
                   >
@@ -84,10 +134,10 @@ const Automaticaly = ({ pick }) => {
           )}
         </Form.Item>
         <Form.Item label="Time">
-          <time className="date-time">10:01:01 AM</time>
+          <time className="date-time">{items.time}</time>
         </Form.Item>
         <Form.Item label="Date">
-          <time className="date-time">2021-05-21</time>
+          <time className="date-time">{items.date}</time>
         </Form.Item>
       </Form>
     </React.Fragment>

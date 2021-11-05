@@ -16,12 +16,14 @@ const { Content } = Layout;
 const { Option } = Select;
 
 const moment = require("moment-timezone");
-const getToken = localStorage.getItem("token");
-const auth = {
-  Authorization: "Bearer " + getToken,
-};
 
 const WLANSetting = () => {
+  // ------token ------
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
+
   const [form] = Form.useForm();
   // ---state -------
   const moments = moment.tz.names();

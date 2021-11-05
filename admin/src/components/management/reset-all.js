@@ -1,9 +1,51 @@
-import React from "react";
-import { Form, Checkbox, Button, Row, Col, Layout } from "antd";
+import React, { useState } from "react";
+import { Form, Checkbox, Button, Row, Col, Layout, message } from "antd";
+import axios from "axios";
 
 const { Content } = Layout;
 
 const ResetAll = () => {
+  const [loading, setLoading] = useState(false);
+  const [checked, setChecked] = useState(false);
+  // ------token ------
+
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
+
+  // -------onchange ------------
+
+  const onChange = (e) => {
+    setChecked(e.target.checked);
+  };
+
+  // -----------on Apply ----------
+
+  const handleApply = () => {
+    axios({
+      method: "POST",
+      url: "http://10.42.0.188:8080/private/api/settings/reset",
+      headers: {
+        "content-type": "application/json",
+        ...auth,
+      },
+    })
+      .then((res) => {
+        if (res.data.operation_status === "Failed") {
+          setLoading(true);
+          message.error("Operation Failed! ");
+          setLoading(false);
+        } else {
+          setLoading(true);
+          message.success("Successful!");
+          window.location.replace("/logout");
+          setLoading(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <React.Fragment>
       <Content>
@@ -19,9 +61,9 @@ const ResetAll = () => {
                   Click the following button to reset all configuration settings
                   to their default values.
                 </h3>
-                <Form>
+                <Form onFinish={handleApply}>
                   <Form.Item name="check">
-                    <Checkbox style={{ color: "red " }}>
+                    <Checkbox style={{ color: "red " }} onChange={onChange}>
                       Confirm that all changed settings will be lost when
                       defaults are restored.
                     </Checkbox>
@@ -30,8 +72,9 @@ const ResetAll = () => {
                     <Button
                       size="large"
                       type="primary"
-                      typeof="submit"
+                      htmlType="submit"
                       className="button-apply2"
+                      disabled={checked !== true}
                     >
                       Reset
                     </Button>

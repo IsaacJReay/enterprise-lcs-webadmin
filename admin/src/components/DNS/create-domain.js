@@ -1,55 +1,82 @@
-import React from "react";
-import { Modal, Button, Form, Input, Select, Checkbox } from "antd";
-import { FiX } from "react-icons/fi";
+import React, { useState } from "react";
+import { Button, Form, Input, message } from "antd";
+import axios from "axios";
 
-const { Option } = Select;
+const CreateDomain = () => {
+  //   // -----state ---------
+  const [loading, setLoading] = useState(false);
 
-const CreateDomain = ({ handleCancel, handleOk, visible }) => {
-  const layout = {
-    labelCol: {
-      span: 8,
-    },
-    wrapperCol: {
-      span: 16,
-    },
+  //   // ------- token ----------
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
+
+  //   // ------- apply button ---------
+
+  const handleApply = (data) => {
+    const inputData = {
+      domain_name: data.domain_name,
+    };
+
+    axios
+      .post(
+        "http://10.42.0.188:8080/private/api/settings/dns/domain_name/creation",
+        inputData,
+        {
+          headers: {
+            "content-type": "application/json",
+            ...auth,
+          },
+        }
+      )
+
+      .then((res) => {
+        if (res.data.operation_status === "Success") {
+          setLoading(true);
+          message.success("Successful!");
+          setLoading(false);
+          window.location.reload();
+        } else {
+          setLoading(true);
+          message.error("Operation Failed! ");
+          setLoading(false);
+        }
+      })
+
+      .catch((err) => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+        message.error(err.response.data.reason);
+      });
   };
 
   return (
     <React.Fragment>
-      <Modal
-        width={800}
-        title="Creating Domain"
-        footer={null}
-        closeIcon={<FiX className="close-icon" />}
-        visible={visible}
-        onCancel={handleCancel}
-        onOk={handleOk}
-      >
-        <div className="container-adding-records">
-          <Form {...layout} size="large">
-            <Form.Item
-              label="Domain name"
-              name="name"
-              rules={[{ required: true, message: "Please input domain name!" }]}
-            >
-              <Input placeholder="text here ..." size="large" />
-            </Form.Item>
-            <Form.Item label="Status" name="status">
-              <Checkbox>Hosting</Checkbox>
-            </Form.Item>
-            <Form.Item>
-              <Button
-                className="button-apply"
-                size="large"
-                htmlType="submit"
-                type="primary"
-              >
-                Submit
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      </Modal>
+      <Form layout="inline" onFinish={handleApply}>
+        <Form.Item
+          label="Domain name"
+          name="domain_name"
+          rules={[{ required: true, message: "Input domain name!" }]}
+        >
+          <Input
+            placeholder="text here ..."
+            size="large"
+            className="input-info"
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="button-update"
+            size="large"
+          >
+            Create
+          </Button>
+        </Form.Item>
+      </Form>
     </React.Fragment>
   );
 };
