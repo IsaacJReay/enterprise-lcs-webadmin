@@ -277,7 +277,7 @@ pub async fn get_storage_device_rw_permission(req: HttpRequest) -> Result<HttpRe
     } 
 }
 
-#[get("/private/api/settings/storage/device/status/test/{drive_partuuid}")]
+#[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
 pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpResponse> {
 
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
