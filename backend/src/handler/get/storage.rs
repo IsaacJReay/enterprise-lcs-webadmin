@@ -4,7 +4,7 @@ use actix_web::{
     get,
     HttpRequest,
 };
-use crate::{config, db, linux, security, structs::{DriveDescription, HttpResponseCustom, Metadata, PartUUID}, tool};
+use crate::{config, db, linux, security, structs::{DriveDescription, HttpResponseCustom, PartUUID}, tool};
 
 #[get("/private/api/settings/storage/status")]
 pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
