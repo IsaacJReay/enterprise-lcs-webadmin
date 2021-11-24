@@ -2,6 +2,10 @@ use serde::{
     Deserialize, 
     Serialize,
 };
+use chrono::{
+    DateTime, 
+    Utc,
+};
 
 #[derive(Serialize)]
 pub struct UserName {
@@ -274,58 +278,94 @@ pub struct DeleteArgs {
 }
 
 
-#[derive(Debug)]
-pub struct Path {
+// #[derive(Debug)]
+pub struct PathPartition {
     pub parts: Vec<String>,
 }
-impl Path {
-    pub fn new(path: &str) -> Path {
-        Path {
-            parts: path.to_string().split("/").map(|s| s.to_string()).collect(),
+impl PathPartition {
+    pub fn new(current_path: &str) -> PathPartition {
+        PathPartition {
+            parts: {
+                current_path
+                    .to_string()
+                    .split("/")
+                    .filter(
+                        |filter_argument| 
+                        !filter_argument.is_empty()
+                    )
+                        .map(
+                            |s|
+                            s.to_string()
+                    )
+                    .collect::<Vec<String>>()
+            },
         }
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Metadata {
-    pub is_file: bool,
-    pub is_dir: bool,
-    pub size: u64,
+#[derive(Clone, Deserialize, Serialize)]
+pub struct ItemMetaData {
+    pub item_last_modify_date: String,
+    pub item_is_dir: bool,
+    pub item_size: u64,
 }
 
-impl Metadata {
+impl ItemMetaData {
     pub fn new(meta: std::fs::Metadata) -> Self {
         let size = meta.clone().len();
-        let is_file = meta.clone().is_file();
         let is_dir = meta.clone().is_dir();
+        let system_modified_date: DateTime<Utc> = meta.clone().modified().unwrap().into();
+        let modified_date = system_modified_date
+            .to_rfc3339()
+            .split("T")
+            .map(
+                |argument| {
+                    let new_argument = match argument.contains(".") {
+                        true => argument
+                            .split(".")
+                            .map(
+                                |new_part| new_part.to_string()
+                            )
+                            .collect::<Vec<String>>()
+                            .first()
+                            .unwrap()
+                            .to_string(),
+                        false => argument.to_string(),
+                    };
+                    new_argument
+                }
+            )
+            .collect::<Vec<String>>()
+            .join(" ");
+
         Self {
-            is_file,
-            is_dir,
-            size,
+            item_last_modify_date: modified_date,
+            item_is_dir: is_dir,
+            item_size: size,
         }
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Dir {
-    pub name: String,
-    pub meta: Option<Metadata>,
-    pub children: Vec<Box<Dir>>,
+#[derive(Clone, Deserialize, Serialize)]
+pub struct DirectoryInfo {
+    name: String,
+    meta: Option<ItemMetaData>,
+    children: Vec<Box<DirectoryInfo>>,
 }
 
-impl Dir {
-    pub fn new(name: &str, meta: Option<Metadata>) -> Dir {
-        Dir {
+impl DirectoryInfo {
+    pub fn new(child_name: &str, meta: Option<ItemMetaData>) -> DirectoryInfo {
+        DirectoryInfo {
             meta,
-            name: name.to_string(),
-            children: Vec::<Box<Dir>>::new(),
+            child_name: child_name.to_string(),
+            children: Vec::<Box<DirectoryInfo>>::new(),
         }
     }
 
-    pub fn find_child(&mut self, name: &str) -> Option<&mut Dir> {
-        for c in self.children.iter_mut() {
-            if c.name == name {
-                return Some(c);
+    pub fn find_child(&mut self, child_name: &str) -> Option<&mut DirectoryInfo> {
+        for each_item in self.children.iter_mut() {
+            if each_item.name == child_name {
+                return Some(each_item);
             }
         }
         None
@@ -333,7 +373,7 @@ impl Dir {
 
     pub fn add_child<T>(&mut self, leaf: T) -> &mut Self
     where
-        T: Into<Dir>,
+        T: Into<DirectoryInfo>,
     {
         self.children.push(Box::new(leaf.into()));
         self

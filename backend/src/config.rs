@@ -1,3 +1,5 @@
+use ipnetwork::Ipv4Network;
+use walkdir::WalkDir;
 use std::{
     io::prelude::*,
     fs::{
@@ -5,58 +7,82 @@ use std::{
         metadata
     }
 };
-use ipnetwork::Ipv4Network;
 use crate::{
     db, 
+    linux, 
+    tool,
     structs::{
         HostapdParam, 
         StaticWiredNetworkParam, 
         WirelessNetworkParam,
         PartialZoneRecords,
         ZoneRecords,
-        Dir,
-        Metadata,
-        Path,
+        DirectoryInfo,
+        ItemMetaData,
+        PathPartition,
     }, 
-    linux, 
-    tool,
 };
-use walkdir::WalkDir;
 
-pub fn generate_file_system_struct(path: &str) -> Dir {
-    let root_path = WalkDir::new(&path);
+pub fn generate_file_system_struct(linux_path: &str) -> DirectoryInfo {
+    let root_path = WalkDir::new(linux_path);
+    let root_path_metadata = std::fs::metadata(linux_path).unwrap();
+    let root_path_length = PathPartition::new(linux_path).parts.len();
+    let mut main_directory_info = DirectoryInfo::new(
+        linux_path, 
+        Some(
+            ItemMetaData::new(
+                root_path_metadata
+            )
+        )
+    );
 
-    let mut top = Dir::new(&path, Some(Metadata{
-        is_file: false,
-        is_dir: true,
-        size: 4096
-    }));
     for path in root_path {
         let entry_path = path.as_ref().unwrap().path();
-        let metadata = Metadata::new(entry_path.metadata().unwrap());
+        
+        let current_metadata = ItemMetaData::new(
+            match entry_path.metadata() {
+                Ok(result) => result,
+                Err(_err) => entry_path.symlink_metadata().unwrap()
+            }
+        );
         let path_str = entry_path.clone().to_str().unwrap();
-        let path = Path::new(path_str);
-        build_tree(&mut top, &path.parts, Some(metadata), 0);
+        let path = PathPartition::new(path_str);
+        
+        build_tree(
+            &mut main_directory_info, 
+            &path.parts, 
+            Some(
+                current_metadata
+            ), 
+            root_path_length
+        );
     }
-    top
+    main_directory_info
 }
 
-fn build_tree(node: &mut Dir, parts: &Vec<String>, metadata: Option<Metadata>, depth: usize) {
-    if depth < parts.len() {
-        let item = &parts[depth];
+pub fn build_tree(current_node: &mut DirectoryInfo, current_parts_list: &Vec<String>, current_metadata: Option<ItemMetaData>, current_parts_depth: usize) {
+    if current_parts_depth < current_parts_list.len() {
+        let current_item_name = &current_parts_list[current_parts_depth];
 
-        let mut dir = match node.find_child(&item) {
-            Some(d) => d,
-            None => {
-                let d = Dir::new(&item, metadata.clone());
-                node.add_child(d);
-                match node.find_child(&item) {
-                    Some(d2) => d2,
-                    None => panic!("Got here!"),
-                }
-            }
+        let mut new_node = match current_item_name.starts_with(".") {
+            true => current_node,
+            false => match current_node.find_child(&current_item_name) {
+                Some(stored_directory_info) => stored_directory_info,
+                None => current_node.add_child(
+                    DirectoryInfo::new(
+                        &current_item_name, 
+                        &current_metadata.clone()
+                    )
+                ),
+            },
         };
-        build_tree(&mut dir, parts, metadata.clone(), depth + 1);
+
+        build_tree(
+            &mut new_node, 
+            current_parts_list, 
+            current_metadata.clone(), 
+            current_parts_depth + 1
+        );
     }
 }
 
