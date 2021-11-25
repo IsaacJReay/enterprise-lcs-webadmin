@@ -76,7 +76,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
 }
 
 #[delete("/private/api/settings/dns/domain_name/deletion")]
-pub async fn delete_delete_domain_name(req: HttpRequest,dns_id_struct: web::Json<DnsId>) -> Result<HttpResponse> {
+pub async fn delete_delete_domain_name(req: HttpRequest, dns_id_struct: web::Json<DnsId>) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{

@@ -86,42 +86,47 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
 
-                let mut source_string: String = String::new();
+                let source_is_external_prefix = match args_vec.source_uuid.as_str() {
+                    "kmp" => false,
+                    _ => true,
+                };
+                let destination_is_external_prefix = match args_vec.destination_uuid.as_str() {
+                    "kmp" => false,
+                    _ => true,
+                };
 
-                let source_is_external_prefix = args_vec.source[0].starts_with("/tmp/");
-                let destination_is_external_prefix = args_vec.destination.starts_with("/tmp/");
-                let source_uuid: String;
-                let destination_uuid: String;
+                let source_prefix =  match args_vec.source_uuid.as_str() {
+                    "kmp" => "/kmp".to_string(),
+                    _ => db::query_mount_by_uuid_from_storage_table(args_vec.source_uuid.as_str()),
+                };
 
-                if source_is_external_prefix {
-                    let splited_mount = args_vec.source[0].split("/").collect::<Vec<&str>>();
-                    source_uuid = splited_mount[2].to_string();
-                }
-                else {
-                    source_uuid = String::new();
-                }
+                let destination_prefix =  match args_vec.destination_uuid.as_str() {
+                    "kmp" => "/kmp".to_string(),
+                    _ => db::query_mount_by_uuid_from_storage_table(args_vec.destination_uuid.as_str()),
+                };
 
-                if destination_is_external_prefix {
-                    let splited_mount = args_vec.destination.split("/").collect::<Vec<&str>>();
-                    destination_uuid = splited_mount[2].to_string();
-                }
-                else {
-                    destination_uuid = String::new();
-                }
+                let source_string = args_vec.source_files
+                    .iter()
+                    .map( |s| format!("{}/{}", source_prefix, s))
+                    .collect::<Vec<String>>()
+                    .join(" ");
+
+                let destination_string = args_vec.destination_files
+                    .iter()
+                    .map(|s| format!("{}/{}", destination_prefix, s))
+                    .collect::<Vec<String>>()
+                    .join(" ");
                 
-                for each_items in &args_vec.source {
-                    source_string = format!("{} {}", source_string, each_items);
-                }
 
                 if args_vec.operation == "copy" {
                     let (code, output, error) = linux::copy_filedir(
                         &password, 
                         &source_string, 
-                        &args_vec.destination, 
+                        &destination_string, 
                         source_is_external_prefix, 
-                        &source_uuid, 
+                        &args_vec.source_uuid, 
                         destination_is_external_prefix, 
-                        &destination_uuid
+                        &args_vec.destination_uuid
                     );
 
                     match code {
@@ -148,11 +153,11 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                     let (code, output, error) = linux::move_filedir(
                         &password, 
                         &source_string, 
-                        &args_vec.destination, 
+                        &destination_string, 
                         source_is_external_prefix, 
-                        &source_uuid, 
+                        &args_vec.source_uuid, 
                         destination_is_external_prefix, 
-                        &destination_uuid
+                        &args_vec.destination_uuid
                     );
 
                     match code {
@@ -231,12 +236,17 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
             let (_username, password) = db::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let mut items_string: String = String::new();
 
-                for each_items in &args_vec.selected_filedir {
-                    // let full_path = format!("{}/{}", each_items.parent_directory, each_items.item_name);
-                    items_string = format!("{} {}", items_string, each_items);
-                }
+                let items_prefix = match args_vec.drive_partuuid.as_str() {
+                    "kmp" => "/kmp".to_string(),
+                    _ => db::query_mount_by_uuid_from_storage_table(&args_vec.drive_partuuid)
+                };
+                
+                let items_string = args_vec.selected_filedir
+                    .iter()
+                    .map(|s| format!("{}/{}", items_prefix, s))
+                    .collect::<Vec<String>>()
+                    .join(" ");
 
                 let (code, output, error) = linux::remove_filedir_root(&password, &items_string);
 

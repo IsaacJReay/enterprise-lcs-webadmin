@@ -268,12 +268,15 @@ pub struct DriveDescription {
 #[derive(Deserialize)]
 pub struct MoveOrCopyArgs {
     pub operation: String,
-    pub source: Vec<String>,
-    pub destination: String,
+    pub source_uuid: String,
+    pub source_files: Vec<String>,
+    pub destination_uuid: String,
+    pub destination_files: Vec<String>,
 }
 
 #[derive(Deserialize)]
 pub struct DeleteArgs {
+    pub drive_partuuid: String,
     pub selected_filedir: Vec<String>,
 }
 
