@@ -35,7 +35,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                     // let partition_full_path = format!("/dev/{}", each_partition);
                     let (_code, partition_filesystem_type, _error) = linux::get_partition_filesystem_type(&each_partition);
                     
-                    if partition_filesystem_type != "swap" {
+                    if partition_filesystem_type != "swap" && !partition_filesystem_type.starts_with("ext") {
                         let is_mounted = db::query_existence_from_storage_table_by_path(each_partition);
                         match is_mounted {
                             true => {

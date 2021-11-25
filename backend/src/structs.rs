@@ -354,10 +354,10 @@ pub struct DirectoryInfo {
 }
 
 impl DirectoryInfo {
-    pub fn new(child_name: &str, meta: Option<ItemMetaData>) -> DirectoryInfo {
+    pub fn new(new_child_name: &str, meta: Option<ItemMetaData>) -> DirectoryInfo {
         DirectoryInfo {
-            meta,
-            child_name: child_name.to_string(),
+            meta: meta,
+            name: new_child_name.to_string(),
             children: Vec::<Box<DirectoryInfo>>::new(),
         }
     }

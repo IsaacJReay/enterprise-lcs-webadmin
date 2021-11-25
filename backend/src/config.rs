@@ -71,7 +71,7 @@ pub fn build_tree(current_node: &mut DirectoryInfo, current_parts_list: &Vec<Str
                 None => current_node.add_child(
                     DirectoryInfo::new(
                         &current_item_name, 
-                        &current_metadata.clone()
+                        current_metadata.clone()
                     )
                 ),
             },
