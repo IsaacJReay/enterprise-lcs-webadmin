@@ -239,6 +239,7 @@ pub struct PartUUID{
 pub struct MakeDirectoryArgs {
     pub directory_name: String,
     pub parent_directory: String,
+    pub drive_partuuid: String
 }
 
 
