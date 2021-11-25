@@ -721,11 +721,13 @@
 >> ```json
 >> {
 >>     "operation": "copy",
->>     "source": [
+>>     "source_files": [
 >>       "/kmp/webadmin/file",
 >>       "/kmp/webadmin/www/abc.txt"
 >>     ],
->>     "destination": "/tmp/3ABC-AAA"
+>>     "source_uuid": "3EB010966E49278D",
+>>     "destination_files": "/tmp/3ABC-AAA",
+>>     "destination_uuid": "3ABC-AAA"
 >>  }
 >> }
 >> ```
@@ -777,7 +779,8 @@
 >>     "selected_filedir": [
 >>       "/tmp/3EB010966E49278D/testing.txtwww",
 >>       "/tmp/3EB010966E49278Dfolder123"
->>     ]
+>>     ],
+>>     "drive_partuuid": "3EB010966E49278D"
 >> }
 >> ```
 >>
@@ -826,7 +829,8 @@
 >> ```json
 >>  {
 >>     "directory_name": "newfolder1234",
->>     "parent_directory": "/tmp/3EB010966E49278D"
+>>     "parent_directory": "/tmp/3EB010966E49278D",
+>>     "drive_partuuid": "3EB010966E49278D"
 >>  }
 >> ```
 >>
