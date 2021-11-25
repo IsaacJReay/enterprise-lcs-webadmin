@@ -348,9 +348,9 @@ impl ItemMetaData {
 
 #[derive(Clone, Deserialize, Serialize)]
 pub struct DirectoryInfo {
-    name: String,
-    meta: Option<ItemMetaData>,
-    children: Vec<Box<DirectoryInfo>>,
+    pub name: String,
+    pub meta: Option<ItemMetaData>,
+    pub children: Vec<Box<DirectoryInfo>>,
 }
 
 impl DirectoryInfo {

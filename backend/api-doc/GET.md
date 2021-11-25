@@ -499,67 +499,96 @@
 >> - Response 200 
 >> ```json
 >> {
->>   "drive_label": "Local Content Storage",
->>   "item_list": [
+>>   "name": "Removeable Device",
+>>   "meta": {
+>>     "item_last_modify_date": "2021-11-25 06:00:43",
+>>     "item_is_dir": true,
+>>     "item_size": 32768
+>>   },
+>>   "children": [
 >>     {
->>       "item_path": "/kmp/webadmin",
->>       "item_date": "2021-10-15 14:18",
->>       "item_type": "directory",
->>       "item_size": "4.1 KB"
+>>       "name": "231_1- Keynote Proficient Student's Book_2016 -192p_backup.pdf",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-24 12:18:53",
+>>         "item_is_dir": false,
+>>         "item_size": 30881022
+>>       },
+>>       "children": []
 >>     },
 >>     {
->>       "item_path": "/kmp/webadmin/file",
->>       "item_date": "2021-10-21 12:50",
->>       "item_type": "directory",
->>       "item_size": "4.1 KB"
+>>       "name": "231_1- Keynote Proficient Student's Book_2016 -192p.pdf",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-24 13:16:09",
+>>         "item_is_dir": false,
+>>         "item_size": 30921636
+>>       },
+>>       "children": []
 >>     },
 >>     {
->>       "item_path": "/kmp/webadmin/file/folder123",
->>       "item_date": "2021-10-21 12:43",
->>       "item_type": "directory",
->>       "item_size": "4.1 KB"
+>>       "name": "Pichponereay NGOR_E4.8_Reflection Paper_Do School Kills Creativity.docx",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-20 16:54:18",
+>>         "item_is_dir": false,
+>>         "item_size": 2955518
+>>       },
+>>       "children": []
 >>     },
 >>     {
->>       "item_path": "/kmp/webadmin/file/folder123/esting.txt",
->>       "item_date": "2021-10-21 12:43",
->>       "item_type": "file",
->>       "item_size": "8 B"
+>>       "name": "PichponereayNGOR_E4.8_Quiz01.docx",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-20 16:49:37",
+>>         "item_is_dir": false,
+>>         "item_size": 5870
+>>       },
+>>       "children": []
 >>     },
 >>     {
->>       "item_path": "/kmp/webadmin/file/testing.txtwww",
->>       "item_date": "2021-10-21 12:47",
->>       "item_type": "file",
->>       "item_size": "8 B"
+>>       "name": "PichponereayNGOR_E4.8_Quiz02.docx",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-24 13:13:02",
+>>         "item_is_dir": false,
+>>         "item_size": 6149
+>>       },
+>>       "children": []
 >>     },
 >>     {
->>       "item_path": "/kmp/webadmin/www",
->>       "item_date": "2021-10-15 14:18",
->>       "item_type": "directory",
->>       "item_size": "4.1 KB"
+>>       "name": "PichponereayNGOR_E4.8_Quiz02.pdf",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-24 13:13:08",
+>>         "item_is_dir": false,
+>>         "item_size": 29102
+>>       },
+>>       "children": []
+>>     },
+>>     {
+>>       "name": "Unit-2-grammar-answer.pdf",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-20 16:46:05",
+>>         "item_is_dir": false,
+>>         "item_size": 4346535
+>>       },
+>>       "children": []
+>>     },
+>>     {
+>>       "name": "Word-Formation_backup.pdf",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-20 16:46:44",
+>>         "item_is_dir": false,
+>>         "item_size": 553243
+>>       },
+>>       "children": []
+>>     },
+>>     {
+>>       "name": "Word-Formation.pdf",
+>>       "meta": {
+>>         "item_last_modify_date": "2021-11-20 16:46:43",
+>>         "item_is_dir": false,
+>>         "item_size": 553239
+>>       },
+>>       "children": []
 >>     }
 >>   ]
 >> }
->> ```
->>
->> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
 >> ```
 
 > ### - /private/api/settings/storage/device/rwpermission/status/{drive_partuuid}

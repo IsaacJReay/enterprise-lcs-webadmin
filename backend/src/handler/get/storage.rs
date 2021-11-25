@@ -281,17 +281,14 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
                 if drive_partuuid != "kmp" {
                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
-                    let top = config::generate_file_system_struct(&path);
+                    let top = config::generate_file_system_struct(&path, "Removeable Device");
                     Ok(
                         HttpResponse::Ok()
                             .json(top)
                     )
                 }
                 else{
-                    let  top = config::generate_file_system_struct("/kmp/webadmin");
-                    // println!("{}", top.meta.to_string());
-                    
-                    
+                    let  top = config::generate_file_system_struct("/kmp/webadmin", "Content Storage");                  
                     Ok(
                         HttpResponse::Ok()
                             .json(

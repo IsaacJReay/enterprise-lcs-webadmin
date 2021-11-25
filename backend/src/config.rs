@@ -23,7 +23,7 @@ use crate::{
     }, 
 };
 
-pub fn generate_file_system_struct(linux_path: &str) -> DirectoryInfo {
+pub fn generate_file_system_struct(linux_path: &str, drive_label: &str) -> DirectoryInfo {
     let root_path = WalkDir::new(linux_path);
     let root_path_metadata = std::fs::metadata(linux_path).unwrap();
     let root_path_length = PathPartition::new(linux_path).parts.len();
@@ -57,6 +57,7 @@ pub fn generate_file_system_struct(linux_path: &str) -> DirectoryInfo {
             root_path_length
         );
     }
+    main_directory_info.name = drive_label.to_string();
     main_directory_info
 }
 
