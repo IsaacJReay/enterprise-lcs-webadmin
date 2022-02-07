@@ -315,17 +315,22 @@ pub async fn post_storage_device_directory_creation(req: HttpRequest, directory_
             let (_username, password) = db::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let item_prefix = match directory_info.parent_directory.as_str() {
-                    "kmp" => "/kmp".to_string(),
-                    _ => db::query_mount_by_uuid_from_storage_table(&directory_info.parent_directory),
-                };
+                // let item_prefix = match directory_info.parent_directory.as_str() {
+                //     "/kmp/webadmin" => "/kmp/webadmin".to_string(),
+                //     _ => db::query_mount_by_uuid_from_storage_table(&directory_info.parent_directory),
+                // };
 
                 let drive_is_external_prefix = match directory_info.drive_partuuid.as_str(){
                     "kmp" => false,
                     _ => true,
                 };
 
-                let dir_location  = format!("{}/{}/{}", item_prefix, directory_info.parent_directory, directory_info.directory_name);
+                // let dir_location  = format!("{}/{}/{}", item_prefix, directory_info.parent_directory, directory_info.directory_name);
+
+                let dir_location = match directory_info.parent_directory.as_str() {
+                    "/kmp/webadmin" => format!("{}/{}", directory_info.parent_directory, directory_info.directory_name),
+                    _ => format!("{}/{}/{}", db::query_mount_by_uuid_from_storage_table(&directory_info.parent_directory), directory_info.parent_directory, directory_info.directory_name)
+                };
 
                 let (code, output, error) = linux::make_dir(&password, &dir_location, drive_is_external_prefix, &directory_info.drive_partuuid);
 

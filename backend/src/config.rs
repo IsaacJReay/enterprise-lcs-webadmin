@@ -57,7 +57,7 @@ pub fn generate_file_system_struct(linux_path: &str, drive_label: &str) -> Direc
             root_path_length
         );
     }
-    main_directory_info.name = drive_label.to_string();
+    // main_directory_info.name = drive_label.to_string();
     main_directory_info
 }
 
