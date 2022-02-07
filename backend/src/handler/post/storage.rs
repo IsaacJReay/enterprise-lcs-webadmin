@@ -327,9 +327,9 @@ pub async fn post_storage_device_directory_creation(req: HttpRequest, directory_
 
                 // let dir_location  = format!("{}/{}/{}", item_prefix, directory_info.parent_directory, directory_info.directory_name);
 
-                let dir_location = match directory_info.parent_directory.as_str() {
-                    "/kmp/webadmin" => format!("{}/{}", directory_info.parent_directory, directory_info.directory_name),
-                    _ => format!("{}/{}/{}", db::query_mount_by_uuid_from_storage_table(&directory_info.parent_directory), directory_info.parent_directory, directory_info.directory_name)
+                let dir_location = match directory_info.drive_partuuid.as_str() {
+                    "kmp" => format!("/kmp/webadmin/{}/{}", directory_info.parent_directory, directory_info.directory_name),
+                    _ => format!("{}/{}/{}", db::query_mount_by_uuid_from_storage_table(&directory_info.drive_partuuid), directory_info.parent_directory, directory_info.directory_name)
                 };
 
                 let (code, output, error) = linux::make_dir(&password, &dir_location, drive_is_external_prefix, &directory_info.drive_partuuid);
