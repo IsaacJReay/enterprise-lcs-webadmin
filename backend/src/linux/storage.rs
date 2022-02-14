@@ -151,36 +151,10 @@ printf "$part_uuid $total_size $free_space $percentage"
 }
 
 pub fn make_dir(dir_location: &str) -> (i32, String, String) {
-    // if drive_is_external {
-    //     // let user_rw_able: bool;
-    //     let device_path = db::query_path_by_uuid_from_storage_table(drive_uuid);
-    //     let (_code, filesystem_type, _error) = get_partition_filesystem_type(&device_path);
-    //     if &filesystem_type == "vfat" || &filesystem_type == "ntfs" || &filesystem_type == "exfat" {
-    //         let options = ScriptOptions::new();
-    //         let command = r#"mkdir dir_location"#;
-    //         let command = command.replace("dir_location", dir_location);
-    //         // let command = _command.replace("destination", destination);
-
-    //         let (code, output, error) = run_script!(
-    //             &format!("{}", command),
-    //             &vec![],
-    //             &options
-    //         ).unwrap();
-            
-    //         (code, output, error)
-    //     }
-    //     else {
-    //         make_dir_root(password, dir_location)
-    //     }
-    // }
-    // else {
-    //     make_dir_root(password, dir_location)
-    // }
 
     let options = ScriptOptions::new();
     let command = r#"mkdir dir_location"#;
     let command = command.replace("dir_location", dir_location);
-    // let command = _command.replace("destination", destination);
 
     let (code, output, error) = run_script!(
         &format!("{}", command),
@@ -226,4 +200,27 @@ pub fn move_filedir_root(password: &str, source: &str, destination: &str) -> (i3
 
     (code, output, error)
 
+}
+
+pub fn copy_or_move(copy: bool, source: &str, destination: &str) -> (i32, String, String){
+    let options = ScriptOptions::new();
+
+    let _command = r#"operation source destination"#;
+    let _command = _command.replace(
+        "operation", 
+    match copy {
+        true => "cp -ax",
+        false => "mv"
+        }
+    );
+    let _command = _command.replace("source", source);
+    let command = _command.replace("destination", destination);
+
+    let (code, output, error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    (code, output, error)
 }

@@ -100,3 +100,52 @@
 >>    "reason": "missing-token"
 >>  }
 >> ```
+
+> ### - /private/api/settings/storage/device/deletion
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>     "drive_partuuid": "kmp",
+>>     "selected_filedir": [ "isaac/qwe/sjdf.txt", "john/aaaa", "john/text.txt" ]
+>> }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "actual_reason_goes_here"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
