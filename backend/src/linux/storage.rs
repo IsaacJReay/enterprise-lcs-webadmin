@@ -10,46 +10,29 @@ use crate::{
     }
 };
 
-pub fn get_all_partitions() -> (i32, String, String) {
-    let options = ScriptOptions::new();
+use std::path::{ PathBuf};
+use block_utils::{
+    get_block_partitions, 
+    get_mountpoint
+};
 
-    let command = 
-r#"
-dash_reached=false;
-count_line=0;
-
-while read -r line;
-do
-    $dash_reached && count_line=$(( $count_line+1 )) && [[ $count_line > 2 ]] && current_disk=$(echo $line | awk -F' ' '{printf $NF}') && alldisks=$(printf "$alldisks /dev/$current_disk"); 
-    [[ $line == -------------------------------------------------------------------------- ]] && dash_reached=true;
-
-done <<< $(udisksctl status)
-
-disks_array=($alldisks);
-disks_array_length=$(echo "${#disks_array[@]}");
-
-for (( i=0; i<$disks_array_length; i++ ));
-do
-    udisks_command_temp=$(udisksctl info -b ${disks_array[$(( $disks_array_length-$i-1 ))]} | grep /org/freedesktop/UDisks2/block_devices/ | sed '1d' | sed 's/Partitions://' | xargs);
-    temp_array=($udisks_command_temp);
-    temp_array_length=$(echo "${#temp_array[@]}");
-    for (( j=0; j<$temp_array_length; j++ ));
-    do
-        partitions_temp=$(echo ${temp_array[$j]} | awk -F'/' '{printf $NF}');
-        partitions_list=$(echo $partitions_temp $partitions_list);
-    done
-    partitions_list=$(echo "| $partitions_list");
-done
-
-partitions_list=$(echo $partitions_list | sed 's/^.//');
-printf "$partitions_list""#;
-    let (code, output, error) = run_script!(
-        &format!("{}", command),
-        &vec![],
-        &options
-    ).unwrap();
-
-    (code, output, error)
+pub fn get_all_partitions() -> Vec<String> {
+    
+    get_block_partitions()
+        .unwrap()
+        .into_iter()
+        .filter(|each_path| {
+            let c = get_mountpoint(each_path).unwrap();
+            Some(PathBuf::from("/")) != c &&
+            Some(PathBuf::from("/boot")) != c &&
+            Some(PathBuf::from("/boot/efi")) != c &&
+            Some(PathBuf::from("/kmp")) != c && 
+            Some(PathBuf::from("/home")) != c 
+        })
+        .map(|each_path| format!("{}", each_path.to_str()
+        .unwrap())
+        .replace("/dev/", ""))
+        .collect::<Vec<String>>()
 
 }
 
@@ -71,6 +54,8 @@ printf "$part_uuid $mount_location"
         &vec![],
         &options
     ).unwrap();
+
+    println!("{}; {}; {}; {}", code, output, error, partition_name);
 
     let splited_output: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
 

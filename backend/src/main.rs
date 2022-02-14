@@ -59,7 +59,7 @@ async fn main() -> Result<()> {
                 .service(handler::get::named::get_zone_record_page)                         // link: /private/api/settings/dns/zone_records/status
                 .service(handler::get::timedatectl::get_timedatepage)                       // link: /private/api/settings/time/status
                 .service(handler::get::storage::get_storage_page)                           // link: /private/api/settings/storage/status
-                .service(handler::get::storage::get_storage_device_page_test)
+                .service(handler::get::storage::get_storage_device_page_test)               // link: /private/api/settings/storage/device/status/{drive_partuuid}
                                                             //handling POST request
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password

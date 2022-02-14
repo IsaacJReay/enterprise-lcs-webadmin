@@ -17,47 +17,34 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let (_username, password) = db::users::query_logindata();
-                let (_code, output, _error) = linux::storage::get_all_partitions();
-                let all_partitions: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
+                let all_partitions = linux::storage::get_all_partitions();
                 let mut local_content_storage = linux::storage::get_partition_information("/kmp");
                 local_content_storage.drive_partuuid = PartUUID {
                     drive_partuuid: "kmp".to_string(),
                 };
                 local_content_storage.drive_label = "Local Content Storage".to_string();
                 let mut mounted_partitions_mount: Vec<String> = Vec::new();
-                let mut not_mounted_partitions: Vec<&str> = Vec::new();
+                let mut not_mounted_partitions: Vec<String> = Vec::new();
                 let mut drives_description: Vec<DriveDescription> = vec![local_content_storage];
-                let mut mounted_partitions_length: usize = 0;
-                let mut not_mounted_partitions_length: usize = 0;
+                
                 let mut drives_description_length: usize = drives_description.len();
                 let mut mount_operation_status: bool = true;
                 for each_partition in all_partitions {
-                    // let partition_full_path = format!("/dev/{}", each_partition);
                     let (_code, partition_filesystem_type, _error) = linux::storage::get_partition_filesystem_type(&each_partition);
-                    
-                    if partition_filesystem_type != "swap" && !partition_filesystem_type.starts_with("ext") {
-                        let is_mounted = db::storage::query_existence_from_storage_table_by_path(each_partition);
+
+                    if  partition_filesystem_type == "exfat" && partition_filesystem_type == "vfat" && partition_filesystem_type == "ntfs" {
+                        let is_mounted = db::storage::query_existence_from_storage_table_by_path(&each_partition);
                         match is_mounted {
-                            true => {
-                                let mount = db::storage::query_mount_by_path_from_storage_table(each_partition);
-                                mounted_partitions_mount.insert(mounted_partitions_length, mount);
-                                mounted_partitions_length +=1;
-                            },
-                            false => {
-                                not_mounted_partitions.insert(not_mounted_partitions_length, each_partition);
-                                not_mounted_partitions_length +=1;
-                            },
+                            true => mounted_partitions_mount.push(db::storage::query_mount_by_path_from_storage_table(&each_partition)),
+                            false => not_mounted_partitions.push(each_partition),
                         }
                     }
                 }
 
                 for each_partition in not_mounted_partitions {
-                    let (code, output, _error) = linux::storage::mount_partition(&password, each_partition);
+                    let (code, output, _error) = linux::storage::mount_partition(&password, &each_partition);
                     match code {
-                        0 => {
-                            mounted_partitions_mount.insert(mounted_partitions_length, output);
-                            mounted_partitions_length +=1;
-                        },
+                        0 => mounted_partitions_mount.push(output),
                         _ => {
                             mount_operation_status = false;
                             break;
@@ -145,7 +132,7 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
                     )
                 }
                 else{
-                    let  top = config::generate_file_system_struct("/kmp/webadmin", "Content Storage");                  
+                    let  top = config::generate_file_system_struct("/kmp/webadmin", "Local Content Storage");                  
                     Ok(
                         HttpResponse::Ok()
                             .json(
