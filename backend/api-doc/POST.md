@@ -478,7 +478,14 @@
 >>    "operation_status": "Failed",
 >>    "reason": "actual_reason_goes_here"
 >>  }
->> ``` 
+>> ```
+>> - Response 406 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "No Space is Allowed"
+>>  }
+>> ```  
 >> - Response 410 
 >> ```json
 >>  {
@@ -529,6 +536,13 @@
 >>  {
 >>    "operation_status": "Failed",
 >>    "reason": "actual_reason_goes_here"
+>>  }
+>> ```
+>> - Response 406 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "No Space is Allowed"
 >>  }
 >> ``` 
 >> - Response 410 
