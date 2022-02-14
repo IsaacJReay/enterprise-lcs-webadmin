@@ -1,5 +1,3 @@
-// extern crate byte_unit;
-
 mod config;
 mod db;
 mod tool;
