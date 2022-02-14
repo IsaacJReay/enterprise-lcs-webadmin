@@ -28,14 +28,14 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let foreign_key = &delete_record_struct.foreign_key.to_owned();
                 let id = &delete_record_struct.id.to_owned();
 
-                db::delete_from_zonerecords_by_id(
+                db::named::delete_from_zonerecords_by_id(
                     id, 
                     &foreign_key,
                 );
@@ -43,7 +43,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
                 return_httpsresponse_from_config_var_named_external_zone(foreign_key)
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -83,16 +83,16 @@ pub async fn delete_delete_domain_name(req: HttpRequest, dns_id_struct: web::Jso
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-            db::delete_from_dnszones_by_id(dns_id_struct.id.to_owned().as_str());
+            db::named::delete_from_dnszones_by_id(dns_id_struct.id.to_owned().as_str());
 
             return_httpsresponse_from_config_named_conf_external_zone()
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -132,15 +132,15 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (_username, password) = db::query_logindata();
+            let (_username, password) = db::users::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
 
                 let items_prefix = match args_vec.drive_partuuid.as_str() {
                     "kmp" => "/kmp/webadmin".to_string(),
-                    _ => db::query_mount_by_uuid_from_storage_table(&args_vec.drive_partuuid)
+                    _ => db::storage::query_mount_by_uuid_from_storage_table(&args_vec.drive_partuuid)
                 };
                 
                 let items_string = args_vec.selected_filedir
@@ -173,7 +173,7 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

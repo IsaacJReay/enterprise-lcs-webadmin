@@ -21,8 +21,8 @@ use actix_web::{
 use actix_cors::Cors;
 use crate::db::{
     create_tables, 
-    populate_dnszones, 
-    populate_zonerecords,
+    named::populate_dnszones, 
+    named::populate_zonerecords,
 };
 
 const IP_ADDRESS: &str = "0.0.0.0:8080";

@@ -24,7 +24,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
@@ -99,7 +99,7 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -140,9 +140,9 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (_username, _password) = db::query_logindata();
+            let (_username, _password) = db::users::query_logindata();
             let password_status: bool = tool::comparedate(olddate);
 
             if password_status{
@@ -205,7 +205,7 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -246,9 +246,9 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (_username, _password) = db::query_logindata();
+            let (_username, _password) = db::users::query_logindata();
             let password_status: bool = tool::comparedate(olddate);
 
             if password_status{
@@ -305,7 +305,7 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

@@ -22,7 +22,7 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
 
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -34,7 +34,7 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
                     read_netmask, 
                     read_gateway, 
                     read_dns
-                ) = db::read_wan_networkd();
+                ) = db::systemdnetworkd::read_wan_networkd();
                 Ok(
                     HttpResponse::Ok().json(
                         WanPageResult{
@@ -50,7 +50,7 @@ pub async fn get_wanpage(req: HttpRequest) -> Result<HttpResponse> {
                 )
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -90,7 +90,7 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
 
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -105,7 +105,7 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
                     read_default_lease, 
                     read_max_lease, 
                     read_timezone
-                ) = db::read_wlan_networkd();
+                ) = db::systemdnetworkd::read_wlan_networkd();
 
                 Ok(
                     HttpResponse::Ok().json(
@@ -123,7 +123,7 @@ pub async fn get_wlanpage(req: HttpRequest) -> Result<HttpResponse>{
                 )
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

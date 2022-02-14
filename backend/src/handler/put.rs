@@ -23,19 +23,19 @@ pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let id = update_status_struct.id.clone();
                 let status = update_status_struct.status;
 
-                db::insert_status_into_dnszone_by_id(id.as_str(), status);
+                db::named::insert_status_into_dnszone_by_id(id.as_str(), status);
 
                 return_httpsresponse_from_config_named_conf_external_zone()
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Ok().json(
                         HttpResponseCustom{
@@ -75,18 +75,18 @@ pub async fn put_rename_domain_name(req: HttpRequest, rename_domain_struct: web:
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let foreign_key: String = rename_domain_struct.foreign_key.foreign_key.clone();
                 let new_domain_name: String = rename_domain_struct.new_domain_name.clone();
-                db::update_domain_name_by_foreign_key(&foreign_key, &new_domain_name);
+                db::named::update_domain_name_by_foreign_key(&foreign_key, &new_domain_name);
 
                 return_httpsresponse_from_config_named_conf_external_zone()
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Ok().json(
                         HttpResponseCustom{

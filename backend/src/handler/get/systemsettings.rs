@@ -20,9 +20,9 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth) {
+        if db::users::query_token(auth) {
             let olddate = security::extract_token(auth);
-            let (_username, _password) = db::query_logindata();
+            let (_username, _password) = db::users::query_logindata();
 
 
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -38,7 +38,7 @@ pub async fn get_token_validated(req: HttpRequest) -> Result<HttpResponse> {
                 )
             }
             else{
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -79,7 +79,7 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
 
             let passwordstatus: bool = tool::comparedate(olddate);
@@ -95,19 +95,19 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
                     _passphrase, 
                     hw_n_mode, 
                     qos
-                ) = db::read_hostapd();
+                ) = db::hostapd::read_hostapd();
                 let (
                     eth0_macaddr, 
                     eth0_ipaddr, 
                     eth0_subnetmask, 
                     eth0_gateway
-                ) = db::read_eth0();
+                ) = db::systemdnetworkd::read_eth0();
                 let (
                     wlan0_macaddr, 
                     wlan0_ipaddr, 
                     wlan0_subnetmask
-                ) = db::read_wlan0();
-                let wlan0_dns = db::read_named();
+                ) = db::systemdnetworkd::read_wlan0();
+                let wlan0_dns = db::named::read_named();
 
                 Ok(
                     HttpResponse::Ok().json(
@@ -130,7 +130,7 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
                 )
             }
             else{
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom {

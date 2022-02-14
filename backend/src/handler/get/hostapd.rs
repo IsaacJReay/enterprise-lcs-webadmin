@@ -20,7 +20,7 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
 
@@ -34,7 +34,7 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
                     read_passphrase, 
                     read_hw_n_mode, 
                     read_qos
-                ) = db::read_hostapd();
+                ) = db::hostapd::read_hostapd();
 
                 Ok(
                     HttpResponse::Ok().json(
@@ -52,7 +52,7 @@ pub async fn get_wifipage(req: HttpRequest) -> Result<HttpResponse> {
                 )
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

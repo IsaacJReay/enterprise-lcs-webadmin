@@ -12,11 +12,11 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let (_username, password) = db::query_logindata();
+                let (_username, password) = db::users::query_logindata();
                 let (_code, output, _error) = linux::storage::get_all_partitions();
                 let all_partitions: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
                 let mut local_content_storage = linux::storage::get_partition_information("/kmp");
@@ -36,10 +36,10 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                     let (_code, partition_filesystem_type, _error) = linux::storage::get_partition_filesystem_type(&each_partition);
                     
                     if partition_filesystem_type != "swap" && !partition_filesystem_type.starts_with("ext") {
-                        let is_mounted = db::query_existence_from_storage_table_by_path(each_partition);
+                        let is_mounted = db::storage::query_existence_from_storage_table_by_path(each_partition);
                         match is_mounted {
                             true => {
-                                let mount = db::query_mount_by_path_from_storage_table(each_partition);
+                                let mount = db::storage::query_mount_by_path_from_storage_table(each_partition);
                                 mounted_partitions_mount.insert(mounted_partitions_length, mount);
                                 mounted_partitions_length +=1;
                             },
@@ -89,7 +89,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -130,14 +130,14 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             // let (_username, _password) = db::query_logindata();
             if passwordstatus {
                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
                 if drive_partuuid != "kmp" {
-                    let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
+                    let path = db::storage::query_mount_by_uuid_from_storage_table(&drive_partuuid);
                     let top = config::generate_file_system_struct(&path, "Removeable Device");
                     Ok(
                         HttpResponse::Ok()
@@ -155,7 +155,7 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

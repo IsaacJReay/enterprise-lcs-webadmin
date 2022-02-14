@@ -35,9 +35,9 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (_username, _password) = db::query_logindata();
+            let (_username, _password) = db::users::query_logindata();
             let password_status: bool = tool::comparedate(olddate);
             if password_status {
             
@@ -66,7 +66,7 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Err(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -107,9 +107,9 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (_username, password) = db::query_logindata();
+            let (_username, password) = db::users::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             let filepath: String = String::new();
             let untar_status: bool;
@@ -204,7 +204,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -245,9 +245,9 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (username, password) = db::query_logindata();
+            let (username, password) = db::users::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus{
             
@@ -352,7 +352,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

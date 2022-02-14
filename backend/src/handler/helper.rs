@@ -77,7 +77,7 @@ pub fn return_httpsresponse_from_config_named_conf_external_zone() -> Result<Htt
 }
 
 pub fn return_httpsresponse_from_config_var_named_external_zone(foreign_key: &str) -> Result<HttpResponse> {
-    let zone_vec = db::read_zonerecords_by_foreign_key(foreign_key);
+    let zone_vec = db::named::read_zonerecords_by_foreign_key(foreign_key);
     let mut record_vec: Vec<PartialZoneRecords> = Vec::new();
     for increments in 0..zone_vec.len(){
         record_vec.insert(

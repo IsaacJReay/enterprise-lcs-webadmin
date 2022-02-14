@@ -28,9 +28,9 @@ pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResp
         auth
             .open_session()
             .is_ok() {
-        db::update_logindata(&logindata.username, &logindata.password);
+        db::users::update_logindata(&logindata.username, &logindata.password);
         let new_token = security::generate_token(&logindata.username, &logindata.password);
-        db::insert_into_token_table(&new_token);
+        db::users::insert_into_token_table(&new_token);
         Ok(
             HttpResponse::Ok().json(
                 LoginResponse {
@@ -59,15 +59,15 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (username, _password) = db::query_logindata();
+            let (username, _password) = db::users::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
 
             if passwordstatus {
                 let (code, _output, error) = linux::passwd(&username, &passwdparam.old_password, &passwdparam.new_password);
                 if code == 0 {
-                    db::update_logindata(&username, &passwdparam.new_password);
+                    db::users::update_logindata(&username, &passwdparam.new_password);
                     Ok(
                         HttpResponse::Ok().json(
                             HttpResponseCustom {
@@ -89,7 +89,7 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

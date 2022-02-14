@@ -24,9 +24,9 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (_username, password) = db::query_logindata();
+            let (_username, password) = db::users::query_logindata();
             let password_status: bool = tool::comparedate(olddate);
 
             if password_status{
@@ -51,7 +51,7 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -92,9 +92,9 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
-            let (_username, password) = db::query_logindata();
+            let (_username, password) = db::users::query_logindata();
             let password_status: bool = tool::comparedate(olddate);
 
             // let timedate = format!("{} {}", time_struct.date, time_struct.time);
@@ -121,7 +121,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
                 }
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

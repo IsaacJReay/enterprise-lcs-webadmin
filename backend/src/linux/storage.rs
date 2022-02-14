@@ -76,7 +76,7 @@ printf "$part_uuid $mount_location"
 
     let (_code, partition_filesystem_type, _error) = get_partition_filesystem_type(partition_name);
 
-    db::insert_into_storage_table(partition_name, splited_output[0], splited_output[1], &partition_filesystem_type);
+    db::storage::insert_into_storage_table(partition_name, splited_output[0], splited_output[1], &partition_filesystem_type);
 
     (code, splited_output[1].to_string(), error)
 

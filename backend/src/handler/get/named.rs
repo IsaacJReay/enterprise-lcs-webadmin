@@ -12,12 +12,12 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
 
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let zone_vec = db::read_dnszones();
+                let zone_vec = db::named::read_dnszones();
 
                 Ok(
                     HttpResponse::Ok().json(
@@ -26,7 +26,7 @@ pub async fn get_domain_name_page(req: HttpRequest) -> Result<HttpResponse> {
                 )
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{
@@ -66,15 +66,15 @@ pub async fn get_zone_record_page(req: HttpRequest) -> Result<HttpResponse> {
 
     if !auth_is_empty{
         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
+        if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let foreign_key = req.match_info().get("foreign_key").unwrap();
 
-                let record_vec = db::read_zonerecords_for_get_by_foreign_key(&foreign_key);
-                let current_domain_name = db::query_domain_name_by_foreign_key(&foreign_key);
-                let domain_status = db::query_status_by_foreign_key(&foreign_key);
+                let record_vec = db::named::read_zonerecords_for_get_by_foreign_key(&foreign_key);
+                let current_domain_name = db::named::query_domain_name_by_foreign_key(&foreign_key);
+                let domain_status = db::named::query_status_by_foreign_key(&foreign_key);
                 Ok(
                     HttpResponse::Ok().json(
                         GetZoneRecords{
@@ -86,7 +86,7 @@ pub async fn get_zone_record_page(req: HttpRequest) -> Result<HttpResponse> {
                 )
             }
             else {
-                db::delete_from_token_table(auth);
+                db::users::delete_from_token_table(auth);
                 Ok(
                     HttpResponse::Gone().json(
                         HttpResponseCustom{

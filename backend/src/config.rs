@@ -109,7 +109,7 @@ pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
     let write_hostapd_status: bool;
     let move_hostapd_status: bool;
     let restart_hostapd_status: bool;
-    let (_username, password) = db::query_logindata();
+    let (_username, password) = db::users::query_logindata();
 
     let conf: String = gen_hostapd_conf(&hostapdparam.ssid, hostapdparam.hide_ssid, &hostapdparam.hw_mode, &hostapdparam.channel, hostapdparam.wpa, &hostapdparam.passphrase, hostapdparam.hw_n_mode, hostapdparam.qos);
 
@@ -137,7 +137,7 @@ pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
 pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool){
 
     // Create Status variables
-    let (_username, password) = db::query_logindata();
+    let (_username, password) = db::users::query_logindata();
 
     let write_networkd_status: bool;
     let write_acl_status: bool;
@@ -245,7 +245,7 @@ pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkPar
 
 pub fn config_named() -> (bool, bool) {
     
-    let (_username, password) = db::query_logindata();
+    let (_username, password) = db::users::query_logindata();
     let named_conf: String = gen_named_conf();
     let named_conf_zones: String = gen_named_conf_internal_zones();
     let named_conf_logging: String = gen_named_conf_logging();
@@ -303,7 +303,7 @@ pub fn config_named() -> (bool, bool) {
 }
 
 pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool) {
-    let (_username, password) = db::query_logindata();
+    let (_username, password) = db::users::query_logindata();
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;
@@ -341,7 +341,7 @@ pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWired
 }
 
 pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool) {
-    let (_username, password) = db::query_logindata();
+    let (_username, password) = db::users::query_logindata();
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;
@@ -372,8 +372,8 @@ pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool) {
 }
 
 pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
-    let (_username, password) = db::query_logindata();
-    let zone_vec  = db::read_dnszones();
+    let (_username, password) = db::users::query_logindata();
+    let zone_vec  = db::named::read_dnszones();
     // println!("Inside {:#?}", zone_vec);
     let mut record_vec: Vec<ZoneRecords>;
     let mut write_var_zone_status: bool = true;
@@ -409,7 +409,7 @@ pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
         let filename: String = zone_vec[increments].domain_name.to_owned() + ".external.zone";
         // println!("{}", filename);
     
-        record_vec = db::read_zonerecords_by_foreign_key(&zone_vec[increments].id.to_owned());
+        record_vec = db::named::read_zonerecords_by_foreign_key(&zone_vec[increments].id.to_owned());
         let mut partial_record_vec: Vec<PartialZoneRecords> = Vec::new();
 
         for partial_increments in 0..record_vec.len(){
@@ -462,9 +462,9 @@ pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
 }
 
 pub fn config_var_named_external_zones(zone_vec: Vec<PartialZoneRecords>) -> (bool, bool, bool){
-    let (_username, password) = db::query_logindata();
+    let (_username, password) = db::users::query_logindata();
 
-    let dns_vec = db::read_dnszones();
+    let dns_vec = db::named::read_dnszones();
     let mut filename: String = String::new();
 
     for increments in 0..dns_vec.len(){
@@ -718,7 +718,7 @@ fn gen_named_conf_logging() -> String {
 
 fn gen_named_conf_external_zones() -> String {
 
-    let zones_vec = db::read_dnszones();
+    let zones_vec = db::named::read_dnszones();
 
     let mut actual_conf: String = String::new();
 
@@ -755,7 +755,7 @@ fn gen_var_named_one_zone(zone_vec: Vec<PartialZoneRecords>) -> String {
     if zone_vec.len() != 0{
         let mut ns_declaration: String = String::new();
         let mut subdomain_declaration: String = String::new();
-        let dns_vec = db::read_dnszones();
+        let dns_vec = db::named::read_dnszones();
         // println!("{:#?}", zone_vec);
 
         let index_dns_vec: usize = zone_vec[0].foreign_key.parse::<usize>().unwrap();
