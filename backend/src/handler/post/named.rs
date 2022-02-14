@@ -33,10 +33,22 @@ pub async fn post_create_domain_name(req: HttpRequest, domain_name_struct: web::
             let password_status: bool = tool::comparedate(olddate);
 
             if password_status{
-
                 let domain_name = domain_name_struct.domain_name.clone();
-                db::named::insert_domain_name_into_dnszones(domain_name.as_str());
-                return_httpsresponse_from_config_named_conf_external_zone()
+                if !&domain_name.contains(" ") {
+                    db::named::insert_domain_name_into_dnszones(domain_name.as_str());
+                    return_httpsresponse_from_config_named_conf_external_zone()
+                }
+                else {
+                    Ok(
+                        HttpResponse::NotAcceptable().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: "No Space is Allowed".to_string(),
+                            }
+                        )
+                    )
+                }
+                
             }
             else {
                 db::users::delete_from_token_table(auth);
@@ -87,9 +99,20 @@ pub async fn post_add_zone_record(req: HttpRequest, zone_record_struct: web::Jso
             let password_status: bool = tool::comparedate(olddate);
 
             if password_status{
-
-                db::named::insert_into_zonerecords(zone_record_struct.clone());
-                return_httpsresponse_from_config_var_named_external_zone(zone_record_struct.foreign_key.as_str())
+                if !&zone_record_struct.subdomain_name.contains(" ") {
+                    db::named::insert_into_zonerecords(zone_record_struct.clone());
+                    return_httpsresponse_from_config_var_named_external_zone(zone_record_struct.foreign_key.as_str())
+                }
+                else {
+                    Ok(
+                        HttpResponse::NotAcceptable().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: "No Space is Allowed".to_string(),
+                            }
+                        )
+                    )
+                }
             }
             else {
                 db::users::delete_from_token_table(auth);
