@@ -776,11 +776,8 @@
 >>  - Body
 >> ```json
 >>  {
->>     "selected_filedir": [
->>       "/tmp/3EB010966E49278D/testing.txtwww",
->>       "/tmp/3EB010966E49278Dfolder123"
->>     ],
->>     "drive_partuuid": "3EB010966E49278D"
+>>     "drive_partuuid": "kmp",
+>>     "selected_filedir": [ "isaac/qwe/sjdf.txt", "john/aaaa", "john/text.txt" ]
 >> }
 >> ```
 >>
