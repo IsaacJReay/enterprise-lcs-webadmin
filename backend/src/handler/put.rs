@@ -9,7 +9,7 @@ use crate::{
     db,
     security,
     tool,
-    handler::helper::return_httpsresponse_from_config_named_conf_external_zone,
+    handler::return_httpsresponse_from_config_named_conf_external_zone,
     structs::{
         UpdateStatus,
         RenameDomain,
