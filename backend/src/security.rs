@@ -2,23 +2,19 @@ use crate::{
     config,
     linux,
     DECRYPT_KEY,
+    DECRYPT_NONCE
 };
-use aes::Aes128;
-use hex_literal::hex;
-use block_modes::{
-    BlockMode, 
-    Cbc, 
-    block_padding::Pkcs7
-};
+use aes_gcm_siv::{Aes256GcmSiv, Key, Nonce}; // Or `Aes128GcmSiv`
+use aes_gcm_siv::aead::{Aead, NewAead};
 use rand::Rng;
 
-pub fn padding_convert(password: &str) -> [u8; 16] {
+pub fn padding_convert(password: &str) -> Vec<u8> {
 
     let mutpassword: String;
     let mut padding: String = String::new();
 
-    if password.len() < 16 {
-        for _i in 0..16-password.len(){
+    if password.len() < 32 {
+        for _i in 0..32-password.len(){
             padding = " ".to_owned() + padding.as_str();
         }
         mutpassword = password.to_owned() + padding.as_str();
@@ -28,53 +24,45 @@ pub fn padding_convert(password: &str) -> [u8; 16] {
     }
 
     let password_vec = mutpassword.as_bytes().to_owned();
-    
-    let mut password_array: [u8; 16] = [0; 16];
 
-    for each_index in 0..16 {
-        password_array[each_index] = password_vec[each_index];
-    }
-    
-    password_array
+    password_vec
 }
 
-pub fn encrypt(plaintext: String, key: [u8; 16]) -> String {
-    
-    type Aes128Cbc = Cbc<Aes128, Pkcs7>;
 
-    let iv = hex!("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff");
-    let byteplaintext = plaintext.as_bytes();
-    let cipher = Aes128Cbc::new_from_slices(&key, &iv).unwrap();
-    let mut ciphertext = cipher.encrypt_vec(byteplaintext);
-    ciphertext.reverse();
+pub fn encrypt(plaintext: String, key: Vec<u8>) -> String {
+
     let mut stringciphertext: String = String::new();
+
+    let key = Key::from_slice(key.as_slice());
+    let cipher = Aes256GcmSiv::new(key);
+    let nonce = Nonce::from_slice(DECRYPT_NONCE.as_bytes());
+    let ciphertext = cipher.encrypt(nonce, plaintext.as_bytes().as_ref())
+        .expect("encryption failure!");  // NOTE: handle this error to avoid panics!
 
     for array in ciphertext {
         stringciphertext = array.to_string() + " " + stringciphertext.as_str();
     }
-    stringciphertext
+    stringciphertext    
+
 }
 
-pub fn decrypt(encrypted_text: String, key: [u8; 16]) -> String {
+pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> String {
 
-    type Aes128Cbc = Cbc<Aes128, Pkcs7>;
-    let mut encrypted_vec_u8: Vec<u8> = Vec::new();
+    let mut ciphertext = encrypted_text.split_whitespace().map(|each_arg| each_arg.parse::<u8>().unwrap()).collect::<Vec<u8>>();
+    ciphertext.reverse();
+
+    let key = Key::from_slice(key.as_slice());
+    let cipher = Aes256GcmSiv::new(key);
+    let nonce = Nonce::from_slice(DECRYPT_NONCE.as_bytes());
+
+
+    let plaintext = cipher.decrypt(nonce, ciphertext.as_ref())
+        .expect("decryption failure!");  // NOTE: handle this error to avoid panics!
+
+    String::from_utf8(plaintext).unwrap()
     
-    let iv = hex!("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff");
-    let mut encrypted_vec_str = encrypted_text.split(" ").collect::<Vec<&str>>();
-    encrypted_vec_str.remove(encrypted_vec_str.len()-1);
-
-    for text in encrypted_vec_str{
-        encrypted_vec_u8.push(text.parse::<u8>().unwrap());
-    }
-
-    let ciphertext: &[u8] = &encrypted_vec_u8;
-
-    let cipher = Aes128Cbc::new_from_slices(&key, &iv).unwrap();
-    let decrypted_ciphertext = cipher.decrypt_vec(&ciphertext).unwrap();
-    let decryptedstring = String::from_utf8(decrypted_ciphertext).unwrap();
-    decryptedstring
 }
+
 
 pub fn encrypt_file(filename: &str, password: &str) -> String {
     let mut byte_file = config::get_file_as_byte_vec(&filename.to_string());

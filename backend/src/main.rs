@@ -26,7 +26,8 @@ use crate::db::{
 };
 
 const IP_ADDRESS: &str = "0.0.0.0:8080";
-const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 16 characters
+const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
+const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 
 #[actix_web::main]
 async fn main() -> Result<()> {
