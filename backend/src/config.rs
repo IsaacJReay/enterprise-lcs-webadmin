@@ -119,7 +119,7 @@ pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
         Err(_err) => write_hostapd_status = false,
     }
 
-    let (code,_output,_error) = linux::move_filedir_root(&password, "hostapd.conf", "/etc/hostapd");
+    let (code,_output,_error) = linux::storage::move_filedir_root(&password, "hostapd.conf", "/etc/hostapd");
     match &code {
         0 => move_hostapd_status = true,
         _ => move_hostapd_status = false,
@@ -196,19 +196,19 @@ pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkPar
 
         // Match Move File Statuses
 
-        let (code,_output,_error) = linux::move_filedir_root(&password, "20-wireless.network", "/etc/systemd/network/");
+        let (code,_output,_error) = linux::storage::move_filedir_root(&password, "20-wireless.network", "/etc/systemd/network/");
         match &code {
             0 => move_networkd_status = true,
             _ => move_networkd_status = false,
         }
 
-        let (code,_output,_error) = linux::move_filedir_root(&password, "named.conf.acl", "/etc/");
+        let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.acl", "/etc/");
         match &code {
             0 => move_acl_status = true,
             _ => move_acl_status = false,
         }
 
-        let (code,_output,_error) = linux::move_filedir_root(&password, "named.conf.options", "/etc/");
+        let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.options", "/etc/");
         match &code {
             0 => move_options_status = true,
             _ => move_options_status = false,
@@ -277,19 +277,19 @@ pub fn config_named() -> (bool, bool) {
         Err(_e) => write_zones_status = false,
     }
 
-    let (code, _output, _error) = linux::move_filedir_root(&password, "named.conf", "/etc/");
+    let (code, _output, _error) = linux::storage::move_filedir_root(&password, "named.conf", "/etc/");
     match &code {
         0 => move_conf_status = true,
         _ => move_conf_status = false,
     }
 
-    let (code,_output,_error) = linux::move_filedir_root(&password, "named.conf.logging", "/etc/");
+    let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.logging", "/etc/");
     match &code {
         0 => move_logging_status = true,
         _ => move_logging_status = false,
     }
     
-    let (code,_output,_error) = linux::move_filedir_root(&password, "named.conf.internal.zones", "/etc/");
+    let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.internal.zones", "/etc/");
     match &code {
         0 => move_zones_status = true,
         _ => move_zones_status = false,
@@ -322,7 +322,7 @@ pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWired
         Err(_err) => write_networkd_status = false,
     }
 
-    let (code, _output, _error) = linux::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
+    let (code, _output, _error) = linux::storage::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
 
     match code {
         0 => move_networkd_status = true,
@@ -354,7 +354,7 @@ pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool) {
         Err(_err) => write_networkd_status = false,
     }
 
-    let (code, _output, _error) = linux::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
+    let (code, _output, _error) = linux::storage::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
 
     match code {
         0 => move_networkd_status = true,
@@ -387,13 +387,13 @@ pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
 
     let conf: String = gen_named_conf_external_zones();
 
-    let (code, _output, _error) = linux::remove_filedir_root(&password, "/etc/named.conf.external.zones");
+    let (code, _output, _error) = linux::storage::remove_filedir_root(&password, "/etc/named.conf.external.zones");
     match code {
         0 => cleanup_exzone_status = true,
         _ => cleanup_exzone_status = false,
     }
 
-    let (code, _output, _error) = linux::remove_filedir_root(&password, "/var/named/*.external.zone");
+    let (code, _output, _error) = linux::storage::remove_filedir_root(&password, "/var/named/*.external.zone");
     match code {
         0 => cleanup_var_named_status = true,
         _ => cleanup_var_named_status = false,
@@ -432,7 +432,7 @@ pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
         }
     };
 
-    let (code, _ouput, _error) = linux::move_filedir_root(&password, "named.conf.external.zones", "/etc/");
+    let (code, _ouput, _error) = linux::storage::move_filedir_root(&password, "named.conf.external.zones", "/etc/");
     match code {
         0 => move_exzone_status = true,
         _ => move_exzone_status = false,
@@ -440,7 +440,7 @@ pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
 
     for increments in 0..zone_vec.len(){
         let filename: String = zone_vec[increments].domain_name.to_owned() + ".external.zone";
-        let (code, _ouput, _error) = linux::move_filedir_root(&password, &filename, "/var/named/");
+        let (code, _ouput, _error) = linux::storage::move_filedir_root(&password, &filename, "/var/named/");
         match code {
             0 => (),
             _ => move_var_zone_status = false,
@@ -484,7 +484,7 @@ pub fn config_var_named_external_zones(zone_vec: Vec<PartialZoneRecords>) -> (bo
         Err(_err) => write_var_zone_status = false,
     }
 
-    let (code, _output, _error) = linux::move_filedir_root(&password, &&filename, "/var/named");
+    let (code, _output, _error) = linux::storage::move_filedir_root(&password, &&filename, "/var/named");
     match code {
         0 => move_var_zone_status = true,
         _ => move_var_zone_status = false,

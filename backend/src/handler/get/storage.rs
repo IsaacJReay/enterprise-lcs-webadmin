@@ -17,9 +17,9 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
                 let (_username, password) = db::query_logindata();
-                let (_code, output, _error) = linux::get_all_partitions();
+                let (_code, output, _error) = linux::storage::get_all_partitions();
                 let all_partitions: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
-                let mut local_content_storage = linux::get_partition_information("/kmp");
+                let mut local_content_storage = linux::storage::get_partition_information("/kmp");
                 local_content_storage.drive_partuuid = PartUUID {
                     drive_partuuid: "kmp".to_string(),
                 };
@@ -33,7 +33,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 let mut mount_operation_status: bool = true;
                 for each_partition in all_partitions {
                     // let partition_full_path = format!("/dev/{}", each_partition);
-                    let (_code, partition_filesystem_type, _error) = linux::get_partition_filesystem_type(&each_partition);
+                    let (_code, partition_filesystem_type, _error) = linux::storage::get_partition_filesystem_type(&each_partition);
                     
                     if partition_filesystem_type != "swap" && !partition_filesystem_type.starts_with("ext") {
                         let is_mounted = db::query_existence_from_storage_table_by_path(each_partition);
@@ -52,7 +52,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 }
 
                 for each_partition in not_mounted_partitions {
-                    let (code, output, _error) = linux::mount_ro_partition(&password, each_partition);
+                    let (code, output, _error) = linux::storage::mount_partition(&password, each_partition);
                     match code {
                         0 => {
                             mounted_partitions_mount.insert(mounted_partitions_length, output);
@@ -67,7 +67,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
 
                 if mount_operation_status {
                     for each_mount in mounted_partitions_mount {
-                        let current_drive_description = linux::get_partition_information(&each_mount);
+                        let current_drive_description = linux::storage::get_partition_information(&each_mount);
                         drives_description.insert(drives_description_length, current_drive_description);
                         drives_description_length +=1;
                     }
@@ -84,149 +84,6 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                                 operation_status: "Failed".to_string(),
                                 reason: "mount-Failed".to_string(),
                             }  
-                        )
-                    )
-                }
-            }
-            else {
-                db::delete_from_token_table(auth);
-                Ok(
-                    HttpResponse::Gone().json(
-                        HttpResponseCustom{
-                            operation_status: "Failed".to_string(),
-                            reason: "token-timeout".to_string(),
-                        }
-                    )
-                )
-            }
-        }
-        else{
-            Ok(
-                HttpResponse::Unauthorized().json(
-                    HttpResponseCustom {
-                        operation_status: "Failed".to_string(),
-                        reason: "incorrect-token".to_string(),
-                    }
-                )
-            )
-        }
-    }
-    else{
-        Ok(
-            HttpResponse::Unauthorized().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "missing-token".to_string(),
-                }
-            )
-        )
-    } 
-}
-
-// #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
-// pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
-//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
-
-//     if !auth_is_empty{
-//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-//         if db::query_token(auth){
-//             let olddate = security::extract_token(auth);
-//             let passwordstatus: bool = tool::comparedate(olddate);
-//             let (_username, password) = db::query_logindata();
-//             if passwordstatus {
-//                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
-//                 if drive_partuuid != "kmp" {
-//                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
-//                     let all_file = linux::query_all_file_in_partition(&password, &path);
-//                     Ok(
-//                         HttpResponse::Ok().json(
-//                             ItemListExtended {
-//                                 drive_label: "Removeable Device".to_string(),
-//                                 item_list: all_file,
-//                             }
-
-//                         )
-//                     )
-//                 }
-//                 else{
-//                     let all_file = linux::query_all_file_in_partition(&password, "/kmp/webadmin");
-//                     Ok(
-//                         HttpResponse::Ok().json(
-//                             ItemListExtended {
-//                                 drive_label: "Local Content Storage".to_string(),
-//                                 item_list: all_file,
-//                             }
-//                         )
-//                     )
-//                 }
-//             }
-//             else {
-//                 db::delete_from_token_table(auth);
-//                 Ok(
-//                     HttpResponse::Gone().json(
-//                         HttpResponseCustom{
-//                             operation_status: "Failed".to_string(),
-//                             reason: "token-timeout".to_string(),
-//                         }
-//                     )
-//                 )
-//             }
-//         }
-//         else{
-//             Ok(
-//                 HttpResponse::Unauthorized().json(
-//                     HttpResponseCustom {
-//                         operation_status: "Failed".to_string(),
-//                         reason: "incorrect-token".to_string(),
-//                     }
-//                 )
-//             )
-//         }
-//     }
-//     else{
-//         Ok(
-//             HttpResponse::Unauthorized().json(
-//                 HttpResponseCustom {
-//                     operation_status: "Failed".to_string(),
-//                     reason: "missing-token".to_string(),
-//                 }
-//             )
-//         )
-//     } 
-// }
-
-
-
-#[get("/private/api/settings/storage/device/rwpermission/status/{drive_partuuid}")]
-pub async fn get_storage_device_rw_permission(req: HttpRequest) -> Result<HttpResponse> {
-    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
-
-    if !auth_is_empty{
-        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::query_token(auth){
-            let olddate = security::extract_token(auth);
-            let passwordstatus: bool = tool::comparedate(olddate);
-            
-            if passwordstatus {
-                let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
-                let mount = db::query_mount_by_uuid_from_storage_table(drive_partuuid);
-                let is_mount_rw = linux::is_read_writeable(&mount);
-
-                match is_mount_rw {
-                    true => Ok(
-                        HttpResponse::Ok().json(
-                            HttpResponseCustom {
-                                operation_status: "Success".to_string(),
-                                reason: "rw".to_string()
-                            }
-                        )
-                    ),
-                    false => Ok(
-                        HttpResponse::Ok().json(
-                            HttpResponseCustom {
-                                operation_status: "Failed".to_string(),
-                                reason: "ro".to_string()
-                            }
                         )
                     )
                 }
@@ -341,3 +198,146 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
 
 
 }
+
+// #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
+// pub async fn get_storage_device_page(req: HttpRequest) -> Result<HttpResponse> {
+//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+//     if !auth_is_empty{
+//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+//         if db::query_token(auth){
+//             let olddate = security::extract_token(auth);
+//             let passwordstatus: bool = tool::comparedate(olddate);
+//             let (_username, password) = db::query_logindata();
+//             if passwordstatus {
+//                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
+//                 if drive_partuuid != "kmp" {
+//                     let path = db::query_mount_by_uuid_from_storage_table(&drive_partuuid);
+//                     let all_file = linux::query_all_file_in_partition(&password, &path);
+//                     Ok(
+//                         HttpResponse::Ok().json(
+//                             ItemListExtended {
+//                                 drive_label: "Removeable Device".to_string(),
+//                                 item_list: all_file,
+//                             }
+
+//                         )
+//                     )
+//                 }
+//                 else{
+//                     let all_file = linux::query_all_file_in_partition(&password, "/kmp/webadmin");
+//                     Ok(
+//                         HttpResponse::Ok().json(
+//                             ItemListExtended {
+//                                 drive_label: "Local Content Storage".to_string(),
+//                                 item_list: all_file,
+//                             }
+//                         )
+//                     )
+//                 }
+//             }
+//             else {
+//                 db::delete_from_token_table(auth);
+//                 Ok(
+//                     HttpResponse::Gone().json(
+//                         HttpResponseCustom{
+//                             operation_status: "Failed".to_string(),
+//                             reason: "token-timeout".to_string(),
+//                         }
+//                     )
+//                 )
+//             }
+//         }
+//         else{
+//             Ok(
+//                 HttpResponse::Unauthorized().json(
+//                     HttpResponseCustom {
+//                         operation_status: "Failed".to_string(),
+//                         reason: "incorrect-token".to_string(),
+//                     }
+//                 )
+//             )
+//         }
+//     }
+//     else{
+//         Ok(
+//             HttpResponse::Unauthorized().json(
+//                 HttpResponseCustom {
+//                     operation_status: "Failed".to_string(),
+//                     reason: "missing-token".to_string(),
+//                 }
+//             )
+//         )
+//     } 
+// }
+
+
+
+// #[get("/private/api/settings/storage/device/rwpermission/status/{drive_partuuid}")]
+// pub async fn get_storage_device_rw_permission(req: HttpRequest) -> Result<HttpResponse> {
+//     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
+
+//     if !auth_is_empty{
+//         let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
+//         if db::query_token(auth){
+//             let olddate = security::extract_token(auth);
+//             let passwordstatus: bool = tool::comparedate(olddate);
+            
+//             if passwordstatus {
+//                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
+//                 let mount = db::query_mount_by_uuid_from_storage_table(drive_partuuid);
+//                 let is_mount_rw = linux::is_read_writeable(&mount);
+
+//                 match is_mount_rw {
+//                     true => Ok(
+//                         HttpResponse::Ok().json(
+//                             HttpResponseCustom {
+//                                 operation_status: "Success".to_string(),
+//                                 reason: "rw".to_string()
+//                             }
+//                         )
+//                     ),
+//                     false => Ok(
+//                         HttpResponse::Ok().json(
+//                             HttpResponseCustom {
+//                                 operation_status: "Failed".to_string(),
+//                                 reason: "ro".to_string()
+//                             }
+//                         )
+//                     )
+//                 }
+//             }
+//             else {
+//                 db::delete_from_token_table(auth);
+//                 Ok(
+//                     HttpResponse::Gone().json(
+//                         HttpResponseCustom{
+//                             operation_status: "Failed".to_string(),
+//                             reason: "token-timeout".to_string(),
+//                         }
+//                     )
+//                 )
+//             }
+//         }
+//         else{
+//             Ok(
+//                 HttpResponse::Unauthorized().json(
+//                     HttpResponseCustom {
+//                         operation_status: "Failed".to_string(),
+//                         reason: "incorrect-token".to_string(),
+//                     }
+//                 )
+//             )
+//         }
+//     }
+//     else{
+//         Ok(
+//             HttpResponse::Unauthorized().json(
+//                 HttpResponseCustom {
+//                     operation_status: "Failed".to_string(),
+//                     reason: "missing-token".to_string(),
+//                 }
+//             )
+//         )
+//     } 
+// }

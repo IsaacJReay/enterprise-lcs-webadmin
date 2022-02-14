@@ -30,7 +30,7 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
             let password_status: bool = tool::comparedate(olddate);
 
             if password_status{
-                let (code, _output, error) = linux::set_timezone(&password, &timezone_struct.timezone);
+                let (code, _output, error) = linux::systemsettings::set_timezone(&password, &timezone_struct.timezone);
                 match code {
                     0 => Ok(
                             HttpResponse::Ok().json(
@@ -100,7 +100,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
             // let timedate = format!("{} {}", time_struct.date, time_struct.time);
 
             if password_status{
-                let (code, _output, error) = linux::set_time(&password, &time_struct.date, &time_struct.time);
+                let (code, _output, error) = linux::systemsettings::set_time(&password, &time_struct.date, &time_struct.time);
                 match code {
                     0 => Ok(
                             HttpResponse::Ok().json(

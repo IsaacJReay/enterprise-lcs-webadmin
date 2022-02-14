@@ -453,22 +453,6 @@ pub fn query_path_by_uuid_from_storage_table(uuid: &str) -> String {
     mount
 }
 
-pub fn query_filesystem_type_by_path_from_storage_table(path: &str) -> String {
-
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
-
-    let mut read_path_mount = connection
-        .prepare(
-            format!("SELECT filesystem_type FROM storagetable WHERE dev_path='{}';", path)
-        )
-            .unwrap();
-
-    read_path_mount.next().unwrap();
-
-    let mount: String = read_path_mount.read::<String>(0).unwrap();
-
-    mount
-}
 
 pub fn insert_into_token_table(token: &str){
     let connection = sqlite::open("/tmp/lcs.db").unwrap();

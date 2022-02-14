@@ -41,7 +41,7 @@ pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<Backu
             let password_status: bool = tool::comparedate(olddate);
             if password_status {
             
-                let (code, _output, _error, filepath) = linux::tar_config(&backupparam.filename);
+                let (code, _output, _error, filepath) = linux::systemsettings::tar_config(&backupparam.filename);
                 let mut backup_name: String = String::new();
                 let tar_status: bool;
 
@@ -139,14 +139,14 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
 
                 let tar_file = security::decrypt_file(&filepath, &restoreparam.password);
 
-                let (code, _output, _error, untar_location) = linux::untar_config(&tar_file);
+                let (code, _output, _error, untar_location) = linux::systemsettings::untar_config(&tar_file);
 
                 match code {
                     0 => untar_status = true,
                     _ => untar_status = false,
                 }
 
-                let (code, _output, _error) = linux::move_filedir_root(&password, format!("{}/*", untar_location).as_str(), "/etc/");
+                let (code, _output, _error) = linux::storage::move_filedir_root(&password, format!("{}/*", untar_location).as_str(), "/etc/");
                 match code {
                     0 => mv_etc_status = true,
                     _ => mv_etc_status = false,

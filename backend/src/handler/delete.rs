@@ -151,7 +151,7 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
 
                 println!("{}", items_string);
 
-                let (code, output, error) = linux::remove_filedir_root(&password, &items_string);
+                let (code, output, error) = linux::storage::remove_filedir_root(&password, &items_string);
 
                 match code {
                     0 => Ok(

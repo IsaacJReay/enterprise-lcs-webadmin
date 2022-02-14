@@ -61,7 +61,7 @@ async fn main() -> Result<()> {
                 .service(handler::get::named::get_zone_record_page)                         // link: /private/api/settings/dns/zone_records/status
                 .service(handler::get::timedatectl::get_timedatepage)                       // link: /private/api/settings/time/status
                 .service(handler::get::storage::get_storage_page)                           // link: /private/api/settings/storage/status
-                .service(handler::get::storage::get_storage_device_rw_permission)           // link: /private/api/settings/storage/device/rwpermission/status
+                // .service(handler::get::storage::get_storage_device_rw_permission)           // link: /private/api/settings/storage/device/rwpermission/status
                 .service(handler::get::storage::get_storage_device_page_test)
                                                             //handling POST request
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
@@ -77,8 +77,8 @@ async fn main() -> Result<()> {
                 .service(handler::post::named::post_add_zone_record)                        // link: /private/api/settings/dns/zone_record/creation
                 .service(handler::post::timedatectl::post_set_time)                         // link: /private/api/settings/time/timedate
                 .service(handler::post::timedatectl::post_set_timezone)                     // link: /private/api/settings/time/timezone
-                .service(handler::post::storage::post_storage_device_rw_permission)         // link: /private/api/settings/storage/device/rwpermission/request
-                .service(handler::post::storage::post_storage_device_copy_or_move)          // link: /private/api/settings/storage/device/copy
+                // .service(handler::post::storage::post_storage_device_rw_permission)         // link: /private/api/settings/storage/device/rwpermission/request
+                // .service(handler::post::storage::post_storage_device_copy_or_move)          // link: /private/api/settings/storage/device/copy
                 .service(handler::post::storage::post_storage_device_directory_creation)    // link: /private/api/settings/storage/device/directory/creation
                 .service(handler::post::storage::post_storage_device_unmount)               // link: /private/api/settings/storage/device/unmount
                                                             //handling DELETE request

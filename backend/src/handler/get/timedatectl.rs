@@ -25,12 +25,12 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let (_code, output, _error) = linux::query_date_for_display();
+                let (_code, output, _error) = linux::systemsettings::query_date_for_display();
                 let time_vec: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
                 let current_date = time_vec[0];
                 let current_time = time_vec[1];
-                let (_code, current_timezone, _error) = linux::query_timezone();
-                let (_code, current_ntp_status, _error) = linux::query_ntp_status();
+                let (_code, current_timezone, _error) = linux::systemsettings::query_timezone();
+                let (_code, current_ntp_status, _error) = linux::systemsettings::query_ntp_status();
                 let status: bool = if current_ntp_status == "active" {
                     true
                 }
