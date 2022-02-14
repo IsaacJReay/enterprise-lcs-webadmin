@@ -11,12 +11,9 @@ actix-cors="*"
 actix-files = "*"
 actix-multipart = "*"
 actix-web = "*"
-
-
 chrono = "*"
 aes-gcm-siv = "*"
 futures = "*"
-
 ipnetwork = "*"
 pam = "*"
 run_script = "*"

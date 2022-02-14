@@ -238,7 +238,7 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
             if passwordstatus {
 
                 let items_prefix = match args_vec.drive_partuuid.as_str() {
-                    "kmp" => "/kmp".to_string(),
+                    "kmp" => "/kmp/webadmin".to_string(),
                     _ => db::query_mount_by_uuid_from_storage_table(&args_vec.drive_partuuid)
                 };
                 
