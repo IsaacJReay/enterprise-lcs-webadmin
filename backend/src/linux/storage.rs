@@ -17,7 +17,7 @@ use block_utils::{
 };
 
 pub fn get_all_partitions() -> Vec<String> {
-    
+
     get_block_partitions()
         .unwrap()
         .into_iter()
@@ -55,7 +55,7 @@ printf "$part_uuid $mount_location"
         &options
     ).unwrap();
 
-    println!("{}; {}; {}; {}", code, output, error, partition_name);
+    // println!("{}; {}; {}; {}", code, output, error, partition_name);
 
     let splited_output: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
 
@@ -194,7 +194,7 @@ pub fn copy_or_move(copy: bool, source: &str, destination: &str) -> (i32, String
     let _command = _command.replace(
         "operation", 
     match copy {
-        true => "cp -ax",
+        true => "cp -r",
         false => "mv"
         }
     );

@@ -28,17 +28,13 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
                     _ => db::storage::query_mount_by_uuid_from_storage_table(args_vec.destination_uuid.as_str()),
                 };
 
-                let source_string = args_vec.source_files
+                let source_string = args_vec.source_items
                     .iter()
                     .map( |s| format!("{}/{}", source_prefix, s))
                     .collect::<Vec<String>>()
                     .join(" ");
 
-                let destination_string = args_vec.destination_files
-                    .iter()
-                    .map(|s| format!("{}/{}", destination_prefix, s))
-                    .collect::<Vec<String>>()
-                    .join(" ");
+                let destination_string = format!("{}/{}", destination_prefix, args_vec.items_destination);
                 
 
                 if args_vec.operation == "copy" {

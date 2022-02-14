@@ -252,27 +252,13 @@ pub struct DriveDescription {
     pub percentage: f32
 }
 
-// #[derive(Serialize)]
-// pub struct ItemList {
-//     pub item_path: String,
-//     pub item_date: String,
-//     pub item_type: String,
-//     pub item_size: String,
-// }
-
-// #[derive(Serialize)]
-// pub struct ItemListExtended {
-//     pub drive_label: String,
-//     pub item_list: Vec<ItemList>,
-// }
-
 #[derive(Deserialize)]
 pub struct MoveOrCopyArgs {
     pub operation: String,
     pub source_uuid: String,
-    pub source_files: Vec<String>,
+    pub source_items: Vec<String>,
     pub destination_uuid: String,
-    pub destination_files: Vec<String>,
+    pub items_destination: String,
 }
 
 #[derive(Deserialize)]

@@ -19,6 +19,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 let (_username, password) = db::users::query_logindata();
                 let all_partitions = linux::storage::get_all_partitions();
                 let mut local_content_storage = linux::storage::get_partition_information("/kmp");
+                // println!("{:#?}", all_partitions);
                 local_content_storage.drive_partuuid = PartUUID {
                     drive_partuuid: "kmp".to_string(),
                 };
@@ -32,7 +33,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                 for each_partition in all_partitions {
                     let (_code, partition_filesystem_type, _error) = linux::storage::get_partition_filesystem_type(&each_partition);
 
-                    if  partition_filesystem_type == "exfat" && partition_filesystem_type == "vfat" && partition_filesystem_type == "ntfs" {
+                    if  partition_filesystem_type == "exfat" || partition_filesystem_type == "vfat" || partition_filesystem_type == "ntfs" {
                         let is_mounted = db::storage::query_existence_from_storage_table_by_path(&each_partition);
                         match is_mounted {
                             true => mounted_partitions_mount.push(db::storage::query_mount_by_path_from_storage_table(&each_partition)),
