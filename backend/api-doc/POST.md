@@ -661,27 +661,22 @@
 >> 
 >>  - Body
 >> ```json
->>  {
+>> {
 >>     "operation": "move",
->>     "source": [
->>       "/kmp/webadmin/file",
->>       "/kmp/webadmin/www/abc.txt"
->>     ],
->>     "destination": "/tmp/3ABC-AAA"
->>  }
+>>     "source_uuid": "kmp",
+>>     "source_items": ["www/test1", "testt"],
+>>     "destination_uuid": "62AA-7652",
+>>     "items_destination": ""
+>> }
 >> ```
 >> Or,
 >> ```json
 >> {
 >>     "operation": "copy",
->>     "source_files": [
->>       "/kmp/webadmin/file",
->>       "/kmp/webadmin/www/abc.txt"
->>     ],
->>     "source_uuid": "3EB010966E49278D",
->>     "destination_files": "/tmp/3ABC-AAA",
->>     "destination_uuid": "3ABC-AAA"
->>  }
+>>     "source_uuid": "kmp",
+>>     "source_items": ["www/test1", "testt"],
+>>     "destination_uuid": "62AA-7652",
+>>     "items_destination": ""
 >> }
 >> ```
 >>
