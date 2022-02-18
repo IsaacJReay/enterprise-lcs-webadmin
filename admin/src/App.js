@@ -1,11 +1,4 @@
 import React from "react";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from "react-query";
 import "./App.css";
 import "antd/dist/antd.css";
 import { BrowserRouter as Router, Switch } from "react-router-dom";
@@ -28,9 +21,9 @@ import BackupSetting from "./components/management/backup/backup-restore";
 import ResetAll from "./components/management/reset-all";
 import TimeSetting from "./components/management/times/time-setting";
 import InternalWebsite from "./components/website/internal";
-import CustomWebsite from "./components/website/custom";
+import CustomWebsite from "./components/website/custom-website/main";
 import DownloadWebsite from "./components/website/download-website/download";
-const queryClient = new QueryClient();
+
 function App() {
   return (
     <React.Fragment>

@@ -128,104 +128,165 @@ const WirelessSetting = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
             <Form {...layout} onFinish={handleApply} form={form}>
-              <div className="container">
-                <div className="container-header">
-                  <h1>Wireless Setting</h1>
-                </div>
-                <hr />
+              <div className="card">
+                <div className="container">
+                  <div className="container-header">
+                    <h1>Wireless Setting</h1>
+                  </div>
+                  <hr />
 
-                <div className="desc-container-banner">
-                  <Form.Item label="Network Name SSID">
-                    <Row gutter={[12, 0]}>
-                      <Col>
-                        <Form.Item
-                          name="ssid_name"
-                          rules={[
-                            {
-                              required: true,
-                              message: "SSID name is require!",
-                            },
-                          ]}
-                        >
-                          <Input size="large" placeholder="Text here ..." />
-                        </Form.Item>
-                      </Col>
-                      <Col>
-                        <Form.Item name="hide_ssid" valuePropName="checked">
-                          <Checkbox>Hide SSID</Checkbox>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Form.Item>
-                  {/* <Form.Item label="Security " name="security">
+                  <div className="desc-container-banner">
+                    <Form.Item label="Network Name SSID">
+                      <Row gutter={[12, 0]}>
+                        <Col>
+                          <Form.Item
+                            name="ssid_name"
+                            rules={[
+                              {
+                                required: true,
+                                message: "SSID name is require!",
+                              },
+                            ]}
+                          >
+                            <Input size="large" placeholder="Text here ..." />
+                          </Form.Item>
+                        </Col>
+                        <Col>
+                          <Form.Item name="hide_ssid" valuePropName="checked">
+                            <Checkbox>Hide SSID</Checkbox>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Form.Item>
+                    {/* <Form.Item label="Security " name="security">
                     <Select size="large" className="select-option-wireless">
                       <Option value="1">WPA</Option>
                       <Option value="2">WPA2-Personal (Recommended)</Option>
                     </Select>
                   </Form.Item> */}
-                  <Form.Item label="Version " name="version">
-                    <Radio.Group valuePropName="checked">
-                      <Radio value={1}>WPA-SPK</Radio>
-                      <Radio value={2}>WPA2-SPK</Radio>
-                    </Radio.Group>
-                  </Form.Item>
-                  <Form.Item
-                    label="Password "
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Password is require!",
-                      },
-                    ]}
-                  >
-                    <Input.Password
-                      size="large"
-                      placeholder="password"
-                      className="label-info"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Mood" name="mode">
-                    <Select size="large" className="select-option-wireless">
-                      <Option value="g">g</Option>
-                      <Option value="b">b</Option>
-                    </Select>
-                  </Form.Item>
+                    <Form.Item label="Version " name="version">
+                      <Radio.Group valuePropName="checked">
+                        <Radio value={1}>WPA-SPK</Radio>
+                        <Radio value={2}>WPA2-SPK</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                    <Form.Item
+                      label="Password "
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Password is require!",
+                        },
+                      ]}
+                    >
+                      <Input.Password
+                        size="large"
+                        placeholder="password"
+                        className="label-info"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Mood" name="mode">
+                      <Select size="large" className="select-option-wireless">
+                        <Option value="g">g</Option>
+                        <Option value="b">b</Option>
+                      </Select>
+                    </Form.Item>
 
-                  <Form.Item label="Channel" name="channel">
-                    <Select size="large" className="select-option">
-                      {options}
-                    </Select>
-                  </Form.Item>
-                  <div className="wireless-radios-options">
-                    <Form.Item name="qos" valuePropName="checked">
-                      <Checkbox value="QOS">QOS</Checkbox>
+                    <Form.Item label="Channel" name="channel">
+                      <Select size="large" className="select-option">
+                        {options}
+                      </Select>
                     </Form.Item>
-                    <Form.Item name="hw_n_mode" valuePropName="checked">
-                      <Checkbox value="802.11N">802.11N</Checkbox>
-                    </Form.Item>
+                    <div className="wireless-radios-options">
+                      <Form.Item name="qos" valuePropName="checked">
+                        <Checkbox value="QOS">QOS</Checkbox>
+                      </Form.Item>
+                      <Form.Item name="hw_n_mode" valuePropName="checked">
+                        <Checkbox value="802.11N">802.11N</Checkbox>
+                      </Form.Item>
+                    </div>
                   </div>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="button-apply"
+                      size="large"
+                    >
+                      Apply
+                    </Button>
+                  </Form.Item>
                 </div>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="button-apply"
-                    size="large"
-                  >
-                    Apply
-                  </Button>
-                </Form.Item>
               </div>
             </Form>
           </Col>
           <Col span={8}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Desciptions</h1>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Desciptions</h1>
+                </div>
+                <div>
+                  <h2>Wireless Settings Help</h2>
+                  <p>
+                    <strong>Note:</strong> The operating distance or range of
+                    your wireless connection varies significantly based on the
+                    physical placement of the Router. For best results, place
+                    your Router.
+                  </p>
+                  <ul>
+                    <li>
+                      Near the center of the area in which your wireless
+                      stations will operate.
+                    </li>
+                    <li>In an elevated location such as a high shelf.</li>
+                    <li>
+                      Away from the potential sources of interference, such as
+                      PCs, microwaves, and cordless phones.
+                    </li>
+                    <li>With the Antenna in the upright position.</li>
+                    <li>Away from large metal surfaces.</li>
+                  </ul>
+                  <p>
+                    <strong>Note:</strong> Failure to follow these guidelines
+                    can result in significant performance degradation or
+                    inability to wirelessly connect to the Router.
+                  </p>
+                  <ul>
+                    <li>
+                      <strong>Wireless Network Name</strong> - Enter a value of
+                      up to 32 characters. The same Name (SSID) must be assigned
+                      to all wireless devices in your network.
+                    </li>
+                    <li>
+                      <strong>Version</strong> - You can select one of following
+                      versions
+                    </li>
+                    <li>
+                      <strong> Password</strong> - Enter the password for the
+                      Radius Server.
+                    </li>
+                    <li>
+                      <strong>Channel</strong> - This field determines which
+                      operating frequency will be used. It is not necessary to
+                      change the wireless channel unless you notice interference
+                      problems with another nearby access point. If you select
+                      auto, then AP will choose the best channel automatically.
+                    </li>
+                    <li>
+                      <strong>MODE</strong> - If all of the wireless devices
+                      connected with this wireless router can connect in the
+                      same transmission mode (e.g. 802.11b), you can choose
+                      "Only" mode (e.g. 11b only). If you have some devices that
+                      use a different transmission mode, choose the appropriate
+                      "Mixed" mode.
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </Col>

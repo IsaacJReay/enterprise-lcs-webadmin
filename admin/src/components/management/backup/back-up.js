@@ -4,7 +4,7 @@ import axios from "axios";
 import fileDownload from "js-file-download";
 
 const Backup = () => {
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   // ------token ------
@@ -56,50 +56,52 @@ const Backup = () => {
 
   return (
     <React.Fragment>
-      <div className="container">
-        <div className="container-header">
-          <h1>Backup Config</h1>
-        </div>
-        <hr />
-        <div className="backup-container">
-          <Form {...layout} onFinish={handleExport} form={form}>
-            <Form.Item
-              label="Name"
-              name="filename"
-              rules={[
-                {
-                  required: true,
-                  message: "Name is required!",
-                },
-              ]}
-            >
-              <Input size="large" className="label-info" />
-            </Form.Item>
-
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Input Password!",
-                },
-              ]}
-            >
-              <Input.Password className="label-info" size="large" />
-            </Form.Item>
-
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="button-apply"
-                size="large"
+      <div className="card">
+        <div className="container">
+          <div className="container-header">
+            <h1>Backup Config</h1>
+          </div>
+          <hr />
+          <div className="backup-container">
+            <Form {...layout} onFinish={handleExport} form={form}>
+              <Form.Item
+                label="Name"
+                name="filename"
+                rules={[
+                  {
+                    required: true,
+                    message: "Name is required!",
+                  },
+                ]}
               >
-                Export
-              </Button>
-            </Form.Item>
-          </Form>
+                <Input size="large" className="label-info" />
+              </Form.Item>
+
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Input Password!",
+                  },
+                ]}
+              >
+                <Input.Password className="label-info" size="large" />
+              </Form.Item>
+
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="button-apply"
+                  size="large"
+                >
+                  Export
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
         </div>
       </div>
     </React.Fragment>

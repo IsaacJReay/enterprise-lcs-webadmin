@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Row, Col, Form, Input, Button, Checkbox, Upload, message } from "antd";
+import { Form, Input, Button, Checkbox, Upload, message } from "antd";
 import axios from "axios";
 
 const Restore = () => {
   // ---------state -----------
 
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -80,64 +80,66 @@ const Restore = () => {
 
   return (
     <React.Fragment>
-      <div className="container">
-        <div className="container-header">
-          <h1>Restore Config</h1>
-        </div>
-        <hr />
-        <Form {...layout} onFinish={handleImport}>
-          <Form.Item
-            className="restore-settting"
-            label="File"
-            rules={[
-              {
-                required: true,
-                message: "Select the file!",
-              },
-            ]}
-          >
-            <Upload
-              {...props}
-              maxCount={1}
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              listType="picture"
-              className="upload-list-inline"
+      <div className="card">
+        <div className="container">
+          <div className="container-header">
+            <h1>Restore Config</h1>
+          </div>
+          <hr />
+          <Form {...layout} onFinish={handleImport}>
+            <Form.Item
+              className="restore-settting"
+              label="File"
+              rules={[
+                {
+                  required: true,
+                  message: "Select the file!",
+                },
+              ]}
             >
-              <Button className="browse-buttons" size="large">
-                Browse
-              </Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Input Password!",
-              },
-            ]}
-          >
-            <Input.Password className="label-info" size="large" />
-          </Form.Item>
-          <Form.Item name="confirm">
-            <Checkbox onChange={onChange} className="restore-checkbox">
-              Confirm
-            </Checkbox>
-          </Form.Item>
+              <Upload
+                {...props}
+                maxCount={1}
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                listType="picture"
+                className="upload-list-inline"
+              >
+                <Button className="browse-buttons" size="large">
+                  Browse
+                </Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Input Password!",
+                },
+              ]}
+            >
+              <Input.Password className="label-info" size="large" />
+            </Form.Item>
+            <Form.Item name="confirm">
+              <Checkbox onChange={onChange} className="restore-checkbox">
+                Confirm
+              </Checkbox>
+            </Form.Item>
 
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="button-apply"
-              size="large"
-              disabled={fileList.length === 0 || confirm === false}
-            >
-              {uploading ? "Importing" : "Import"}
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="button-apply"
+                size="large"
+                disabled={fileList.length === 0 || confirm === false}
+              >
+                {uploading ? "Importing" : "Import"}
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </div>
     </React.Fragment>
   );

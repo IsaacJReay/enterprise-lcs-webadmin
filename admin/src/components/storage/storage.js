@@ -12,7 +12,7 @@ const { Panel } = Collapse;
 const Storages = () => {
   // -------state management ---------------
 
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [storages, setStorages] = useState([]);
 
   // -------token ----------
@@ -44,109 +44,113 @@ const Storages = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
-            <div className="container">
-              <div className="container-header">
-                <h1>File Storages</h1>
-              </div>
-              <hr />
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>File Storages</h1>
+                </div>
+                <hr />
 
-              <Collapse
-                bordered={false}
-                defaultActiveKey={["1"]}
-                expandIcon={({ isActive }) => (
-                  <CaretRightOutlined rotate={isActive ? 90 : 0} />
-                )}
-              >
-                <Panel
-                  className="storage-header"
-                  header={<span>All devices ({storages.length})</span>}
-                  key="1"
+                <Collapse
+                  bordered={false}
+                  defaultActiveKey={["1"]}
+                  expandIcon={({ isActive }) => (
+                    <CaretRightOutlined rotate={isActive ? 90 : 0} />
+                  )}
                 >
-                  {storages.map((res, index) => {
-                    if (index === 0) {
-                      return (
-                        <div className="storages-container">
-                          <div className="item-storages">
-                            <Link
-                              to={`/storages/setting/${res.drive_partuuid.drive_partuuid}`}
-                            >
-                              <Row gutter={24}>
-                                <Col span={3}>
-                                  <img
-                                    src={myImage}
-                                    className="storages-icon"
-                                    alt="storages picture"
-                                  />
-                                </Col>
-                                <Col span={21}>
-                                  <p>{res.drive_label}</p>
-                                  <Progress
-                                    percent={res.percentage}
-                                    showInfo={false}
-                                    strokeWidth={25}
-                                    status="active"
-                                    strokeColor={{
-                                      "0%": "#65DDFF",
-                                      "100%": "#E2F516",
-                                    }}
-                                  />
-                                  <p>
-                                    {res.free_space} free of {res.total_space}
-                                  </p>
-                                </Col>
-                              </Row>
-                            </Link>
+                  <Panel
+                    className="storage-header"
+                    header={<span>All devices ({storages.length})</span>}
+                    key="1"
+                  >
+                    {storages.map((res, index) => {
+                      if (index === 0) {
+                        return (
+                          <div className="storages-container">
+                            <div className="item-storages">
+                              <Link
+                                to={`/storages/setting/${res.drive_partuuid.drive_partuuid}`}
+                              >
+                                <Row gutter={24}>
+                                  <Col span={3}>
+                                    <img
+                                      src={myImage}
+                                      className="storages-icon"
+                                      alt="storages"
+                                    />
+                                  </Col>
+                                  <Col span={21}>
+                                    <p>{res.drive_label}</p>
+                                    <Progress
+                                      percent={res.percentage}
+                                      showInfo={false}
+                                      strokeWidth={25}
+                                      status="active"
+                                      strokeColor={{
+                                        "0%": "#65DDFF",
+                                        "100%": "#E2F516",
+                                      }}
+                                    />
+                                    <p>
+                                      {res.free_space} free of {res.total_space}
+                                    </p>
+                                  </Col>
+                                </Row>
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    } else {
-                      return (
-                        <div className="storages-container">
-                          <div className="item-storages">
-                            <Link
-                              to={`/storages/setting/${res.drive_partuuid.drive_partuuid}`}
-                            >
-                              <Row gutter={24}>
-                                <Col span={3}>
-                                  <img
-                                    src={driver}
-                                    className="storages-icon2"
-                                    alt="storages picture"
-                                  />
-                                </Col>
-                                <Col span={21}>
-                                  <p>{res.drive_label}</p>
-                                  <Progress
-                                    percent={res.percentage}
-                                    showInfo={false}
-                                    strokeWidth={25}
-                                    status="active"
-                                    strokeColor={{
-                                      "0%": "#65DDFF",
-                                      "100%": "#E2F516",
-                                    }}
-                                  />
-                                  <p>
-                                    {res.free_space} free of {res.total_space}
-                                  </p>
-                                </Col>
-                              </Row>
-                            </Link>
+                        );
+                      } else {
+                        return (
+                          <div className="storages-container">
+                            <div className="item-storages">
+                              <Link
+                                to={`/storages/setting/${res.drive_partuuid.drive_partuuid}`}
+                              >
+                                <Row gutter={24}>
+                                  <Col span={3}>
+                                    <img
+                                      src={driver}
+                                      className="storages-icon2"
+                                      alt="storages "
+                                    />
+                                  </Col>
+                                  <Col span={21}>
+                                    <p>{res.drive_label}</p>
+                                    <Progress
+                                      percent={res.percentage}
+                                      showInfo={false}
+                                      strokeWidth={25}
+                                      status="active"
+                                      strokeColor={{
+                                        "0%": "#65DDFF",
+                                        "100%": "#E2F516",
+                                      }}
+                                    />
+                                    <p>
+                                      {res.free_space} free of {res.total_space}
+                                    </p>
+                                  </Col>
+                                </Row>
+                              </Link>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    }
-                  })}
-                </Panel>
-              </Collapse>
+                        );
+                      }
+                    })}
+                  </Panel>
+                </Collapse>
+              </div>
             </div>
           </Col>
           <Col span={8}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Desciptions</h1>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Desciptions</h1>
+                </div>
               </div>
             </div>
           </Col>

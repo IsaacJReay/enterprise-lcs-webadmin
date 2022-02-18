@@ -8,7 +8,7 @@ const { Content } = Layout;
 
 const TimeSetting = () => {
   const [pick, setPick] = useState();
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [items, setItems] = useState({});
   const [form] = Form.useForm();
 
@@ -50,42 +50,103 @@ const TimeSetting = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Factory Defaults</h1>
-              </div>
-              <hr />
-              <div className="reset-container">
-                <Form form={form}>
-                  <Form.Item name="ntp_status">
-                    <Radio.Group
-                      onChange={handleChange}
-                      valuePropName="checked"
-                    >
-                      <Radio value={true}>
-                        Automatically synchronize with an Internet time server
-                      </Radio>
-                      <Radio className="custom-radio" value={false}>
-                        Custom
-                      </Radio>
-                    </Radio.Group>
-                  </Form.Item>
-                </Form>
-                <div className="time-container">
-                  <Automaticaly pick={pick} items={items} />
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Time Settings</h1>
                 </div>
-                <div className="time-container2">
-                  <CustomeTime pick={pick} items={items} />
+                <hr />
+                <div className="desc-container-banner">
+                  <Form form={form}>
+                    <Form.Item name="ntp_status">
+                      <Radio.Group
+                        onChange={handleChange}
+                        valuePropName="checked"
+                      >
+                        <Radio value={true}>
+                          Automatically synchronize with an Internet time server
+                        </Radio>
+                        <Radio className="custom-radio" value={false}>
+                          Custom
+                        </Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Form>
+                  <div className="time-container">
+                    <Automaticaly pick={pick} items={items} />
+                  </div>
+                  <div className="time-container2">
+                    <CustomeTime pick={pick} items={items} />
+                  </div>
                 </div>
               </div>
             </div>
           </Col>
           <Col span={8}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Desciptions</h1>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Desciptions</h1>
+                </div>
+                <div>
+                  <h1>Time Settings Help</h1>
+                  <p>
+                    his page allows you to set the time manually or to configure
+                    automatic time synchronization. The Router can automatically
+                    update the time from an NTP server via the Internet.
+                  </p>
+                  <p>
+                    <strong>Time Zone</strong> - Select your local time zone
+                    from this pull-down list.
+                  </p>
+                  <p>To set time manually:</p>
+                  <ul>
+                    <li>Select your local time zone.</li>
+                    <li>Enter the Date in Month/Day/Year format.</li>
+                    <li>Enter the Time in Hour/Minute/Second format.</li>
+                    <li>Click Save.</li>
+                  </ul>
+                  <p>For automatic time synchronization:</p>
+                  <ul>
+                    <li>
+                      Enter the address or domain of the NTP Server 1 or NTP
+                      Server 2.
+                    </li>
+                    <li>
+                      Click the Get GMT button to get GMT from the Internet.
+                    </li>
+                  </ul>
+                  <p>To set up daylight saving:</p>
+                  <ul>
+                    <li>
+                      Select the Enable Daylight Saving checkbox to enable
+                      daylight saving function.
+                    </li>
+                    <li>
+                      Select the correct Start time and End time of daylight
+                      saving range.
+                    </li>
+                    <li>Click Save.</li>
+                  </ul>
+                  <p>
+                    <strong>Note:</strong> This setting will be used for some
+                    time-based functions such as firewall functions. These time
+                    dependant functions will not work if time is not set.
+                    Therefore, it is important to specify time settings as soon
+                    as you successfully login to the Router. The time will be
+                    lost if the Router is turned off.
+                  </p>
+                  <p>
+                    The Router will automatically obtain GMT from the Internet
+                    if it is configured accordingly.
+                  </p>
+                  <p>
+                    In daylight saving configuration, start time shall be
+                    earlier than end time.
+                  </p>
+                </div>
               </div>
             </div>
           </Col>

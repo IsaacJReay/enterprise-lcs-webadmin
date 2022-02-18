@@ -15,7 +15,7 @@ import moment from "moment";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const CustomeTime = ({ pick }) => {
-  const [loading, setLoading] = useState(false);
+  const [setLoading] = useState(false);
   let now = new Date();
 
   // const onChange = (time) => {

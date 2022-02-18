@@ -13,8 +13,9 @@ const DownloadWebsite = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
+          <div className="card">
             <div className="container">
               <div className="container-header">
                 <h1>Download Website</h1>
@@ -86,12 +87,15 @@ const DownloadWebsite = () => {
                 </div>
               )}
             </div>
+            </div>
           </Col>
           <Col span={8}>
+          <div className="card">
             <div className="container">
               <div className="container-header">
                 <h1>Desciptions</h1>
               </div>
+            </div>
             </div>
           </Col>
         </Row>

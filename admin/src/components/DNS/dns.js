@@ -10,7 +10,6 @@ import {
   message,
   Popconfirm,
   Divider,
-  Button,
 } from "antd";
 
 import { Link } from "react-router-dom";
@@ -28,34 +27,36 @@ const DNSSetting = () => {
   };
   // --------state ---------
 
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [datas, setDatas] = useState([]);
 
   // ----------get data -------------
 
-  useEffect(async () => {
-    await axios({
-      method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/dns/domain_name/status",
-      headers: {
-        "content-type": "application/json",
-        ...auth,
-      },
-    })
-      .then((res) => {
-        setLoading(true);
-        setDatas(res.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+  useEffect(() => {
+    async function fetchData() {
+      await axios({
+        method: "GET",
+        url: "http://10.42.0.188:8080/private/api/settings/dns/domain_name/status",
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
       })
-      .catch((err) => console.log(err));
-  }, []);
+        .then((res) => {
+          setDatas(res.data);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
+        })
+        .catch((err) => console.log(err));
+    }
+    fetchData();
+  }, [datas]);
 
   //  --------delete record ----------
 
-  const handleDelete = (id) => {
-    axios
+  const handleDelete = async (id) => {
+    await axios
       .delete(
         "http://10.42.0.188:8080/private/api/settings/dns/domain_name/deletion",
         {
@@ -68,14 +69,13 @@ const DNSSetting = () => {
       )
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
-          window.location.reload();
+          setTimeout(() => {
+            message.success("Successful!");
+          }, 1000);
         } else {
-          setLoading(true);
-          message.error("Operation Failed! ");
-          setLoading(false);
+          setTimeout(() => {
+            message.error("Operation Failed! ");
+          }, 1000);
         }
       })
 
@@ -115,7 +115,7 @@ const DNSSetting = () => {
         return (
           <React.Fragment>
             <Link to={`/dns-management/${id}`}>
-              <Tag color="processing">Manage</Tag>
+              <Tag color="processing">Control</Tag>
             </Link>
             <Divider type="vertical" />
             <Popconfirm
@@ -141,37 +141,38 @@ const DNSSetting = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
-            <div className="container">
-              <div className="container-header">
-                <h1>DNS Setting</h1>
-              </div>
-              <hr />
-
-              <div className="dns-desc-container">
-                <Form.Item>
-                  <CreateDomain />
-                </Form.Item>
-              </div>
-              <Form>
-                <div className="dns-desc-container">
-                  <Form.Item>
-                    <Table
-                      columns={columns}
-                      dataSource={datas}
-                      pagination={false}
-                      scroll={{ y: 450 }}
-                    />
-                  </Form.Item>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>DNS Setting</h1>
                 </div>
-              </Form>
+                <hr />
+                <div className="dns-desc-container">
+                  <CreateDomain />
+                </div>
+                <Form>
+                  <div className="dns-desc-container">
+                    <Form.Item>
+                      <Table
+                        columns={columns}
+                        dataSource={datas}
+                        pagination={false}
+                        scroll={{ y: 450 }}
+                      />
+                    </Form.Item>
+                  </div>
+                </Form>
+              </div>
             </div>
           </Col>
           <Col span={8}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Desciptions</h1>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Desciptions</h1>
+                </div>
               </div>
             </div>
           </Col>

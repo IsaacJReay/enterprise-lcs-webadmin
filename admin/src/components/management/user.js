@@ -6,7 +6,7 @@ import axios from "axios";
 const { Content } = Layout;
 
 const UserAccount = () => {
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [user, setUser] = useState({});
 
@@ -81,89 +81,115 @@ const UserAccount = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Change Password</h1>
-              </div>
-              <hr />
-              <div className="user-information">
-                <span>
-                  After the password is up to date the site will logout!
-                </span>
-              </div>
-              <Form {...layout} form={form} onFinish={handleApply}>
-                <div className="user-account-contanier">
-                  <Avatar size={100} className="navbar-avatar" src={Avatar1} />
-                  <h2>{user.username}</h2>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Change Password</h1>
                 </div>
+                <hr />
+                <div className="user-information">
+                  <span>
+                    After the password is up to date the site will logout!
+                  </span>
+                </div>
+                <Form {...layout} form={form} onFinish={handleApply}>
+                  <div className="user-account-contanier">
+                    <Avatar
+                      size={100}
+                      className="navbar-avatar"
+                      src={Avatar1}
+                    />
+                    <h2>{user.username}</h2>
+                  </div>
 
-                <Form.Item
-                  label="Current Password"
-                  name="current_password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Input Current Password!",
-                    },
-                  ]}
-                >
-                  <Input.Password className="label-info" size="large" />
-                </Form.Item>
-                <Form.Item
-                  label="New Password"
-                  name="new_password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Input New Password!",
-                    },
-                  ]}
-                >
-                  <Input.Password className="label-info" size="large" />
-                </Form.Item>
-                <Form.Item
-                  label="Confirm Password"
-                  name="confirm_password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Confirm Password is required!",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue("new_password") === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error(
-                            "The two passwords that you entered do not match!"
-                          )
-                        );
+                  <Form.Item
+                    label="Current Password"
+                    name="current_password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Input Current Password!",
                       },
-                    }),
-                  ]}
-                >
-                  <Input.Password className="label-info" size="large" />
-                </Form.Item>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="button-apply"
-                    size="large"
+                    ]}
                   >
-                    Apply
-                  </Button>
-                </Form.Item>
-              </Form>
+                    <Input.Password className="label-info" size="large" />
+                  </Form.Item>
+                  <Form.Item
+                    label="New Password"
+                    name="new_password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Input New Password!",
+                      },
+                    ]}
+                  >
+                    <Input.Password className="label-info" size="large" />
+                  </Form.Item>
+                  <Form.Item
+                    label="Confirm Password"
+                    name="confirm_password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Confirm Password is required!",
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (
+                            !value ||
+                            getFieldValue("new_password") === value
+                          ) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error(
+                              "The two passwords that you entered do not match!"
+                            )
+                          );
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input.Password className="label-info" size="large" />
+                  </Form.Item>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="button-apply"
+                      size="large"
+                    >
+                      Apply
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
             </div>
           </Col>
           <Col span={8}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Desciptions</h1>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Desciptions</h1>
+                </div>
+                <div>
+                  <h1>Account Setting</h1>
+                  <p>
+                    It is strongly recommended that you change the factory
+                    default user name and password of this device. All users who
+                    try to access this device's web-based utility will be
+                    prompted for this device's user name and password.
+                  </p>
+                  <p>
+                    <strong>Note:</strong> The new user name and password must
+                    not exceed 15 characters in length and must not include any
+                    spaces. Enter the new Password twice to confirm it.
+                  </p>
+                  <p>Click the apply button when finished.</p>
+                </div>
               </div>
             </div>
           </Col>

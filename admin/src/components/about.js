@@ -75,8 +75,10 @@ const AboutUs = () => {
 
   return (
     <React.Fragment>
-      <div className="container">
-        <Banner />
+      <div className="card">
+        <div className="container">
+          <Banner />
+        </div>
       </div>
     </React.Fragment>
   );

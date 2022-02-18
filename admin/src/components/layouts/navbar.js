@@ -3,6 +3,7 @@ import { Layout, Avatar, Popover, Row, Col } from "antd";
 import { Link } from "react-router-dom";
 import { HiLogout } from "react-icons/hi";
 import { FiSettings } from "react-icons/fi";
+import { ReadOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Avatar1 from "../../assets/images/avatar/avatar.png";
 
@@ -12,7 +13,7 @@ const getToken = localStorage.getItem("token");
 
 const NavBar = () => {
   const [currentUser, setCurrentUser] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -46,7 +47,8 @@ const NavBar = () => {
               className="logo-content-server"
               alt="logo"
             />
-            |CONTENT SERVER
+
+            <span>CONTENT SERVER</span>
           </Link>
         </div>
         <Popover
@@ -75,6 +77,18 @@ const NavBar = () => {
                 <Col className="logout" span={20}>
                   <Link to="/management/users-account">
                     <p style={{ paddingTop: "4px", color: "black" }}>Setting</p>
+                  </Link>
+                </Col>
+              </Row>
+              <Row className="accountNavbarhover">
+                <Col span={4} style={{ paddingTop: "6px" }}>
+                  <ReadOutlined className="about-us-icon" />
+                </Col>
+                <Col className="logout" span={20}>
+                  <Link to="/about-us">
+                    <a style={{ paddingTop: "4px", color: "black" }}>
+                      About US
+                    </a>
                   </Link>
                 </Col>
               </Row>

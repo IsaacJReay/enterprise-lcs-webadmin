@@ -21,27 +21,29 @@ const WANDynamic = () => {
     },
   };
 
-  useEffect(async () => {
-    setLoading(true);
-    await axios({
-      method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/status",
-      headers: {
-        "content-type": "application/json",
-        ...auth,
-      },
-    })
-      .then((res) => {
-        setItems(res.data.wired_network_param);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+  useEffect(() => {
+    async function fetchData() {
+      await axios({
+        method: "GET",
+        url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/status",
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
       })
-      .catch((err) => console.log(err));
+        .then((res) => {
+          setItems(res.data.wired_network_param);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
+        })
+        .catch((err) => console.log(err));
+    }
+    fetchData();
   }, []);
 
-  const handleApply = () => {
-    axios({
+  const handleApply = async () => {
+    await axios({
       method: "POST",
       url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/dynamic",
       headers: {
@@ -51,9 +53,9 @@ const WANDynamic = () => {
     })
       .then(async (res) => {
         if (res.data.operation_status === "Success") {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
+          setTimeout(() => {
+            message.success("Successful!");
+          }, 1000);
         } else {
           setLoading(true);
           message.error("operation failed! ");

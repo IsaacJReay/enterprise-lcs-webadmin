@@ -21,34 +21,36 @@ const WANStatic = () => {
     },
   };
 
-  useEffect(async () => {
-    setLoading(true);
-    await axios({
-      method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/status",
-      headers: {
-        "content-type": "application/json",
-        ...auth,
-      },
-    })
-      .then((res) => {
-        const { internet_ip, gateway, netmask, dns } =
-          res.data.wired_network_param;
-        form.setFieldsValue({
-          internet_ip: internet_ip,
-          gateway: gateway,
-          netmask: netmask,
-          dns: dns,
-        });
-        setLoading(false);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+  useEffect(() => {
+    async function fetchData() {
+      await axios({
+        method: "GET",
+        url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/status",
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
       })
-      .catch((err) => console.log(err));
+        .then((res) => {
+          const { internet_ip, gateway, netmask, dns } =
+            res.data.wired_network_param;
+          form.setFieldsValue({
+            internet_ip: internet_ip,
+            gateway: gateway,
+            netmask: netmask,
+            dns: dns,
+          });
+          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
+        })
+        .catch((err) => console.log(err));
+    }
+    fetchData();
   }, []);
 
-  const handleApply = (data) => {
+  const handleApply = async (data) => {
     const inputData = {
       internet_ip: data.internet_ip,
       netmask: data.netmask,
@@ -56,7 +58,7 @@ const WANStatic = () => {
       dns: data.dns,
     };
 
-    axios
+    await axios
       .post(
         "http://10.42.0.188:8080/private/api/settings/wirednetwork/static",
         inputData,
@@ -70,9 +72,9 @@ const WANStatic = () => {
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
+          setTimeout(() => {
+            message.success("Successful!");
+          }, 1000);
         } else {
           setLoading(true);
           message.error("Operation Failed! ");

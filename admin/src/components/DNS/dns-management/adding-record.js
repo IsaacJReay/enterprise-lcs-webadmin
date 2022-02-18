@@ -7,7 +7,7 @@ const { Option } = Select;
 
 const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
   //  -------------state -------------
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   //   // ------- token ----------
   const getToken = localStorage.getItem("token");
@@ -17,7 +17,7 @@ const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
 
   //   // ------- apply button ---------
 
-  const handleApply = (data) => {
+  const handleApply = async (data) => {
     const inputData = {
       subdomain_name: data.subdomain_name,
       address: data.address,
@@ -25,9 +25,7 @@ const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
       foreign_key: doid,
     };
 
-    console.log(inputData);
-
-    axios
+    await axios
       .post(
         "http://10.42.0.188:8080/private/api/settings/dns/zone_record/creation",
         inputData,
@@ -38,13 +36,12 @@ const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
           },
         }
       )
-
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
-          window.location.reload();
+          setTimeout(() => {
+            message.success("Successful!");
+          }, 1000);
+          handleOk();
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -115,8 +112,14 @@ const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
                 placeholder="Select here ..."
               >
                 <Option value="A">A</Option>
+                <Option value="AAAA">AAAA</Option>
                 <Option value="MX 10">MX 10</Option>
                 <Option value="CNAME">CNAME</Option>
+                <Option value="PTR">PTR</Option>
+                <Option value="CERT">CERT</Option>
+                <Option value="SRV">SRV</Option>
+                <Option value="TXT">TXT</Option>
+                <Option value="SOA">SOA</Option>
               </Select>
             </Form.Item>
             <Form.Item>

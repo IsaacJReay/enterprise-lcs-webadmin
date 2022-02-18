@@ -39,8 +39,9 @@ const InternalWebsite = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
+          <div className="card">
             <div className="container">
               <div className="container-header">
                 <h1>Internal Website</h1>
@@ -53,12 +54,15 @@ const InternalWebsite = () => {
                 scroll={{ y: 450 }}
               />
             </div>
+            </div>
           </Col>
           <Col span={8}>
+          <div className="card">
             <div className="container">
               <div className="container-header">
                 <h1>Desciptions</h1>
               </div>
+            </div>
             </div>
           </Col>
         </Row>

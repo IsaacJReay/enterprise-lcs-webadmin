@@ -9,22 +9,24 @@ export default function StorageItem({
   setSelected,
   selected,
 }) {
-  const { name } = data;
-  const { size } = data.meta;
+  const { name, meta } = data;
+  const { item_size, item_last_modify_date } = meta;
   const [expand, setExpand] = useState(false);
 
-  function formatBytes(size, decimals = 2) {
-    if (size === 0) return "0 B";
+  function formatBytes(item_size, decimals = 2) {
+    if (item_size === 0) return "0 B";
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-    const total = Math.floor(Math.log(size) / Math.log(k));
+    const total = Math.floor(Math.log(item_size) / Math.log(k));
     return (
-      parseFloat((size / Math.pow(k, total)).toFixed(dm)) + " " + sizes[total]
+      parseFloat((item_size / Math.pow(k, total)).toFixed(dm)) +
+      " " +
+      sizes[total]
     );
   }
 
-  if (data.meta.is_dir) {
+  if (data.meta.item_is_dir) {
     const selfLocation = `${parent}${name}/`;
     return (
       <ul className="file-container">
@@ -35,19 +37,21 @@ export default function StorageItem({
           onClick={(e) => {
             setExpand(!expand);
             setSelected(selfLocation);
-            console.log(`${selfLocation} is dir`);
+            // console.log(`${selfLocation} is dir`);
           }}
         >
           <Row gutter={6}>
             <Col span={2}>
               <FcFolder size={35} className="folder-icon" />
             </Col>
-            <Col span={20}>
+            <Col span={12}>
               <p className="file-name">{name}</p>
             </Col>
+            <Col span={8}>
+              <p className="file-name">{item_last_modify_date}</p>
+            </Col>
             <Col span={2}>
-              {" "}
-              <div className="file-size">{formatBytes(size)}</div>
+              <div className="file-size">{formatBytes(item_size)}</div>
             </Col>
           </Row>
         </li>
@@ -55,7 +59,7 @@ export default function StorageItem({
         {!expand ? (
           ""
         ) : (
-          <ul>
+          <ul className="children-dir">
             {data.children.map((child) => (
               <StorageItem
                 data={child}
@@ -78,16 +82,21 @@ export default function StorageItem({
         }`}
         onClick={(e) => {
           setSelected(selfLocation);
-          console.log(`${selfLocation} is file`);
+          // console.log(`${selfLocation} is file`);
         }}
       >
         <Row gutter={12}>
           <Col span={2}>
             <FcFile size={35} className="folder-icon" />
           </Col>
-          <Col span={20}>{name}</Col>
+          <Col span={12}>
+            <p className="filename">{name}</p>
+          </Col>
+          <Col span={8}>
+            <p className="file-name">{item_last_modify_date}</p>
+          </Col>
           <Col span={2}>
-            <div>{formatBytes(size)}</div>
+            <p className="filename">{formatBytes(item_size)}</p>
           </Col>
         </Row>
       </li>

@@ -4,7 +4,8 @@ import axios from "axios";
 
 const CreateDomain = () => {
   //   // -----state ---------
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   //   // ------- token ----------
   const getToken = localStorage.getItem("token");
@@ -14,12 +15,11 @@ const CreateDomain = () => {
 
   //   // ------- apply button ---------
 
-  const handleApply = (data) => {
+  const handleApply = async (data) => {
     const inputData = {
       domain_name: data.domain_name,
     };
-
-    axios
+    await axios
       .post(
         "http://10.42.0.188:8080/private/api/settings/dns/domain_name/creation",
         inputData,
@@ -33,10 +33,10 @@ const CreateDomain = () => {
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
-          window.location.reload();
+          setTimeout(() => {
+            message.success("Successful!");
+          }, 1000);
+          form.resetFields();
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -54,16 +54,16 @@ const CreateDomain = () => {
 
   return (
     <React.Fragment>
-      <Form layout="inline" onFinish={handleApply}>
+      <Form form={form} layout="inline" onFinish={handleApply}>
         <Form.Item
           label="Domain name"
           name="domain_name"
           rules={[{ required: true, message: "Input domain name!" }]}
         >
           <Input
-            placeholder="text here ..."
+            placeholder="example.com "
             size="large"
-            className="input-info"
+            className="input-info-dns"
           />
         </Form.Item>
         <Form.Item>

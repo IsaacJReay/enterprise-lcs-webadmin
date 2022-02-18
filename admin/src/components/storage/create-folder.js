@@ -3,10 +3,10 @@ import { Modal, Button, message, Input, Form } from "antd";
 import axios from "axios";
 import { FiX } from "react-icons/fi";
 
-const CreateFolder = ({ visible, handleCancel, handleOk, path }) => {
+const CreateFolder = ({ visible, handleCancel, handleOk, uuid, selected }) => {
   // -------state management ---------------
 
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   // -------token ----------
 
@@ -19,10 +19,10 @@ const CreateFolder = ({ visible, handleCancel, handleOk, path }) => {
 
   const handleApply = (data) => {
     const inputData = {
-      item_name: data.folder_name,
-      parent_directory: path,
+      directory_name: data.folder_name,
+      parent_directory: selected,
+      drive_partuuid: uuid,
     };
-    console.log(inputData);
     axios
       .post(
         "http://10.42.0.188:8080/private/api/settings/storage/device/directory/creation",

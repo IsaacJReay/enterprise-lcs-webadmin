@@ -4,6 +4,7 @@ import { Form, Button, Input, Row, Col } from "antd";
 const ManaullyUpdate = () => {
   return (
     <React.Fragment>
+         <div className="card">
       <div className="container">
         <div className="container-header">
           <h1>Manually Update</h1>
@@ -51,6 +52,7 @@ const ManaullyUpdate = () => {
               </Button>
             </Form.Item>
           </Form>
+        </div>
         </div>
       </div>
     </React.Fragment>

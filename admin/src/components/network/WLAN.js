@@ -111,9 +111,9 @@ const WLANSetting = () => {
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
+          setTimeout(() => {
+            message.success("Successful!");
+          }, 1000);
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -140,153 +140,194 @@ const WLANSetting = () => {
   return (
     <React.Fragment>
       <Content>
-        <Row gutter={[32, 32]}>
+        <Row gutter={12}>
           <Col span={16}>
             <Form {...layout} onFinish={handleApply} form={form}>
-              <div className="container">
-                <div className="container-header">
-                  <h1>WLAN Setting</h1>
-                </div>
-                <hr />
+              <div className="card">
+                <div className="container">
+                  <div className="container-header">
+                    <h1>WLAN Setting</h1>
+                  </div>
+                  <hr />
 
-                <div className="desc-container-banner">
-                  <Form.Item
-                    label="Router Address"
-                    name="router"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Input Router Address!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      size="large"
-                      placeholder="0.0.0.0"
-                      className="label-info"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Netmask"
-                    name="netmask"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Input Netmask!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      size="large"
-                      placeholder="0.0.0.0"
-                      className="label-info"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Range " style={{ marginBottom: 0 }}>
+                  <div className="desc-container-banner">
                     <Form.Item
-                      name="start_range"
+                      label="Router Address"
+                      name="router"
                       rules={[
-                        { required: true, message: "Input Start Range!" },
+                        {
+                          required: true,
+                          message: "Input Router Address!",
+                        },
                       ]}
-                      style={{
-                        display: "inline-block",
-                        width: "calc(50% - 8px)",
-                      }}
                     >
-                      <Input placeholder="0.0.0.0" size="large" />
+                      <Input
+                        size="large"
+                        placeholder="0.0.0.0"
+                        className="label-info"
+                      />
                     </Form.Item>
                     <Form.Item
-                      name="end_range"
-                      rules={[{ required: true, message: "Input End Range!" }]}
-                      style={{
-                        display: "inline-block",
-                        width: "calc(50% - 8px)",
-                        margin: "0 8px",
-                      }}
+                      label="Netmask"
+                      name="netmask"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Input Netmask!",
+                        },
+                      ]}
                     >
-                      <Input placeholder="0.0.0.0" size="large" />
+                      <Input
+                        size="large"
+                        placeholder="0.0.0.0"
+                        className="label-info"
+                      />
                     </Form.Item>
-                  </Form.Item>
-                  <Form.Item
-                    label="DNS "
-                    name="dns"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Input DNS!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      size="large"
-                      placeholder="0.0.0.0"
-                      className="label-info"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Default Lease time"
-                    name="default_time"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Input Default Lease time!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      size="large"
-                      placeholder="0000"
-                      className="label-info"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Max Lease time"
-                    name="max_time"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Input Max Lease time!",
-                      },
-                    ]}
-                  >
-                    <Input
-                      size="large"
-                      placeholder="0000"
-                      className="label-info"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Timezone ">
-                    <Select
-                      defaultValue={defalutTime}
-                      size="large"
-                      className="select-Option"
-                      showSearch
-                      optionFilterProp="children"
-                      onChange={onChange}
+                    <Form.Item label="Range " style={{ marginBottom: 0 }}>
+                      <Form.Item
+                        name="start_range"
+                        rules={[
+                          { required: true, message: "Input Start Range!" },
+                        ]}
+                        style={{
+                          display: "inline-block",
+                          width: "calc(50% - 8px)",
+                        }}
+                      >
+                        <Input placeholder="0.0.0.0" size="large" />
+                      </Form.Item>
+                      <Form.Item
+                        name="end_range"
+                        rules={[
+                          { required: true, message: "Input End Range!" },
+                        ]}
+                        style={{
+                          display: "inline-block",
+                          width: "calc(50% - 8px)",
+                          margin: "0 8px",
+                        }}
+                      >
+                        <Input placeholder="0.0.0.0" size="large" />
+                      </Form.Item>
+                    </Form.Item>
+                    <Form.Item
+                      label="DNS "
+                      name="dns"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Input DNS!",
+                        },
+                      ]}
                     >
-                      {moments.map((res) => {
-                        return <Option value={res}>{res}</Option>;
-                      })}
-                    </Select>
+                      <Input
+                        size="large"
+                        placeholder="0.0.0.0"
+                        className="label-info"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Default Lease time"
+                      name="default_time"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Input Default Lease time!",
+                        },
+                      ]}
+                    >
+                      <Input
+                        size="large"
+                        placeholder="0000"
+                        className="label-info"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Max Lease time"
+                      name="max_time"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Input Max Lease time!",
+                        },
+                      ]}
+                    >
+                      <Input
+                        size="large"
+                        placeholder="0000"
+                        className="label-info"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Timezone ">
+                      <Select
+                        defaultValue={defalutTime}
+                        size="large"
+                        className="select-Option"
+                        showSearch
+                        optionFilterProp="children"
+                        onChange={onChange}
+                      >
+                        {moments.map((res) => {
+                          return <Option value={res}>{res}</Option>;
+                        })}
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="button-apply"
+                      size="large"
+                    >
+                      Apply
+                    </Button>
                   </Form.Item>
                 </div>
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="button-apply"
-                    size="large"
-                  >
-                    Apply
-                  </Button>
-                </Form.Item>
               </div>
             </Form>
           </Col>
           <Col span={8}>
-            <div className="container">
-              <div className="container-header">
-                <h1>Desciptions</h1>
+            <div className="card">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Desciptions</h1>
+                </div>
+                <div>
+                  <h2>WLAN Help</h2>
+                  <p>
+                    You can configure the IP parameters of LAN on this page.
+                  </p>
+                  <ul>
+                    <li>
+                      <strong>MAC Address</strong> - The physical address of the
+                      LAN ports, as seen from the LAN. The value cannot be
+                      changed.
+                    </li>
+                    <li>
+                      <strong>IP Address</strong> - Enter the IP address of your
+                      Router in dotted-decimal notation (factory default -
+                      192.168.0.1).
+                    </li>
+                    <li>
+                      <strong>Subnet Musk</strong> - An address code that
+                      determines the size of the network. Usually it is
+                      255.255.255.0. Note:
+                    </li>
+                  </ul>
+                  <p>
+                    If you change the LAN IP address, you must use the new IP
+                    address to login to the Router.
+                  </p>
+                  <p>
+                    If the new LAN IP address you set is not in the same subnet
+                    with the previous one, the IP Address pool in the DHCP
+                    server will be configured automatically, but the Virtual
+                    Server and DMZ Host will not take effect until they are
+                    re-configured
+                  </p>
+                  <p>Click the Apply button to save your settings.</p>
+                </div>
               </div>
             </div>
           </Col>

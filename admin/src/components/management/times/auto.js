@@ -9,7 +9,7 @@ const moment = require("moment-timezone");
 const Automaticaly = ({ pick, items }) => {
   const moments = moment.tz.names();
   const defalutTime = moment.tz.guess();
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   // ------token ------
 
@@ -70,7 +70,7 @@ const Automaticaly = ({ pick, items }) => {
           {pick === true ? (
             <div>
               <Row gutter={[12, 12]}>
-                <Col span={10}>
+                <Col span={14}>
                   <Form.Item label="Zone" name="zone">
                     <Select
                       defaultValue={defalutTime}
@@ -85,7 +85,7 @@ const Automaticaly = ({ pick, items }) => {
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col span={14}>
+                <Col span={10}>
                   <Form.Item>
                     <Button
                       size="large"
@@ -101,7 +101,7 @@ const Automaticaly = ({ pick, items }) => {
             </div>
           ) : (
             <Row gutter={[12, 12]}>
-              <Col span={10}>
+              <Col span={14}>
                 <Form.Item label="Zone">
                   <Select
                     defaultValue={defalutTime}
@@ -117,7 +117,7 @@ const Automaticaly = ({ pick, items }) => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={14}>
+              <Col span={10}>
                 <Form.Item>
                   <Button
                     size="large"

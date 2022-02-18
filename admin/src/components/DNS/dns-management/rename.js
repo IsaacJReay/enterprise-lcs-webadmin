@@ -5,7 +5,7 @@ import axios from "axios";
 
 const DNSRename = ({ visible, handleCancel, handleOk, doid, doname }) => {
   //  ----------state -----------
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   //   // ------- token ----------
   const getToken = localStorage.getItem("token");
@@ -15,12 +15,12 @@ const DNSRename = ({ visible, handleCancel, handleOk, doid, doname }) => {
 
   //   // ------- apply button ---------
 
-  const handleApply = (data) => {
+  const handleApply = async (data) => {
     const inputData = {
       new_domain_name: data.domain_name,
       foreign_key: { foreign_key: doid },
     };
-    axios
+    await axios
       .put(
         "http://10.42.0.188:8080/private/api/settings/dns/domain_name/update",
         inputData,
@@ -34,14 +34,14 @@ const DNSRename = ({ visible, handleCancel, handleOk, doid, doname }) => {
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
-          window.location.reload();
+          setTimeout(() => {
+            message.success("Successful!");
+          }, 1000);
+          handleOk();
         } else {
-          setLoading(true);
-          message.error("Operation Failed! ");
-          setLoading(false);
+          setTimeout(() => {
+            message.error("Operation Failed! ");
+          }, 1000);
         }
       })
 
