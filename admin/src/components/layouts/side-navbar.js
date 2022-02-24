@@ -97,12 +97,12 @@ const SideNavBar = () => {
             title="Management"
             className="menu-navbar"
           >
-            <Menu.Item
+            {/* <Menu.Item
               key="/management/system-update"
               className="container-submenu"
             >
               <Link to="/management/system-update">System Updates</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item
               key="/management/users-account"
               className="container-submenu"

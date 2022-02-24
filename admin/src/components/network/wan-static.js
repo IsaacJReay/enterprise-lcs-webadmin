@@ -3,6 +3,7 @@ import { Form, Input, Button, message, Spin } from "antd";
 import axios from "axios";
 
 const getToken = localStorage.getItem("token");
+const baseUrl = process.env.REACT_APP_API_URL;
 
 const WANStatic = () => {
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,7 @@ const WANStatic = () => {
     async function fetchData() {
       await axios({
         method: "GET",
-        url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/status",
+        url: `${baseUrl}/settings/wirednetwork/status`,
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -59,16 +60,12 @@ const WANStatic = () => {
     };
 
     await axios
-      .post(
-        "http://10.42.0.188:8080/private/api/settings/wirednetwork/static",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .post(` ${baseUrl}/settings/wirednetwork/static`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
 
       .then((res) => {
         if (res.data.operation_status === "Success") {

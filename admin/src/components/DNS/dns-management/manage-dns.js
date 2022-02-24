@@ -38,7 +38,7 @@ const DNSManagement = ({ match }) => {
   const key = match.params.id;
 
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -46,55 +46,53 @@ const DNSManagement = ({ match }) => {
 
   // ----------get data -------------
 
+  async function fetchData() {
+    await axios
+      .get(`${baseUrl}/settings/dns/zone_records/status/${key}`, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
+      .then((res) => {
+        setLoading(true);
+        setItems(res.data);
+        setSubdomain(res.data.record_table);
+        const { status } = res.data;
+        form.setFieldsValue({
+          status: status,
+        });
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((err) => console.log(err));
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      await axios
-        .get(
-          `http://10.42.0.188:8080/private/api/settings/dns/zone_records/status/${key}`,
-          {
-            headers: {
-              "content-type": "application/json",
-              ...auth,
-            },
-          }
-        )
-        .then((res) => {
-          setLoading(true);
-          setItems(res.data);
-          setSubdomain(res.data.record_table);
-          const { status } = res.data;
-          form.setFieldsValue({
-            status: status,
-          });
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
-        })
-        .catch((err) => console.log(err));
-    }
     fetchData();
-  }, [items]);
+  }, []);
 
   //  --------delete record ----------
 
   const handleDelete = async (id) => {
     await axios
       .delete(
-        "http://10.42.0.188:8080/private/api/settings/dns/zone_record/deletion",
+        `${baseUrl}/settings/dns/zone_record/deletion`,
 
         {
           headers: {
             "content-type": "application/json",
             ...auth,
           },
-          data: { id: id, foreign_key: `${match.params.id}` },
+          data: { id: `${id}`, foreign_key: `${match.params.id}` },
         }
       )
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
+          fetchData();
+          setLoading(false);
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -118,22 +116,18 @@ const DNSManagement = ({ match }) => {
       status: data.status,
     };
     await axios
-      .put(
-        "http://10.42.0.188:8080/private/api/settings/dns/status/update",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .put(`${baseUrl}/settings/dns/status/update`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
+          fetchData();
+          setLoading(false);
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -271,6 +265,7 @@ const DNSManagement = ({ match }) => {
                       type="primary"
                       className="button-apply2"
                       htmlType="submit"
+                      size="large"
                     >
                       Apply
                     </Button>
@@ -293,12 +288,14 @@ const DNSManagement = ({ match }) => {
           handleOk={handleOk}
           doid={doid}
           doname={doname}
+          fetchData={fetchData}
         />
         <AddRecord
           records={records}
           handleCancel={handleCancel}
           handleOk={handleOk}
           doid={doid}
+          fetchData={fetchData}
         />
         <Row gutter={12}>
           <Col span={16}>
@@ -376,7 +373,7 @@ const DNSManagement = ({ match }) => {
             </Row>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

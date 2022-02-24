@@ -11,7 +11,7 @@ const Restore = () => {
   const [confirm, setConfirm] = useState(false);
 
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -37,7 +37,7 @@ const Restore = () => {
     formData.append("file", file);
     setUploading(true);
     axios
-      .post("http://10.42.0.188:8080/private/api/settings/import", {
+      .post(`${baseUrl}/settings/import`, {
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -131,7 +131,7 @@ const Restore = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="button-apply"
+                className="button-apply3"
                 size="large"
                 disabled={fileList.length === 0 || confirm === false}
               >

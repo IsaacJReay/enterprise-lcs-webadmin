@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Form, Input, message } from "antd";
 import axios from "axios";
 
-const CreateDomain = () => {
+const CreateDomain = (fetchData) => {
   //   // -----state ---------
   const [, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -21,7 +21,8 @@ const CreateDomain = () => {
     };
     await axios
       .post(
-        "http://10.42.0.188:8080/private/api/settings/dns/domain_name/creation",
+        // "http://10.42.0.188:8080/private/api/settings/dns/domain_name/creation",
+        "http://10.1.2.2:8080/private/api/settings/dns/domain_name/creation",
         inputData,
         {
           headers: {
@@ -33,10 +34,10 @@ const CreateDomain = () => {
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
           form.resetFields();
+          window.location.reload(false);
+          setLoading(false);
         } else {
           setLoading(true);
           message.error("Operation Failed! ");

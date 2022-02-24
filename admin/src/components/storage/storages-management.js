@@ -33,7 +33,7 @@ const StoragesManagement = ({ match }) => {
   const [showModal, setShowModal] = useState(false);
 
   // -------token ----------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -41,50 +41,46 @@ const StoragesManagement = ({ match }) => {
 
   // -------- get data ----------
 
-  useEffect(async () => {
-    setLoading(true);
-    let data = await axios
-      .get(
-        `http://10.42.0.188:8080/private/api/settings/storage/device/status/${uuid}`,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+  async function fetchData() {
+    await axios
+      .get(`${baseUrl}/settings/storage/device/status/${uuid}`, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
       .then((res) => {
-        return res.data;
+        setDataStorage(res.data);
+        setLoading(false);
       })
       .catch((err) => console.log(err));
-    setDataStorage({ ...data });
-    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   // -------delete dir---------------
 
   const deleteDir = () => {
     axios
-      .delete(
-        "http://10.42.0.188:8080/private/api/settings/storage/device/deletion",
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-          data: {
-            selected_filedir: [`${selected}`],
-            drive_partuuid: uuid,
-          },
-        }
-      )
+      .delete(`${baseUrl}/settings/storage/device/deletion`, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+        data: {
+          selected_filedir: [`${selected}`],
+          drive_partuuid: uuid,
+        },
+      })
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
           setLoading(true);
           message.success("Successful!");
+          fetchData();
           setLoading(false);
-          window.location.reload();
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -128,22 +124,18 @@ const StoragesManagement = ({ match }) => {
       items_destination: selected,
     };
     axios
-      .post(
-        "http://10.42.0.188:8080/private/api/settings/storage/device/copy_or_move",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .post(`${baseUrl}/settings/storage/device/copy_or_move`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
       .then((res) => {
         if (res.data.operation_status === "Success") {
           setLoading(true);
           message.success("Successful!");
           setLoading(false);
-          window.location.reload();
+          fetchData();
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -167,22 +159,18 @@ const StoragesManagement = ({ match }) => {
       drive_partuuid: uuid,
     };
     axios
-      .post(
-        "http://10.42.0.188:8080/private/api/settings/storage/device/unmount",
-        unmountData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .post(`${baseUrl}/settings/storage/device/unmount`, unmountData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
       .then((res) => {
         if (res.data.operation_status === "Success") {
           setLoading(true);
           message.success("Successful!");
           setLoading(false);
-          window.location.reload();
+          fetchData();
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -208,6 +196,7 @@ const StoragesManagement = ({ match }) => {
   };
   const handleCancel = () => {
     setVisible(false);
+    setShowModal(false);
   };
 
   const showSendTo = () => {
@@ -222,48 +211,80 @@ const StoragesManagement = ({ match }) => {
     );
   }
 
-  const OperationButton = () => {
+  const OperationButtonFlash = () => {
     return (
       <React.Fragment>
         <div className="btn-options-storages">
-          <Button type="primary" className="button-update" onClick={handleCopy}>
-            Copy
-          </Button>
+          {selected ? (
+            <div className="btn-options-storages2">
+              <Button
+                type="primary"
+                className="button-update2"
+                onClick={handleCopy}
+              >
+                Copy
+              </Button>
+              <Button
+                type="primary"
+                className="button-update2"
+                onClick={handlePaste}
+              >
+                Paste
+              </Button>
+              <Button
+                type="primary"
+                className="button-update2"
+                onClick={handleCut}
+              >
+                Cut
+              </Button>
+              <Popover
+                content={contents}
+                placement="rightTop"
+                title={null}
+                trigger="click"
+                // visible={showModal}
+                onVisibleChange={showSendTo}
+              >
+                <Button type="primary" className="button-update2">
+                  Send to
+                </Button>
+              </Popover>
+              <Button type="primary" className="button-update2">
+                Delete
+              </Button>
+            </div>
+          ) : (
+            <div className="btn-options-storages2">
+              <Button type="primary" className="button-unselected">
+                Copy
+              </Button>
+              <Button type="primary" className="button-unselected">
+                Paste
+              </Button>
+              <Button type="primary" className="button-unselected">
+                Cut
+              </Button>
+
+              <Button type="primary" className="button-unselected">
+                Send to
+              </Button>
+
+              <Button type="primary" className="button-unselected">
+                Delete
+              </Button>
+            </div>
+          )}
           <Button
             type="primary"
-            className="button-update"
-            onClick={handlePaste}
-          >
-            Paste
-          </Button>
-          <Button type="primary" className="button-update" onClick={handleCut}>
-            Cut
-          </Button>
-          <Popover
-            content={contents}
-            placement="rightTop"
-            title={null}
-            trigger="click"
-            visible={showModal}
-            onVisibleChange={showSendTo}
-          >
-            <Button type="primary" className="button-update">
-              Send to
-            </Button>
-          </Popover>
-          <Button type="primary" className="button-update">
-            Delete
-          </Button>
-          <Button
-            type="primary"
-            className="button-update"
+            className="button-update2"
             onClick={showCreateFoder}
           >
             New Folder
           </Button>
           <Button
             type="primary"
-            className="button-update"
+            className="button-update2"
             onClick={handleUnmount}
           >
             Safely Remove
@@ -273,9 +294,94 @@ const StoragesManagement = ({ match }) => {
     );
   };
 
+  const OperationButtonLocal = () => {
+    return (
+      <React.Fragment>
+        <div className="btn-options-storages">
+          {selected ? (
+            <div className="btn-options-storages2">
+              <Button
+                type="primary"
+                className="button-update2"
+                onClick={handleCopy}
+              >
+                Copy
+              </Button>
+              <Button
+                type="primary"
+                className="button-update2"
+                onClick={handlePaste}
+              >
+                Paste
+              </Button>
+              <Button
+                type="primary"
+                className="button-update2"
+                onClick={handleCut}
+              >
+                Cut
+              </Button>
+              <Popover
+                content={contents}
+                placement="rightTop"
+                title={null}
+                trigger="click"
+                // visible={showModal}
+                onVisibleChange={showSendTo}
+              >
+                <Button type="primary" className="button-update2">
+                  Send to
+                </Button>
+              </Popover>
+              <Popconfirm
+                title="Are you sure to delete it?"
+                placement="rightTop"
+                okText="Yes"
+                cancelText="No"
+                onConfirm={deleteDir}
+                onCancel={handleCancel}
+              >
+                <Button type="primary" className="button-update2">
+                  Delete
+                </Button>
+              </Popconfirm>
+            </div>
+          ) : (
+            <div className="btn-options-storages2">
+              <Button type="primary" className="button-unselected">
+                Copy
+              </Button>
+              <Button type="primary" className="button-unselected">
+                Paste
+              </Button>
+              <Button type="primary" className="button-unselected">
+                Cut
+              </Button>
+
+              <Button type="primary" className="button-unselected">
+                Send to
+              </Button>
+
+              <Button type="primary" className="button-unselected">
+                Delete
+              </Button>
+            </div>
+          )}
+          <Button
+            type="primary"
+            className="button-update2"
+            onClick={showCreateFoder}
+          >
+            New Folder
+          </Button>
+        </div>
+      </React.Fragment>
+    );
+  };
+
   const contents = (
     <React.Fragment>
-      <SendTO selected={selected} uuid={uuid} />
+      <SendTO selected={selected} uuid={uuid} fetchData={fetchData} />
     </React.Fragment>
   );
 
@@ -287,6 +393,7 @@ const StoragesManagement = ({ match }) => {
         handleOk={handleOk}
         uuid={uuid}
         selected={selected}
+        fetchData={fetchData}
       />
       <Content>
         <Row gutter={12}>
@@ -309,62 +416,9 @@ const StoragesManagement = ({ match }) => {
                   </div>
                 </div>
                 {dataStorage.name !== "Local Content Storage" ? (
-                  <OperationButton />
+                  <OperationButtonFlash />
                 ) : (
-                  <div className="btn-options-storages">
-                    <Button
-                      type="primary"
-                      className="button-update"
-                      onClick={handleCopy}
-                    >
-                      Copy
-                    </Button>
-                    <Button
-                      type="primary"
-                      className="button-update"
-                      onClick={handlePaste}
-                    >
-                      Paste
-                    </Button>
-                    <Button
-                      type="primary"
-                      className="button-update"
-                      onClick={handleCut}
-                    >
-                      Cut
-                    </Button>
-                    <Popover
-                      content={contents}
-                      placement="rightTop"
-                      title={null}
-                      trigger="click"
-                      visible={showModal}
-                      onVisibleChange={showSendTo}
-                    >
-                      <Button type="primary" className="button-update">
-                        Send to
-                      </Button>
-                    </Popover>
-                    <Popconfirm
-                      title="Are you sure to delete it?"
-                      placement="rightTop"
-                      okText="Yes"
-                      cancelText="No"
-                      onConfirm={deleteDir}
-                      onCancel={handleCancel}
-                    >
-                      <Button type="primary" className="button-update">
-                        Delete
-                      </Button>
-                    </Popconfirm>
-                    <Button
-                      type="primary"
-                      className="button-update"
-                      onClick={showCreateFoder}
-                    >
-                      New Folder
-                    </Button>
-                  </div>
+                  <OperationButtonLocal />
                 )}
                 <hr />
                 <div className="local-data-container">
@@ -397,7 +451,7 @@ const StoragesManagement = ({ match }) => {
             </div>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

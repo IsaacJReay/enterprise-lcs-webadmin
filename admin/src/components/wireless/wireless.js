@@ -24,6 +24,7 @@ for (let i = 0; i < 14; i++) {
 }
 
 const getToken = localStorage.getItem("token");
+const baseUrl = process.env.REACT_APP_API_URL;
 
 const WirelessSetting = () => {
   const auth = {
@@ -47,7 +48,7 @@ const WirelessSetting = () => {
     setLoading(true);
     await axios({
       method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/hostapd/status",
+      url: `${baseUrl}/settings/hostapd/status`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -96,7 +97,7 @@ const WirelessSetting = () => {
       hw_n_mode: data.hw_n_mode,
     };
     axios
-      .post("http://10.42.0.188:8080/private/api/settings/hostapd", inputData, {
+      .post(`${baseUrl}/settings/hostapd`, inputData, {
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -214,7 +215,7 @@ const WirelessSetting = () => {
                     <Button
                       type="primary"
                       htmlType="submit"
-                      className="button-apply"
+                      className="button-apply3"
                       size="large"
                     >
                       Apply
@@ -225,7 +226,7 @@ const WirelessSetting = () => {
             </Form>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

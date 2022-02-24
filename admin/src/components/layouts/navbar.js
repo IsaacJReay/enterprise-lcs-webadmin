@@ -8,7 +8,7 @@ import axios from "axios";
 import Avatar1 from "../../assets/images/avatar/avatar.png";
 
 const { Header } = Layout;
-
+const baseUrl = process.env.REACT_APP_API_URL;
 const getToken = localStorage.getItem("token");
 
 const NavBar = () => {
@@ -22,7 +22,7 @@ const NavBar = () => {
     };
     axios({
       method: "GET",
-      url: "http://10.42.0.188:8080/private/api/user/query",
+      url: `${baseUrl}/user/query`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -62,7 +62,6 @@ const NavBar = () => {
                 <Col span={20}>
                   <div>
                     <div className="popover-text">{currentUser.username}</div>
-                    {/* <span>thiththin762@gmail.com</span> */}
                   </div>
                 </Col>
               </Row>

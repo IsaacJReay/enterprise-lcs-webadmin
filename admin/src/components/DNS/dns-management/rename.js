@@ -3,11 +3,19 @@ import { Modal, Input, Form, Button, message } from "antd";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 
-const DNSRename = ({ visible, handleCancel, handleOk, doid, doname }) => {
+const DNSRename = ({
+  visible,
+  handleCancel,
+  handleOk,
+  doid,
+  doname,
+  fetchData,
+}) => {
   //  ----------state -----------
   const [, setLoading] = useState(false);
 
   //   // ------- token ----------
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -21,23 +29,19 @@ const DNSRename = ({ visible, handleCancel, handleOk, doid, doname }) => {
       foreign_key: { foreign_key: doid },
     };
     await axios
-      .put(
-        "http://10.42.0.188:8080/private/api/settings/dns/domain_name/update",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .put(`${baseUrl}/settings/dns/domain_name/update`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
+          fetchData();
           handleOk();
+          setLoading(false);
         } else {
           setTimeout(() => {
             message.error("Operation Failed! ");

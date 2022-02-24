@@ -5,11 +5,12 @@ import axios from "axios";
 
 const { Option } = Select;
 
-const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
+const AddRecord = ({ handleCancel, handleOk, records, doid, fetchData }) => {
   //  -------------state -------------
   const [, setLoading] = useState(false);
 
   //   // ------- token ----------
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -26,22 +27,18 @@ const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
     };
 
     await axios
-      .post(
-        "http://10.42.0.188:8080/private/api/settings/dns/zone_record/creation",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .post(`${baseUrl}/settings/dns/zone_record/creation`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
+          fetchData();
           handleOk();
+          setLoading(false);
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -124,7 +121,7 @@ const AddRecord = ({ handleCancel, handleOk, records, doid }) => {
             </Form.Item>
             <Form.Item>
               <Button
-                className="button-apply"
+                className="button-apply4"
                 size="large"
                 htmlType="submit"
                 type="primary"

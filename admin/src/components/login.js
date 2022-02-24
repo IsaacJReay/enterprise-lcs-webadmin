@@ -4,24 +4,20 @@ import axios from "axios";
 import image from "../assets/images/login2.png";
 import icon from "../assets/images/icons/koompi-black.png";
 
+const baseUrl = process.env.REACT_APP_API_URL;
+
 const Login = () => {
   const [, setLoading] = useState(false);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const adminLogin = {
       username: data.username,
       password: data.password,
     };
-
-    axios
-      .post(
-        "http://10.42.0.188:8080/private/api/user/login",
-        adminLogin,
-        setLoading(true)
-      )
-
-      .then(async (res) => {
-        await localStorage.setItem("token", res.data.token);
+    await axios
+      .post(`${baseUrl}/user/login`, adminLogin, setLoading(true))
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
         if (res.data.operation_status === "Success") {
           setLoading(true);
           message.success("Successful!");

@@ -10,17 +10,18 @@ import {
   message,
   Popconfirm,
   Divider,
+  Input,
+  Button,
 } from "antd";
 
 import { Link } from "react-router-dom";
-import CreateDomain from "./create-domain";
 import axios from "axios";
 
 const { Content } = Layout;
 
 const DNSSetting = () => {
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -29,53 +30,84 @@ const DNSSetting = () => {
 
   const [, setLoading] = useState(false);
   const [datas, setDatas] = useState([]);
+  const [form] = Form.useForm();
 
   // ----------get data -------------
 
-  useEffect(() => {
-    async function fetchData() {
-      await axios({
-        method: "GET",
-        url: "http://10.42.0.188:8080/private/api/settings/dns/domain_name/status",
-        headers: {
-          "content-type": "application/json",
-          ...auth,
-        },
+  async function fetchData() {
+    await axios({
+      method: "GET",
+      url: `${baseUrl}/settings/dns/domain_name/status`,
+      headers: {
+        "content-type": "application/json",
+        ...auth,
+      },
+    })
+      .then((res) => {
+        setDatas(res.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       })
-        .then((res) => {
-          setDatas(res.data);
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
-        })
-        .catch((err) => console.log(err));
-    }
+      .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
     fetchData();
-  }, [datas]);
+  }, []);
 
   //  --------delete record ----------
 
   const handleDelete = async (id) => {
     await axios
-      .delete(
-        "http://10.42.0.188:8080/private/api/settings/dns/domain_name/deletion",
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-          data: { id: id },
-        }
-      )
+      .delete(`${baseUrl}/settings/dns/domain_name/deletion`, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+        data: { id: id },
+      })
       .then((res) => {
         if (res.data.operation_status === "Success") {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
+          fetchData();
+          setLoading(false);
         } else {
           setTimeout(() => {
             message.error("Operation Failed! ");
           }, 1000);
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        message.error(err.response.data.reason);
+      });
+  };
+
+  // ------- apply button ---------
+
+  const handleApply = async (data) => {
+    const inputData = {
+      domain_name: data.domain_name,
+    };
+    await axios
+      .post(`${baseUrl}/settings/dns/domain_name/creation`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
+
+      .then((res) => {
+        if (res.data.operation_status === "Success") {
+          message.success("Successful!");
+          form.resetFields();
+          fetchData();
+          setLoading(false);
+        } else {
+          setLoading(true);
+          message.error("Operation Failed! ");
+          setLoading(false);
         }
       })
 
@@ -138,6 +170,39 @@ const DNSSetting = () => {
       },
     },
   ];
+
+  // -------------- create domain name ----------------
+
+  const CreateDomain = () => {
+    return (
+      <React.Fragment>
+        <Form form={form} layout="inline" onFinish={handleApply}>
+          <Form.Item
+            label="Domain name"
+            name="domain_name"
+            rules={[{ required: true, message: "Input domain name!" }]}
+          >
+            <Input
+              placeholder="example.com "
+              size="large"
+              className="input-info-dns"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="button-update"
+              size="large"
+            >
+              Create
+            </Button>
+          </Form.Item>
+        </Form>
+      </React.Fragment>
+    );
+  };
+
   return (
     <React.Fragment>
       <Content>
@@ -168,7 +233,7 @@ const DNSSetting = () => {
             </div>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

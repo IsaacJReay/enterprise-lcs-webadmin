@@ -8,7 +8,7 @@ const ResetAll = () => {
   const [, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -25,7 +25,7 @@ const ResetAll = () => {
   const handleApply = () => {
     axios({
       method: "POST",
-      url: "http://10.42.0.188:8080/private/api/settings/reset",
+      url: `${baseUrl}/settings/reset`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -86,7 +86,7 @@ const ResetAll = () => {
             </div>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

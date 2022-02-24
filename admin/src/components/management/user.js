@@ -11,7 +11,7 @@ const UserAccount = () => {
   const [user, setUser] = useState({});
 
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -36,7 +36,7 @@ const UserAccount = () => {
     };
 
     axios
-      .post("http://10.42.0.188:8080/private/api/user/password", inputData, {
+      .post(`${baseUrl}/user/password`, inputData, {
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -63,7 +63,7 @@ const UserAccount = () => {
     setLoading(true);
     axios({
       method: "GET",
-      url: "http://10.42.0.188:8080/private/api/user/query",
+      url: `${baseUrl}/user/query`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -159,7 +159,7 @@ const UserAccount = () => {
                     <Button
                       type="primary"
                       htmlType="submit"
-                      className="button-apply"
+                      className="button-apply3"
                       size="large"
                     >
                       Apply
@@ -170,7 +170,7 @@ const UserAccount = () => {
             </div>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

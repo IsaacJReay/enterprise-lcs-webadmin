@@ -21,12 +21,12 @@ const SystemUpdates = () => {
             </div>
           </Col>
           <Col span={8}>
-          <div className="card">
-            <div className="container">
-              <div className="container-header">
-                <h1>Desciptions</h1>
+            <div className="card2">
+              <div className="container">
+                <div className="container-header">
+                  <h1>Desciptions</h1>
+                </div>
               </div>
-            </div>
             </div>
           </Col>
         </Row>

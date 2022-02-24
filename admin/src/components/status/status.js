@@ -3,7 +3,7 @@ import { Layout, Col, Row, Spin } from "antd";
 import axios from "axios";
 
 const { Content } = Layout;
-
+const baseUrl = process.env.REACT_APP_API_URL;
 const getToken = localStorage.getItem("token");
 
 const StatusPage = () => {
@@ -17,7 +17,7 @@ const StatusPage = () => {
     };
     axios({
       method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/status",
+      url: `${baseUrl}/settings/status`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -137,7 +137,7 @@ const StatusPage = () => {
             </div>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

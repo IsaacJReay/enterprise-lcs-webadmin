@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap"); */
 
 html {
   scroll-behavior: smooth;
@@ -17,7 +17,7 @@ b {
 .ant-layout.ant-layout-has-sider > .ant-layout,
 .ant-layout.ant-layout-has-sider > .ant-layout-content {
   overflow-x: hidden;
-  background-color: #c1c1c1;
+  background-color: #eff1f7;
   padding: 10px;
 }
 .avatarNavbar {
@@ -31,9 +31,10 @@ b {
 }
 .popover-text {
   font-size: 20px;
-  font-weight: 500;
-  margin-top: 5px;
+  font-weight: 700;
+  margin-top: 8px;
   cursor: pointer;
+  font-family: "Play", sans-serif;
 }
 .accountNavbarhover:hover {
   background-color: rgb(230, 247, 255);
@@ -44,6 +45,11 @@ b {
 .card {
   background-color: #fff;
   border-radius: 8px;
+}
+.card2 {
+  background-color: #fff;
+  border-radius: 8px;
+  min-height: 95% !important;
 }
 .accountNavbarhover {
   transition: 0.3s;
@@ -79,10 +85,14 @@ b {
   padding-left: 5px;
 }
 .ant-layout-sider-light {
-  background: #bebebe !important;
+  background: #eff1f7 !important;
+  box-shadow: none !important;
 }
 .ant-menu {
-  background: #bebebe !important;
+  background: #eff1f7 !important;
+}
+.ant-layout-sider .ant-layout-sider-light {
+  box-shadow: none !important;
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
@@ -281,9 +291,11 @@ b {
   text-align: center;
   margin-bottom: 0 !important;
 }
+.card2 .container {
+  min-height: 90vh !important;
+}
 .container {
   width: 100% auto;
-  min-height: 20%;
   border-radius: 8px;
   padding: 20px 20px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
@@ -364,11 +376,11 @@ b {
   border-radius: 4px !important;
 }
 .button-apply {
-  width: 120px !important;
   border-radius: 8px !important;
+  padding: 5px 50px !important;
   margin-top: 30px;
-  position: relative;
-  left: 120% !important;
+  position: absolute;
+  left: 140% !important;
   background: #0caedc !important;
   border-color: #0caedc !important;
 }
@@ -378,11 +390,37 @@ b {
   background: #0caedc !important;
   border-color: #0caedc !important;
   border-radius: 8px !important;
+  padding: 5px 50px !important;
+}
+.button-apply3 {
+  border-radius: 8px !important;
+  padding: 5px 50px !important;
+  margin-top: 30px;
+  position: absolute;
+  left: 125% !important;
+  background: #0caedc !important;
+  border-color: #0caedc !important;
+}
+.button-apply4 {
+  border-radius: 8px !important;
+  padding: 5px 50px !important;
+  margin-top: 30px;
+  position: absolute;
+  left: 120% !important;
+  background: #0caedc !important;
+  border-color: #0caedc !important;
 }
 .button-update {
   background: #0caedc !important;
   border-color: #0caedc !important;
   border-radius: 8px !important;
+  padding: 5px 50px !important;
+}
+.button-update2 {
+  background: #0caedc !important;
+  border-color: #0caedc !important;
+  border-radius: 8px !important;
+  padding: 5px 30px !important;
 }
 .select-option-wireless {
   width: 350px !important;
@@ -580,6 +618,20 @@ b {
   padding: 10px 25px;
   justify-content: end;
   text-align: end;
+}
+.btn-options-storages2 {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  /* padding: 10px 25px; */
+  justify-content: end;
+  text-align: end;
+}
+.button-unselected {
+  background-color: #bebebe !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 5px 30px !important;
 }
 .local-data-container {
   padding: 5px 20px;

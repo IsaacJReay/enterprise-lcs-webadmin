@@ -19,6 +19,7 @@ const moment = require("moment-timezone");
 
 const WLANSetting = () => {
   // ------token ------
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -51,7 +52,7 @@ const WLANSetting = () => {
     setLoading(true);
     await axios({
       method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/wirelessnetwork/status",
+      url: ` ${baseUrl}/settings/wirelessnetwork/status`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -98,16 +99,12 @@ const WLANSetting = () => {
     };
 
     axios
-      .post(
-        "http://10.42.0.188:8080/private/api/settings/wirelessnetwork",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .post(`${baseUrl}/settings/wirelessnetwork`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
@@ -277,7 +274,7 @@ const WLANSetting = () => {
                     <Button
                       type="primary"
                       htmlType="submit"
-                      className="button-apply"
+                      className="button-apply3"
                       size="large"
                     >
                       Apply
@@ -288,7 +285,7 @@ const WLANSetting = () => {
             </Form>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

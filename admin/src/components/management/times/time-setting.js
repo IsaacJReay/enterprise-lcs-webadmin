@@ -13,7 +13,7 @@ const TimeSetting = () => {
   const [form] = Form.useForm();
 
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -28,7 +28,7 @@ const TimeSetting = () => {
   useEffect(async () => {
     await axios({
       method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/time/status",
+      url: `${baseUrl}/settings/time/status`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -85,7 +85,7 @@ const TimeSetting = () => {
             </div>
           </Col>
           <Col span={8}>
-            <div className="card">
+            <div className="card2">
               <div className="container">
                 <div className="container-header">
                   <h1>Desciptions</h1>

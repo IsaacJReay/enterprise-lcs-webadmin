@@ -2,14 +2,23 @@ import React, { useState } from "react";
 import { Modal, Button, message, Input, Form } from "antd";
 import axios from "axios";
 import { FiX } from "react-icons/fi";
+import { useForm } from "antd/lib/form/Form";
 
-const CreateFolder = ({ visible, handleCancel, handleOk, uuid, selected }) => {
+const CreateFolder = ({
+  visible,
+  handleCancel,
+  handleOk,
+  uuid,
+  selected,
+  fetchData,
+}) => {
   // -------state management ---------------
 
   const [, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   // -------token ----------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -25,7 +34,7 @@ const CreateFolder = ({ visible, handleCancel, handleOk, uuid, selected }) => {
     };
     axios
       .post(
-        "http://10.42.0.188:8080/private/api/settings/storage/device/directory/creation",
+        `${baseUrl}/settings/storage/device/directory/creation`,
         inputData,
         {
           headers: {
@@ -39,8 +48,10 @@ const CreateFolder = ({ visible, handleCancel, handleOk, uuid, selected }) => {
         if (res.data.operation_status === "Success") {
           setLoading(true);
           message.success("Successful!");
+          fetchData();
+          form.resetFields();
+          handleOk();
           setLoading(false);
-          window.location.reload();
         } else {
           setLoading(true);
           message.error("Operation Failed! ");
@@ -67,7 +78,7 @@ const CreateFolder = ({ visible, handleCancel, handleOk, uuid, selected }) => {
         closeIcon={<FiX className="close-icon" />}
         footer={null}
       >
-        <Form layout="inline" onFinish={handleApply}>
+        <Form layout="inline" onFinish={handleApply} form={form}>
           <Form.Item
             label="Folder name"
             name="folder_name"

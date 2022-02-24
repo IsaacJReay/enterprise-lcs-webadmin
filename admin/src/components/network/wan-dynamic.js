@@ -3,6 +3,7 @@ import { Form, Input, Button, message, Spin } from "antd";
 import axios from "axios";
 
 const getToken = localStorage.getItem("token");
+const baseUrl = process.env.REACT_APP_API_URL;
 
 const WANDynamic = () => {
   const [items, setItems] = useState({});
@@ -25,7 +26,7 @@ const WANDynamic = () => {
     async function fetchData() {
       await axios({
         method: "GET",
-        url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/status",
+        url: `${baseUrl}/settings/wirednetwork/status`,
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -45,7 +46,7 @@ const WANDynamic = () => {
   const handleApply = async () => {
     await axios({
       method: "POST",
-      url: "http://10.42.0.188:8080/private/api/settings/wirednetwork/dynamic",
+      url: `${baseUrl}/settings/wirednetwork/dynamic`,
       headers: {
         "content-type": "application/json",
         ...auth,

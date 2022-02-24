@@ -4,14 +4,14 @@ import { Col, Row, message } from "antd";
 import myImage from "../../assets/images/Hard-Drive3.png";
 import driver from "../../assets/images/Hard-Drive.png";
 
-const SendTO = ({ selected, uuid }) => {
+const SendTO = ({ selected, uuid, fetchData }) => {
   // -------state management ---------------
 
   const [, setLoading] = useState(false);
   const [storages, setStorages] = useState([]);
 
   // -------token ----------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -21,7 +21,7 @@ const SendTO = ({ selected, uuid }) => {
     setLoading(true);
     axios({
       method: "GET",
-      url: "http://10.42.0.188:8080/private/api/settings/storage/status",
+      url: `${baseUrl}/settings/storage/status`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -47,22 +47,18 @@ const SendTO = ({ selected, uuid }) => {
       items_destination: "",
     };
     axios
-      .post(
-        "http://10.42.0.188:8080/private/api/settings/storage/device/copy_or_move",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .post(`${baseUrl}/settings/storage/device/copy_or_move`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
       .then((res) => {
         if (res.data.operation_status === "Success") {
           setLoading(true);
           message.success("Successful!");
+          fetchData();
           setLoading(false);
-          window.location.reload();
         } else {
           setLoading(true);
           message.error("Operation Failed! ");

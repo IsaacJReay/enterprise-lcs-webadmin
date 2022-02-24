@@ -8,7 +8,7 @@ const Backup = () => {
   const [form] = Form.useForm();
 
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -30,7 +30,7 @@ const Backup = () => {
     };
 
     axios
-      .post("http://10.42.0.188:8080/private/api/settings/export", inputData, {
+      .post(`${baseUrl}/settings/export`, inputData, {
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -94,7 +94,7 @@ const Backup = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="button-apply"
+                  className="button-apply3"
                   size="large"
                 >
                   Export

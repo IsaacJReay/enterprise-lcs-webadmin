@@ -12,7 +12,7 @@ const Automaticaly = ({ pick, items }) => {
   const [, setLoading] = useState(false);
 
   // ------token ------
-
+  const baseUrl = process.env.REACT_APP_API_URL;
   const getToken = localStorage.getItem("token");
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -26,16 +26,12 @@ const Automaticaly = ({ pick, items }) => {
     };
 
     axios
-      .post(
-        "http://10.42.0.188:8080/private/api/settings/time/timezone",
-        inputData,
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-        }
-      )
+      .post(`${baseUrl}/settings/time/timezone`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
 
       .then((res) => {
         if (res.data.operation_status === "Success") {
