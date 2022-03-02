@@ -1,17 +1,34 @@
 mod templates;
+pub mod update;
 
 use walkdir::WalkDir;
-use std::{
-    io::prelude::*,
+use flate2::read::GzDecoder;
+use reqwest::{
+    StatusCode, header::{
+        CONTENT_LENGTH, RANGE
+    }
+};
+use toml::value::Value;
+use tar::Archive;
+use std::{    
+    str::FromStr,
+    io::{
+        BufReader,
+        BufWriter,
+        prelude::*
+    },
     fs::{
+        OpenOptions,
         File, 
         metadata
     }
 };
 use crate::{
+    CHUNK_SIZE,
     db, 
     linux,
     structs::{
+        PartialRangeIter,
         HostapdParam, 
         StaticWiredNetworkParam, 
         WirelessNetworkParam,
@@ -20,8 +37,144 @@ use crate::{
         DirectoryInfo,
         ItemMetaData,
         PathPartition,
+        ContentServerUpdate,
     }, 
 };
+
+pub fn insert_update_information_to_toml(status: (bool, bool), new_update_id: &str, new_update: &Value, is_sys_update: bool) {
+    
+    let output_file_location = match status.0 {
+        true => "/tmp/update_db.toml.downloading",
+        false => match status.1 {
+            true => "/tmp/update_db.toml.installing",
+            false => "/kmp/update_db.toml"
+        }
+    };
+
+    let mut config = toml::from_str::<ContentServerUpdate>(&read_file(output_file_location)).unwrap();
+
+    let map = match is_sys_update {
+        true => config.sys_update.as_mut().unwrap(),
+        false => config.patch_update.as_mut().unwrap()
+    };
+
+    map.insert(new_update_id.to_string(), new_update.to_owned());
+    
+    write_file(toml::to_string(&config).unwrap().as_bytes(), output_file_location);
+}
+
+pub fn remove_update_information_from_toml(status: (bool, bool), update_id: &str, is_sys_update: bool) {
+    
+    let output_file_location = match status.0 {
+        true => "/tmp/update_db.toml.downloading",
+        false => match status.1 {
+            true => "/tmp/update_db.toml.installing",
+            false => "/kmp/update_db.toml"
+        }
+    };
+
+    let mut config = toml::from_str::<ContentServerUpdate>(&read_file(output_file_location)).unwrap();
+    
+    let map = match is_sys_update {
+        true => config.sys_update.as_mut().unwrap(),
+        false => config.patch_update.as_mut().unwrap()
+    };
+
+    map.remove(update_id).unwrap();
+
+}
+
+pub fn read_file(source_file: &str) -> String {
+
+    match OpenOptions::new()
+        .read(true)
+        .open(source_file) {
+            Ok(file_read) => {
+                let mut read_buffer = BufReader::new(&file_read);
+                let mut contents = String::new();
+                read_buffer.read_to_string(&mut contents).unwrap();
+                contents
+            },
+            Err(_error) => {
+                String::new()
+            }
+        }
+}
+
+pub fn write_file(config: &[u8], destination_file: &str) {
+    let file = OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(destination_file)
+        .unwrap();
+    let mut write_buffer = BufWriter::new(&file);
+    write_buffer.write_all(config).unwrap();
+}
+
+pub fn continue_file(source_file: &str) -> File {
+
+    OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .append(true)
+        .open(source_file)
+        .unwrap()
+}
+
+pub fn untar_file(filename: &str, extract_location: &str) -> bool {
+    let file = File::open(filename).unwrap();
+    let mut archive = Archive::new(GzDecoder::new(file));
+    match archive.unpack(extract_location) {
+        Ok(_t) => true,
+        Err(_err) => false
+    }
+}
+
+fn download_file(download_link: &str, mut output_file: File) -> bool {
+    
+    let client = reqwest::blocking::Client::new();
+
+    match client.head(download_link).send() {
+        Ok(response) => {
+            match response.headers().get(CONTENT_LENGTH) {
+                Some(length) => {
+                    match u64::from_str(length.to_str().unwrap()) {
+                        Ok(length) => {
+                            let startingpoint = output_file.metadata().unwrap().len();
+                            match PartialRangeIter::new(startingpoint, length - 1, CHUNK_SIZE) {
+                                Ok(whole_range) => {
+                                    let mut success: bool = true;
+                                    for range in whole_range {    
+                                        match client.get(download_link).header(RANGE, &range).send(){
+                                            Ok(mut response) => {
+                                                let status = response.status();
+                                                match !(status == StatusCode::OK || status == StatusCode::PARTIAL_CONTENT) {
+                                                    true => std::io::copy(&mut response, &mut output_file).unwrap(),
+                                                    false => {success = false; 0}
+                                                }
+                                            },
+                                            Err(_) => {success = false; 0}
+                                        };
+                                    }
+                                    match success {
+                                        true => true,
+                                        false => false,
+                                    }
+                                },
+                                Err(_) => false,
+                            }
+                        },
+                        Err(_) => false,
+                    }
+                },
+                None => false,
+            }
+        },
+        Err(_t) => false,
+    }
+}
 
 pub fn generate_file_system_struct(linux_path: &str, drive_label: &str) -> DirectoryInfo {
     let root_path = WalkDir::new(linux_path);
