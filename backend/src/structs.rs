@@ -6,6 +6,8 @@ use chrono::{
     DateTime, 
     Utc,
 };
+use reqwest::header::HeaderValue;
+use toml::value::Table;
 
 #[derive(Serialize)]
 pub struct UserName {
@@ -368,4 +370,89 @@ impl DirectoryInfo {
         self.children.push(Box::new(leaf.into()));
         self
     }
+}
+
+
+pub struct PartialRangeIter {
+  pub start: u64,
+  pub end: u64,
+  pub buffer_size: u32,
+}
+
+impl PartialRangeIter {
+    pub fn new(start: u64, end: u64, buffer_size: u32) -> reqwest::Result<Self> {
+        if buffer_size == 0 {
+            panic!("invalid buffer_size, give a value greater than zero.");
+        }
+        Ok(
+            PartialRangeIter {
+                start,
+                end,
+                buffer_size,
+            }
+        )
+    }
+}
+
+impl Iterator for PartialRangeIter {
+    type Item = HeaderValue;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.start > self.end {
+            None
+        }
+        else {
+            let prev_start = self.start;
+            self.start += std::cmp::min(self.buffer_size as u64, self.end - self.start + 1);
+            Some(HeaderValue::from_str(&format!("bytes={}-{}", prev_start, self.start - 1)).expect("string provided by format!"))
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ContentServerUpdate {
+    pub sys_update: Option<Table>,
+    pub patch_update: Option<Table>,
+}
+
+#[derive(Serialize)]
+pub struct SystemUpdateInformation {
+    pub id: String,
+    pub display_name: String,
+    pub update_size: u32,
+    pub sys_update: bool,
+    pub status: String
+}
+
+impl SystemUpdateInformation {
+    pub fn get_id(&self) -> String {
+        self.id.clone()
+    }
+    pub fn get_sys_update(&self) -> bool {
+        self.sys_update
+    }
+    pub fn get_status(&self) -> String {
+        self.status.clone()
+    }
+}
+
+impl PartialEq for SystemUpdateInformation {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id &&
+        self.display_name == other.display_name &&
+        self.update_size == other.update_size &&
+        self.sys_update == other.sys_update &&
+        self.status == other.status 
+    }
+}
+
+
+#[derive(Serialize)]
+pub struct SystemUpdateResponse {
+    pub update_list: Vec<SystemUpdateInformation>
+}
+
+#[derive(Deserialize)]
+pub struct SystemUpdateRequest {
+    pub id: String,
+    pub sys_update: bool
 }
