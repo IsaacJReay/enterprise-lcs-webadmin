@@ -1,5 +1,6 @@
 pub mod storage;
 pub mod systemsettings;
+pub mod update;
 
 use run_script::{
     ScriptOptions, 

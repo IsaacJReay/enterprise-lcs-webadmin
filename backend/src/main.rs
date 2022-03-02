@@ -17,12 +17,16 @@ use actix_web::{
     HttpServer,
 };
 use actix_cors::Cors;
-use crate::db::{
-    create_tables, 
-    named::populate_dnszones, 
-    named::populate_zonerecords,
+use crate::{
+    linux::update::create_update_script,
+    db::{
+        create_tables, 
+        named::populate_dnszones, 
+        named::populate_zonerecords,
+    }
 };
 
+const CHUNK_SIZE: u32 = 409599;
 const IP_ADDRESS: &str = "0.0.0.0:8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
@@ -31,6 +35,7 @@ const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 async fn main() -> Result<()> {
     
     set_var("RUST_LOG", "actix_server=info,actix_web=info");
+    create_update_script();
     create_tables();
     populate_dnszones();
     populate_zonerecords();
@@ -77,6 +82,7 @@ async fn main() -> Result<()> {
                 .service(handler::post::storage::post_storage_device_copy_or_move)          // link: /private/api/settings/storage/device/copy_or_move
                 .service(handler::post::storage::post_storage_device_directory_creation)    // link: /private/api/settings/storage/device/directory/creation
                 .service(handler::post::storage::post_storage_device_unmount)               // link: /private/api/settings/storage/device/unmount
+                .service(handler::post::update::post_update_content_server)                 // link: /private/api/settings/update/update
                                                             //handling DELETE request
                 .service(handler::delete::delete_delete_zone_record)                        // link: /private/api/settings/dns/zone_record/deletion
                 .service(handler::delete::delete_delete_domain_name)                        // link: /private/api/settings/dns/domain_name/deletion
