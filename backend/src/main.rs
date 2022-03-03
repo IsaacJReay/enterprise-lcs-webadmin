@@ -65,6 +65,7 @@ async fn main() -> Result<()> {
                 .service(handler::get::timedatectl::get_timedatepage)                       // link: /private/api/settings/time/status
                 .service(handler::get::storage::get_storage_page)                           // link: /private/api/settings/storage/status
                 .service(handler::get::storage::get_storage_device_page_test)               // link: /private/api/settings/storage/device/status/{drive_partuuid}
+                .service(handler::get::update::get_content_server_update)                   // link: /private/api/settings/update/status
                                                             //handling POST request
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password

@@ -827,3 +827,52 @@
 >>    "reason": "missing-token"
 >>  }
 >> ```
+
+> ### - /private/api/settings/update/update
+>>
+>> | Header Parameter | Data Type |
+>> | ---------------- | --------- |
+>> | Authorization     | `String` |
+>> 
+>>  - Body
+>> ```json
+>>  {
+>>    "id": "1",
+>>    "sys_update": true
+>>  }
+>> ```
+>>
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Success",
+>>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 500 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "Another update is in progress"
+>>  }
+>> ``` 
+>> - Response 410 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "token-timeout"
+>>  }
+>> ```
+>> - Response 401 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "incorrect-token"
+>>  }
+>> ```
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "missing-token"
+>>  }
+>> ```
