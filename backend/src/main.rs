@@ -87,7 +87,7 @@ async fn main() -> Result<()> {
                 .service(handler::delete::delete_delete_zone_record)                        // link: /private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}
                 .service(handler::delete::post_storage_device_remove_filedir)               // link: /private/api/settings/storage/device/deletion
                 //                                             //handling PUT request
-                .service(handler::put::put_rename_domain_name)                              // link: /private/api/settings/dns/domain_name/rename/{old_domain_name}/{new_domain_name}
+                .service(handler::put::put_rename_domain_name)                              // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
         }
     )
         .bind(IP_ADDRESS)?

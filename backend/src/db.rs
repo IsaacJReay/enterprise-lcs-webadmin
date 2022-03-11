@@ -1,31 +1,10 @@
 pub mod users;
 pub mod systemdnetworkd;
 pub mod storage;
-// pub mod named;
 pub mod hostapd;
 
-use std::{
-    path::Path,
-    fs::{
-        File,
-        remove_file,
-    }, 
-    io::{
-        self, 
-        BufRead, 
-        Lines, 
-        BufReader,
-    }, 
-};
-
-fn read_lines<P>(filename: P) -> io::Result<Lines<BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(BufReader::new(file).lines())
-}
-
 pub fn create_tables() {
-    let result = remove_file("/tmp/lcs.db");
+    let result = std::fs::remove_file("/tmp/lcs.db");
     let mut error: String = String::new();
     match result {
         Ok(()) => (),
