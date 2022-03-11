@@ -256,93 +256,124 @@
 >>  }
 >> ```
 
-> ### - /private/api/settings/dns/domain_name/status
+> ### - /private/api/settings/dns/status/zone
 >>
 >> | Header Parameter | Data Type |
 >> | --------- | --------- |
 >> | Authorization | `String` |
 >> 
+>> | Parameter        | Data Type                 |
+>> | ---------------- | ------------------------- |
+>> | zone             | `internal` or `external`  |
+>>
 >> - Body
 >> ```
 >> ```
 >> - Response 200 
 >> ```json
 >> [
->>  {
->>    "id": "1",
->>    "domain_name": "website1.local",
->>    "status": true
->>  },
->>  {
->>    "id": "2",
->>    "domain_name": "website2.local",
->>    "status": false
->>  }
+>>   {
+>>     "domain_name": "koompi.com",
+>>     "status": true,
+>>     "zone_record": [
+>>       {
+>>         "subdomain_name": "ns",
+>>         "dns_type": "A",
+>>         "address": "10.100.100.1"
+>>       },
+>>       {
+>>         "subdomain_name": "sala",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "salabackend",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "rachel",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "admin",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "phet",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "w3",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "wikipedia",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "wiktionary",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "wikibook",
+>>         "dns_type": "CNAME",
+>>         "address": "ns"
+>>       },
+>>       {
+>>         "subdomain_name": "test",
+>>         "dns_type": "CAA",
+>>         "address": "0 issue \"test.net\""
+>>       },
+>>       {
+>>         "subdomain_name": "aaaa",
+>>         "dns_type": "MX 10",
+>>        "address": "mail.example.com."
+>>       }
+>>     ]
+>>   },
+>>   {
+>>     "domain_name": "website1.local",
+>>     "status": true,
+>>     "zone_record": [
+>>       {
+>>         "subdomain_name": "ns01",
+>>         "dns_type": "A",
+>>         "address": "10.100.100.1"
+>>       },
+>>       {
+>>         "subdomain_name": "ns01",
+>>         "dns_type": "A",
+>>         "address": "10.100.100.1"
+>>       },
+>>       {
+>>         "subdomain_name": "ns01",
+>>         "dns_type": "A",
+>>         "address": "10.100.100.1"
+>>       }
+>>     ]
+>>   }
 >> ]
 >> ```
 >>
->> - Response 410 
+>> - Response 200
 >> ```json
 >>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
+>>    "operation_status": "Siccess",
+>>    "reason": ""
 >>  }
 >> ```
 >> ```json
 >>  {
 >>    "operation_status": "Failed",
->>    "reason": "missing-token"
+>>    "reason": "actual_error_goes_here"
 >>  }
->> ```
-
-> ### - /private/api/settings/dns/zone_records/status
->>
->> | Header Parameter | Data Type |
->> | --------- | --------- |
->> | Authorization | `String` |
->> 
->> - Body
->> ```
->> {
->>   "foreign_key": "1"
->> }
->> ```
->> - Response 200 
->> ```json
->> {
->>   "domain_name": "website1.local",
->>   "status": false,
->>   "record_table": [
->>     {
->>       "id": "1",
->>       "subdomain_name": "ns01",
->>       "dns_type": "A",
->>       "address": "10.100.100.1",
->>       "foreign_key": "1"
->>     },
->>     {
->>       "id": "2",
->>       "subdomain_name": "ns01",
->>       "dns_type": "A",
->>       "address": "10.100.100.1",
->>       "foreign_key": "1"
->>     },
->>     {
->>       "id": "3",
->>       "subdomain_name": "ns01",
->>       "dns_type": "A",
->>       "address": "10.100.100.1",
->>       "foreign_key": "1"
->>     }
->>   ]
->> }
 >> ```
 >>
 >> - Response 410 
@@ -365,7 +396,7 @@
 >>    "reason": "missing-token"
 >>  }
 >> ```
-
+>>
 > ### - /private/api/settings/time/status
 >>
 >> | Header Parameter | Data Type |

@@ -1,9 +1,61 @@
 use ipnetwork::Ipv4Network;
 use crate::{
-    db, 
     tool,
-    structs::PartialZoneRecords,
+    linux,
+    structs::DnsRecords,
 };
+
+pub fn generate_zone_config(domain_name: &str, status: bool, zone_is_internal: bool) -> String {
+    let location = match zone_is_internal {
+        true => "internal",
+        false => "external"
+    };
+    match status {
+        true => format!(
+            "zone \"{}\" IN {{\n    type master;\n    file \"{}.{}.zone\";\n    allow-update {{ none; }};\n    notify no;\n}};\n", 
+            domain_name, domain_name, location
+        ),
+        false => format!(
+            "# zone \"{}\" IN {{\n#     type master;\n#     file \"{}.{}.zone\";\n#     allow-update {{ none; }};\n#     notify no;\n# }};\n", 
+            domain_name, domain_name, location
+        )
+    }
+}
+
+pub fn generate_records_for_zone(domain_name: &str, vec_record: Option<Vec<DnsRecords>>) -> String {
+    
+    let mut records_str: String = String::new();
+    let mut date = linux::query_date_for_calculate().1;
+    date.truncate(10);
+
+    if let Some(vec_record) = vec_record {
+        vec_record
+            .iter()
+            .for_each(
+                |each_record| {
+                    records_str.push_str(format!("{}              IN      {}       {}\n", each_record.subdomain_name, each_record.dns_type, each_record.address).as_ref());
+                    if each_record.dns_type == "A" {
+                        records_str.insert_str( 0, format!("                IN      NS      {}\n", each_record.subdomain_name).as_ref());
+                    }
+                }
+            );
+    }
+
+    records_str.insert_str(
+        0,
+        format!(
+            "$TTL 7200\n; {}\n@       IN      SOA     ns.{}. admin.{}. (
+                                        {} ; Serial
+                                        28800      ; Refresh
+                                        1800       ; Retry
+                                        604800     ; Expire - 1 week
+                                        86400 )    ; Negative Cache TTL\n", 
+        domain_name, domain_name, domain_name, date)
+        .as_ref()
+    );
+    records_str
+    
+}
 
 pub fn gen_hostapd_conf(ssid: &str, hide_ssid: bool, hw_mode: &str, channel: &u8, wpa: u8, passphrase: &str, hw_n_mode: bool, qos: bool) -> String {
     format!("interface=wlan0
@@ -223,83 +275,83 @@ pub fn gen_named_conf_logging() -> String {
 }};"#.to_string()
 }
 
-pub fn gen_named_conf_external_zones() -> String {
+// pub fn gen_named_conf_external_zones() -> String {
 
-    let zones_vec = db::named::read_dnszones();
+//     let zones_vec = db::named::read_dnszones();
 
-    let mut actual_conf: String = String::new();
+//     let mut actual_conf: String = String::new();
 
-    for increments in 0..zones_vec.len(){
-        if zones_vec[increments].status != false {
-            let current_zone_info = format!(
-r#"zone "{}" IN {{
-    type master;
-    file "{}.external.zone";
-    allow-update {{ none; }};
-    notify no;
-}};
-"#, zones_vec[increments].domain_name, zones_vec[increments].domain_name);
-            actual_conf = format!("{}\n{}", actual_conf, current_zone_info);
-        }
-        else {
-            let current_zone_info = format!(
-r#"# zone "{}" IN {{
-#     type master;
-#     file "{}.external.zone";
-#     allow-update {{ none; }};
-#     notify no;
-# }};
-"#, zones_vec[increments].domain_name, zones_vec[increments].domain_name);
-            actual_conf = format!("{}\n{}", actual_conf, current_zone_info);
-        }
-    }
-    actual_conf
-}
+//     for increments in 0..zones_vec.len(){
+//         if zones_vec[increments].status != false {
+//             let current_zone_info = format!(
+// r#"zone "{}" IN {{
+//     type master;
+//     file "{}.external.zone";
+//     allow-update {{ none; }};
+//     notify no;
+// }};
+// "#, zones_vec[increments].domain_name, zones_vec[increments].domain_name);
+//             actual_conf = format!("{}\n{}", actual_conf, current_zone_info);
+//         }
+//         else {
+//             let current_zone_info = format!(
+// r#"# zone "{}" IN {{
+// #     type master;
+// #     file "{}.external.zone";
+// #     allow-update {{ none; }};
+// #     notify no;
+// # }};
+// "#, zones_vec[increments].domain_name, zones_vec[increments].domain_name);
+//             actual_conf = format!("{}\n{}", actual_conf, current_zone_info);
+//         }
+//     }
+//     actual_conf
+// }
 
-pub fn gen_var_named_one_zone(zone_vec: Vec<PartialZoneRecords>) -> String {
+// pub fn gen_var_named_one_zone(zone_vec: Vec<PartialZoneRecords>) -> String {
 
-    let actual_conf: String;
-    if zone_vec.len() != 0{
-        let mut ns_declaration: String = String::new();
-        let mut subdomain_declaration: String = String::new();
-        let dns_vec = db::named::read_dnszones();
-        // println!("{:#?}", zone_vec);
+//     let actual_conf: String;
+//     if zone_vec.len() != 0{
+//         let mut ns_declaration: String = String::new();
+//         let mut subdomain_declaration: String = String::new();
+//         let dns_vec = db::named::read_dnszones();
+//         // println!("{:#?}", zone_vec);
 
-        let index_dns_vec: usize = zone_vec[0].foreign_key.parse::<usize>().unwrap();
-        let domain_name: String = dns_vec[index_dns_vec-1].domain_name.to_owned();
+//         let index_dns_vec: usize = zone_vec[0].foreign_key.parse::<usize>().unwrap();
+//         let domain_name: String = dns_vec[index_dns_vec-1].domain_name.to_owned();
 
-        for increments in 0..zone_vec.len(){
-            let subdomain_name: String = zone_vec[increments].subdomain_name.to_owned();
-            let dns_type: String = zone_vec[increments].dns_type.to_owned();
-            let address: String = zone_vec[increments].address.to_owned();
-            if zone_vec[increments].dns_type == "A" {
-                let current_ns = format!("                IN      NS      {}", zone_vec[increments].subdomain_name);
-                ns_declaration = format!("{}\n{}", ns_declaration, current_ns);
-                let current_subdomain = format!("{}              IN      {}       {}", subdomain_name, dns_type,address);
-                subdomain_declaration = format!("{}\n{}", subdomain_declaration, current_subdomain)
-            }
-            else {
-                let current_subdomain = format!("{}              IN      {}       {}", subdomain_name, dns_type,address);
-                subdomain_declaration = format!("{}\n{}", subdomain_declaration, current_subdomain);
-            }
-        }
+//         for increments in 0..zone_vec.len(){
+//             let subdomain_name: String = zone_vec[increments].subdomain_name.to_owned();
+//             let dns_type: String = zone_vec[increments].dns_type.to_owned();
+//             let address: String = zone_vec[increments].address.to_owned();
+//             if zone_vec[increments].dns_type == "A" {
+//                 let current_ns = format!("                IN      NS      {}", zone_vec[increments].subdomain_name);
+//                 ns_declaration = format!("{}\n{}", ns_declaration, current_ns);
+//                 let current_subdomain = format!("{}              IN      {}       {}", subdomain_name, dns_type,address);
+//                 subdomain_declaration = format!("{}\n{}", subdomain_declaration, current_subdomain)
+//             }
+//             else {
+//                 let current_subdomain = format!("{}              IN      {}       {}", subdomain_name, dns_type,address);
+//                 subdomain_declaration = format!("{}\n{}", subdomain_declaration, current_subdomain);
+//             }
+//         }
 
-        actual_conf = format!(
-r#"$TTL 7200
-; {}
-@       IN      SOA     ns01.{}. admin.{}. (
-                                        2018111111 ; Serial
-                                        28800      ; Refresh
-                                        1800       ; Retry
-                                        604800     ; Expire - 1 week
-                                        86400 )    ; Negative Cache TTL
-{}
-{}                                        
-"#, domain_name, domain_name, domain_name, ns_declaration, subdomain_declaration);
-    }
-    else {
-        actual_conf = "".to_string();
-    }
+//         actual_conf = format!(
+// r#"$TTL 7200
+// ; {}
+// @       IN      SOA     ns01.{}. admin.{}. (
+//                                         2018111111 ; Serial
+//                                         28800      ; Refresh
+//                                         1800       ; Retry
+//                                         604800     ; Expire - 1 week
+//                                         86400 )    ; Negative Cache TTL
+// {}
+// {}                                        
+// "#, domain_name, domain_name, domain_name, ns_declaration, subdomain_declaration);
+//     }
+//     else {
+//         actual_conf = "".to_string();
+//     }
 
-    actual_conf
-}
+//     actual_conf
+// }

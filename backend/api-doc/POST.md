@@ -452,40 +452,62 @@
 >>  }
 >> ```
 
-> ### - /private/api/settings/dns/domain_name/creation
+> ### - /private/api/settings/dns/new/{zone}
 >>
 >> | Header Parameter | Data Type |
->> | ---------------- | --------- |
->> | Authorization     | `String` |
+>> | --------- | --------- |
+>> | Authorization | `String` |
 >> 
->>  - Body
+>> | Parameter        | Data Type                 |
+>> | ---------------- | ------------------------- |
+>> | zone             | `internal` or `external`  |
+>>
+>> - Body
+>>
+>> for change status or add new domain_name
 >> ```json
->>  {
->>    "domain_name": "koompi.com"
->>  }
+>>   {
+>>     "domain_name": "koompi.com",
+>>     "status": true,
+>>     "zone_record": null
+>>   }
+>> ```
+>>  
+>> for add new subdomain_name records
+>> 
+>> ```json
+>>   {
+>>     "domain_name": "koompi.com",
+>>     "status": true,
+>>     "zone_record": [
+>>       {
+>>         "subdomain_name": "test",
+>>         "dns_type": "CAA",
+>>         "address": "0 issue \"test.net\""
+>>       },
+>>       {
+>>         "subdomain_name": "aaaa",
+>>         "dns_type": "MX 10",
+>>        "address": "mail.example.com."
+>>       }
+>>     ]
+>>   }
 >> ```
 >>
->> - Response 200 
+>> - Response 200
 >> ```json
 >>  {
 >>    "operation_status": "Success",
 >>    "reason": ""
 >>  }
->> ``` 
->> - Response 500 
+>> ```
 >> ```json
 >>  {
 >>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
+>>    "reason": "actual_error_goes_here"
 >>  }
 >> ```
->> - Response 406 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "No Space is Allowed"
->>  }
->> ```  
+>>
 >> - Response 410 
 >> ```json
 >>  {
@@ -506,66 +528,8 @@
 >>    "reason": "missing-token"
 >>  }
 >> ```
->> **Note:** `domain_name` must be a website without subdomain
-
-> ### - /private/api/settings/dns/zone_record/creation
 >>
->> | Header Parameter | Data Type |
->> | ---------------- | --------- |
->> | Authorization     | `String` |
->> 
->>  - Body
->> ```json
->>  {
->>    "subdomain_name": "sala",
->>    "dns_type": "A",
->>    "address": "10.100.100.1",
->>    "foreign_key": "1"
->>  }
->> ```
->>
->> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
->> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ```
->> - Response 406 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "No Space is Allowed"
->>  }
->> ``` 
->> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
->> **Note:** `subdomain_name` must be a subdomain without its main website name after and is also website form; `dns_type` must only be A, AAAA, CNAME, MX 10, PTR, CERT, SRV, TXT, SOA.
+>> **Note:** `subdomain_name` must be a subdomain without its main website name after and is also website form; `dns_type` must only be A, AAAA, CNAME, MX 10, PTR, CAA, SRV, TXT, SOA.
 
 > ### - /private/api/settings/time/timedate
 >>
