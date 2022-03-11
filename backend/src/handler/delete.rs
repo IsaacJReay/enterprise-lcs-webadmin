@@ -35,7 +35,7 @@ pub async fn delete_delete_domain_name(req: HttpRequest) -> Result<HttpResponse>
                 let domain_name = req.match_info().get("domain_name").unwrap();
                 match config::named::delete_domain_name(&password, domain_name, zone_is_internal) {
                     Ok(()) => Ok(
-                        HttpResponse::Gone().json(
+                        HttpResponse::Ok().json(
                             HttpResponseCustom{
                                 operation_status: "Success".to_string(),
                                 reason: "".to_string(),
@@ -43,7 +43,7 @@ pub async fn delete_delete_domain_name(req: HttpRequest) -> Result<HttpResponse>
                         )
                     ),
                     Err(err) => Ok(
-                        HttpResponse::Gone().json(
+                        HttpResponse::Ok().json(
                             HttpResponseCustom{
                                 operation_status: "Failed".to_string(),
                                 reason: err,
@@ -107,7 +107,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest) -> Result<HttpResponse>
                 let domain_name = req.match_info().get("domain_name").unwrap();
                 match config::named::delete_dns_records(&password, domain_name, subdomain_name, zone_is_internal) {
                     Ok(()) => Ok(
-                        HttpResponse::Gone().json(
+                        HttpResponse::Ok().json(
                             HttpResponseCustom{
                                 operation_status: "Success".to_string(),
                                 reason: "".to_string(),
@@ -115,7 +115,7 @@ pub async fn delete_delete_zone_record(req: HttpRequest) -> Result<HttpResponse>
                         )
                     ),
                     Err(err) => Ok(
-                        HttpResponse::Gone().json(
+                        HttpResponse::Ok().json(
                             HttpResponseCustom{
                                 operation_status: "Failed".to_string(),
                                 reason: err,
