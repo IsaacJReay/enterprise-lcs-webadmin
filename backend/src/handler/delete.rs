@@ -10,20 +10,15 @@ use crate::{
     tool,
     db,
     linux,
-    handler::{
-        return_httpsresponse_from_config_var_named_external_zone,
-        return_httpsresponse_from_config_named_conf_external_zone,
-    },
+    config,
     structs::{
-        DeleteRecord,
-        DnsId,
         HttpResponseCustom,
         DeleteArgs,
     }
 };
 
-#[delete("/private/api/settings/dns/zone_record/deletion")]
-pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: web::Json<DeleteRecord>) -> Result<HttpResponse> {
+#[delete("/private/api/settings/dns/delete/{zone}/{domain_name}")]
+pub async fn delete_delete_domain_name(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -31,17 +26,33 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
         if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
+            let (_username, password) = db::users::query_logindata();
             if passwordstatus {
-                let foreign_key = &delete_record_struct.foreign_key.to_owned();
-                let id = &delete_record_struct.id.to_owned();
-
-                db::named::delete_from_zonerecords_by_id(
-                    id, 
-                    &foreign_key,
-                );
-
-                return_httpsresponse_from_config_var_named_external_zone(foreign_key)
+                let zone_is_internal = match req.match_info().get("zone").unwrap() {
+                    "internal" => true,
+                    _ => false
+                };
+                let domain_name = req.match_info().get("domain_name").unwrap();
+                match config::named::delete_domain_name(&password, domain_name, zone_is_internal) {
+                    Ok(()) => Ok(
+                        HttpResponse::Gone().json(
+                            HttpResponseCustom{
+                                operation_status: "Success".to_string(),
+                                reason: "".to_string(),
+                            }
+                        )
+                    ),
+                    Err(err) => Ok(
+                        HttpResponse::Gone().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: err,
+                            }
+                        )
+                    )
+                }
             }
+
             else {
                 db::users::delete_from_token_table(auth);
                 Ok(
@@ -77,8 +88,8 @@ pub async fn delete_delete_zone_record(req: HttpRequest, delete_record_struct: w
     } 
 }
 
-#[delete("/private/api/settings/dns/domain_name/deletion")]
-pub async fn delete_delete_domain_name(req: HttpRequest, dns_id_struct: web::Json<DnsId>) -> Result<HttpResponse> {
+#[delete("/private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}")]
+pub async fn delete_delete_zone_record(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -86,11 +97,34 @@ pub async fn delete_delete_domain_name(req: HttpRequest, dns_id_struct: web::Jso
         if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
+            let (_username, password) = db::users::query_logindata();
             if passwordstatus {
-            db::named::delete_from_dnszones_by_id(dns_id_struct.id.to_owned().as_str());
-
-            return_httpsresponse_from_config_named_conf_external_zone()
+                let zone_is_internal = match req.match_info().get("zone").unwrap() {
+                    "internal" => true,
+                    _ => false
+                };
+                let subdomain_name = req.match_info().get("subdomain_name").unwrap();
+                let domain_name = req.match_info().get("domain_name").unwrap();
+                match config::named::delete_dns_records(&password, domain_name, subdomain_name, zone_is_internal) {
+                    Ok(()) => Ok(
+                        HttpResponse::Gone().json(
+                            HttpResponseCustom{
+                                operation_status: "Success".to_string(),
+                                reason: "".to_string(),
+                            }
+                        )
+                    ),
+                    Err(err) => Ok(
+                        HttpResponse::Gone().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: err,
+                            }
+                        )
+                    )
+                }
             }
+
             else {
                 db::users::delete_from_token_table(auth);
                 Ok(

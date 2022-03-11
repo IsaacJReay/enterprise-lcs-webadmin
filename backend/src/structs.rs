@@ -136,75 +136,24 @@ pub struct HttpResponseCustom {
     pub reason: String,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct DnsZones {
-    pub id: String,
-    pub domain_name: String,
-    pub status: bool,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ZoneRecords {
-    pub id_zonerecords: DnsId,
-    pub partial_zonerecords: PartialZoneRecords,    
-}
-
-#[derive(Serialize)]
-pub struct GetZoneRecords {
-    pub domain_name: String,
-    pub status: bool,
-    pub record_table: Vec<CustomZoneRecords>,
-}
-
-#[derive(Serialize)]
-pub struct CustomZoneRecords {
-    pub id: String,
-    pub subdomain_name: String,
-    pub dns_type: String,
-    pub address: String,
-    pub foreign_key: String,
-}
-
-
 #[derive(Serialize, Deserialize, Clone)]
-pub struct PartialZoneRecords {
-    pub subdomain_name: String,
-    pub dns_type: String,
-    pub address: String,
-    pub foreign_key: String,
+pub struct DnsZonesInfo {
+    pub domain_name: String,
+    pub status: bool,
+    pub zone_record: Option<Vec<DnsRecords>>
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct DnsId {
-    pub id: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ForeignKey {
-    pub foreign_key: String,
+pub struct DnsRecords {
+    pub subdomain_name: String,
+    pub dns_type: String,
+    pub address: String,
 }
 
 #[derive(Deserialize)]
-pub struct DeleteRecord {
-    pub id: String,
-    pub foreign_key: String,
-}
-
-#[derive(Deserialize)]
-pub struct RenameDomain {
-    pub foreign_key: ForeignKey,
+pub struct RenameDomainName {
+    pub old_domain_name: String,
     pub new_domain_name: String,
-}
-
-#[derive(Deserialize)]
-pub struct UpdateStatus {
-    pub id: String,
-    pub status: bool,
-}
-
-#[derive(Deserialize)]
-pub struct CreateDomainName {
-    pub domain_name: String,
 }
 
 #[derive(Serialize, Deserialize)]

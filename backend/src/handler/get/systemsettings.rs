@@ -5,6 +5,7 @@ use actix_web::{
     HttpRequest,
 };
 use crate::{
+    config,
     db, 
     security, 
     tool,
@@ -107,7 +108,7 @@ pub async fn get_statuspage(req: HttpRequest) -> Result<HttpResponse> {
                     wlan0_ipaddr, 
                     wlan0_subnetmask
                 ) = db::systemdnetworkd::read_wlan0();
-                let wlan0_dns = db::named::read_named();
+                let wlan0_dns = config::named::read_forward_dns_server();
 
                 Ok(
                     HttpResponse::Ok().json(

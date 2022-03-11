@@ -3,22 +3,17 @@ use actix_web::{
     HttpRequest,
     Result, 
     put,
-    web,
 };
 use crate::{
     db,
     security,
     tool,
-    handler::return_httpsresponse_from_config_named_conf_external_zone,
-    structs::{
-        UpdateStatus,
-        RenameDomain,
-        HttpResponseCustom,
-    },
+    config,
+    structs::HttpResponseCustom,
 };
 
-#[put("/private/api/settings/dns/status/update")]
-pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::Json<UpdateStatus>) -> Result<HttpResponse> {
+#[put("/private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}")]
+pub async fn put_rename_domain_name(req: HttpRequest) -> Result<HttpResponse> {
     let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
 
     if !auth_is_empty{
@@ -26,13 +21,32 @@ pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::
         if db::users::query_token(auth){
             let olddate = security::extract_token(auth);
             let passwordstatus: bool = tool::comparedate(olddate);
+            let (_username, password) = db::users::query_logindata();
             if passwordstatus {
-                let id = update_status_struct.id.clone();
-                let status = update_status_struct.status;
-
-                db::named::insert_status_into_dnszone_by_id(id.as_str(), status);
-
-                return_httpsresponse_from_config_named_conf_external_zone()
+                let zone_is_internal = match req.match_info().get("zone").unwrap() {
+                    "internal" => true,
+                    _ => false
+                };
+                let old_domain_name = req.match_info().get("old_domain_name").unwrap();
+                let new_domain_name = req.match_info().get("new_domain_name").unwrap();
+                match config::named::rename_domain_name(&password, &old_domain_name, &new_domain_name, zone_is_internal) {
+                    Ok(()) => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Success".to_string(),
+                                reason: "".to_string(),
+                            }
+                        )
+                    ),
+                    Err(err) => Ok(
+                        HttpResponse::Ok().json(
+                            HttpResponseCustom{
+                                operation_status: "Failed".to_string(),
+                                reason: err,
+                            }
+                        )
+                    )
+                }
             }
             else {
                 db::users::delete_from_token_table(auth);
@@ -69,54 +83,4 @@ pub async fn put_update_dns_status(req: HttpRequest, update_status_struct: web::
     } 
 }
 
-#[put("/private/api/settings/dns/domain_name/update")]
-pub async fn put_rename_domain_name(req: HttpRequest, rename_domain_struct: web::Json<RenameDomain>) -> Result<HttpResponse> {
-    let auth_is_empty = req.headers().get("AUTHORIZATION").is_none();
-
-    if !auth_is_empty{
-        let auth = req.headers().get("AUTHORIZATION").unwrap().to_str().unwrap();
-        if db::users::query_token(auth){
-            let olddate = security::extract_token(auth);
-            let passwordstatus: bool = tool::comparedate(olddate);
-            if passwordstatus {
-                let foreign_key: String = rename_domain_struct.foreign_key.foreign_key.clone();
-                let new_domain_name: String = rename_domain_struct.new_domain_name.clone();
-                db::named::update_domain_name_by_foreign_key(&foreign_key, &new_domain_name);
-
-                return_httpsresponse_from_config_named_conf_external_zone()
-            }
-            else {
-                db::users::delete_from_token_table(auth);
-                Ok(
-                    HttpResponse::Ok().json(
-                        HttpResponseCustom{
-                            operation_status: "Failed".to_string(),
-                            reason: "token-timeout".to_string(),
-                        }
-                    )
-                )
-            }
-        }
-        else{
-            Ok(
-                HttpResponse::Ok().json(
-                    HttpResponseCustom {
-                        operation_status: "Failed".to_string(),
-                        reason: "incorrect-token".to_string(),
-                    }
-                )
-            )
-        }
-    }
-    else{
-        Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "missing-token".to_string(),
-                }
-            )
-        )
-    } 
-}
 

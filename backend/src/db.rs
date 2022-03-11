@@ -1,7 +1,7 @@
 pub mod users;
 pub mod systemdnetworkd;
 pub mod storage;
-pub mod named;
+// pub mod named;
 pub mod hostapd;
 
 use std::{
@@ -42,9 +42,7 @@ pub fn create_tables() {
         connection
             .execute(
 r#"
-CREATE TABLE dnszones (id TXT, domain_name TXT, status TXT);
 CREATE TABLE logindata (variable TXT, value TXT);
-CREATE TABLE zonerecords(id TXT, subdomain_name TXT, type TXT, address TXT, foreign_key TXT);
 CREATE TABLE storagetable(dev_path TXT, part_uuid TXT, mount_location TXT, filesystem_type TXT);
 CREATE TABLE tokentable(token TXT);
 

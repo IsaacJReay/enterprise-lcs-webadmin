@@ -1,21 +1,18 @@
 # Delete API Documentations
 
-> ### - /private/api/settings/dns/zone_record/deletion
+> ### - /private/api/settings/dns/delete/{zone}/{domain_name}
 >>
 >> | Header Parameter | Data Type |
 >> | ---------------- | --------- |
 >> | Authorization    | `String`  |
 >> 
+>> | Parameter        | Data Type                 |
+>> | ---------------- | ------------------------- |
+>> | zone             | `internal` or `external`  |
+>> | domain_name      | Example: `koompi.com`     |
+>>
 >>  - Body
 >> ```json
->>  {
->>   "id": {
->>     "id": "1"
->>   },
->>   "foreign_key": {
->>     "foreign_key": "1"
->>   }
->>  }
 >> ```
 >>
 >> - Response 200 
@@ -23,6 +20,13 @@
 >>  {
 >>    "operation_status": "Success",
 >>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "actual_error_goes_here"
 >>  }
 >> ``` 
 >> - Response 500 
@@ -53,17 +57,20 @@
 >>  }
 >> ```
 
-> ### - /private/api/settings/dns/domain_name/deletion
+> ### - /private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}
 >>
 >> | Header Parameter | Data Type |
 >> | ---------------- | --------- |
 >> | Authorization    | `String`  |
 >> 
+>> | Parameter        | Data Type                 |
+>> | ---------------- | ------------------------- |
+>> | zone             | `internal` or `external`  |
+>> | domain_name      | Example: `koompi.com`     |
+>> | subdomain_name   | Example: `sala` or `wiki` |
+>>
 >>  - Body
 >> ```json
->>  {
->>   "id": "1"
->>  }
 >> ```
 >>
 >> - Response 200 
@@ -71,6 +78,13 @@
 >>  {
 >>    "operation_status": "Success",
 >>    "reason": ""
+>>  }
+>> ``` 
+>> - Response 200 
+>> ```json
+>>  {
+>>    "operation_status": "Failed",
+>>    "reason": "actual_error_goes_here"
 >>  }
 >> ``` 
 >> - Response 500 
@@ -100,6 +114,7 @@
 >>    "reason": "missing-token"
 >>  }
 >> ```
+
 
 > ### - /private/api/settings/storage/device/deletion
 >>

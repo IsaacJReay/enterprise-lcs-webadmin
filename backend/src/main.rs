@@ -21,8 +21,8 @@ use crate::{
     linux::update::create_update_script,
     db::{
         create_tables, 
-        named::populate_dnszones, 
-        named::populate_zonerecords,
+        // named::populate_dnszones, 
+        // named::populate_zonerecords,
     }
 };
 
@@ -37,8 +37,8 @@ async fn main() -> Result<()> {
     set_var("RUST_LOG", "actix_server=info,actix_web=info");
     create_update_script();
     create_tables();
-    populate_dnszones();
-    populate_zonerecords();
+    // populate_dnszones();
+    // populate_zonerecords();
     // let production_cors = Cors::default()
     //           .allowed_origin("http://localhost:3000")
     //           .allowed_origin("http://127.0.0.1:3000")
@@ -60,8 +60,7 @@ async fn main() -> Result<()> {
                 .service(handler::get::systemdnetworkd::get_wanpage)                        // link: /private/api/settings/wirednetwork/status
                 .service(handler::get::systemdnetworkd::get_wlanpage)                       // link: /private/api/settings/wirelessnetwork/status
                 .service(handler::get::hostapd::get_wifipage)                               // link: /private/api/settings/hostapd/status
-                .service(handler::get::named::get_domain_name_page)                         // link: /private/api/settings/dns/domain_name/status
-                .service(handler::get::named::get_zone_record_page)                         // link: /private/api/settings/dns/zone_records/status
+                .service(handler::get::named::get_dns_page)                                 // link: /private/api/settings/dns/status
                 .service(handler::get::timedatectl::get_timedatepage)                       // link: /private/api/settings/time/status
                 .service(handler::get::storage::get_storage_page)                           // link: /private/api/settings/storage/status
                 .service(handler::get::storage::get_storage_device_page_test)               // link: /private/api/settings/storage/device/status/{drive_partuuid}
@@ -76,8 +75,7 @@ async fn main() -> Result<()> {
                 .service(handler::post::systemdnetworkd::post_wireless_network_settings)    // link: /private/api/settings/wirelessnetwork
                 .service(handler::post::systemdnetworkd::post_static_wired_network)         // link: /private/api/settings/wirednetwork/static
                 .service(handler::post::systemdnetworkd::post_dynamic_wired_network)        // link: /private/api/settings/wirednetwork/dynamic   
-                .service(handler::post::named::post_create_domain_name)                     // link: /private/api/settings/dns/domain_name/creation
-                .service(handler::post::named::post_add_zone_record)                        // link: /private/api/settings/dns/zone_record/creation
+                .service(handler::post::named::post_handle_new_domain_name_and_record)      // link: /private/api/settings/dns/new/{zone}
                 .service(handler::post::timedatectl::post_set_time)                         // link: /private/api/settings/time/timedate
                 .service(handler::post::timedatectl::post_set_timezone)                     // link: /private/api/settings/time/timezone
                 .service(handler::post::storage::post_storage_device_copy_or_move)          // link: /private/api/settings/storage/device/copy_or_move
@@ -85,12 +83,11 @@ async fn main() -> Result<()> {
                 .service(handler::post::storage::post_storage_device_unmount)               // link: /private/api/settings/storage/device/unmount
                 .service(handler::post::update::post_update_content_server)                 // link: /private/api/settings/update/update
                                                             //handling DELETE request
-                .service(handler::delete::delete_delete_zone_record)                        // link: /private/api/settings/dns/zone_record/deletion
-                .service(handler::delete::delete_delete_domain_name)                        // link: /private/api/settings/dns/domain_name/deletion
-                .service(handler::delete::post_storage_device_remove_filedir)        // link: /private/api/settings/storage/device/deletion
-                                                            //handling PUT request
-                .service(handler::put::put_update_dns_status)                               // link: /private/api/settings/dns/status/update
-                .service(handler::put::put_rename_domain_name)                              // link: /private/api/settings/dns/domain_name/update
+                .service(handler::delete::delete_delete_domain_name)                        // link: /private/api/settings/dns/delete/{zone}/{domain_name}
+                .service(handler::delete::delete_delete_zone_record)                        // link: /private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}
+                .service(handler::delete::post_storage_device_remove_filedir)               // link: /private/api/settings/storage/device/deletion
+                //                                             //handling PUT request
+                .service(handler::put::put_rename_domain_name)                              // link: /private/api/settings/dns/domain_name/rename/{old_domain_name}/{new_domain_name}
         }
     )
         .bind(IP_ADDRESS)?
