@@ -13,13 +13,6 @@
 >>
 >>  - Body
 >> ```json
-<<<<<<< HEAD
->>  {
->>     "id": "1",
->>     "foreign_key": "1"
->>  }
-=======
->>>>>>> ponereay
 >> ```
 >>
 >> - Response 200 
