@@ -1,30 +1,8 @@
-use crate::linux;
 use std::{
     usize,
     isize,
     convert::TryInto
 };
-
-pub fn comparedate(olddate: u64) -> bool {
-
-    let mut newdate: u64 = 18446744073709551615; //max value of u64
-    let (code, output, error) = linux::query_date_for_calculate();
-
-    match &code {
-        1 => println!("{}", &error),
-        0 => newdate = output.to_owned().as_str().parse::<u64>().unwrap(),
-        _ => println!("Broken"),
-    }
-
-    let elapse: u64 = newdate - olddate;
-
-    if elapse <= 150000 {
-        true
-    }
-    else{
-        false
-    }
-}
 
 pub fn from_binary(binary_ip: String) -> String {
 

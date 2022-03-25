@@ -25,8 +25,7 @@ use std::{
     }
 };
 use crate::{
-    CHUNK_SIZE,
-    db, 
+    CHUNK_SIZE, 
     linux,
     structs::{
         PartialRangeIter,
@@ -256,12 +255,11 @@ pub fn createfile(filename: &str, content: &[u8]) -> std::io::Result<()> {
 
 }
 
-pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
+pub fn config_hostapd(password: &str, hostapdparam: HostapdParam) -> (bool, bool, bool){
 
     let write_hostapd_status: bool;
     let move_hostapd_status: bool;
     let restart_hostapd_status: bool;
-    let (_username, password) = db::users::query_logindata();
 
     let conf: String = templates::gen_hostapd_conf(&hostapdparam.ssid, hostapdparam.hide_ssid, &hostapdparam.hw_mode, &hostapdparam.channel, hostapdparam.wpa, &hostapdparam.passphrase, hostapdparam.hw_n_mode, hostapdparam.qos);
 
@@ -286,11 +284,9 @@ pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
     (write_hostapd_status, move_hostapd_status, restart_hostapd_status)
 }
 
-pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool){
+pub fn config_systemd_networkd_wireless(password: &str, wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool){
 
     // Create Status variables
-    let (_username, password) = db::users::query_logindata();
-
     let write_networkd_status: bool;
     let write_acl_status: bool;
     let write_options_status: bool;
@@ -395,9 +391,8 @@ pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkPar
     )
 }
 
-pub fn config_named() -> (bool, bool) {
-    
-    let (_username, password) = db::users::query_logindata();
+pub fn config_named(password: &str) -> (bool, bool) {
+
     let named_conf: String = templates::gen_named_conf();
     let named_conf_zones: String = templates::gen_named_conf_internal_zones();
     let named_conf_logging: String = templates::gen_named_conf_logging();
@@ -454,8 +449,8 @@ pub fn config_named() -> (bool, bool) {
 
 }
 
-pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool) {
-    let (_username, password) = db::users::query_logindata();
+pub fn config_systemd_networkd_wired_static(password: &str, staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool) {
+    
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;
@@ -492,8 +487,8 @@ pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWired
 
 }
 
-pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool) {
-    let (_username, password) = db::users::query_logindata();
+pub fn config_systemd_networkd_wired_dynamic(password: &str) -> (bool, bool, bool) {
+    
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;

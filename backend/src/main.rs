@@ -30,6 +30,9 @@ const CHUNK_SIZE: u32 = 409599;
 const IP_ADDRESS: &str = "0.0.0.0:8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
+const TOKEN_EXPIRATION_SEC: u64 = 6; // Cannot Exceed u64
+const SESSION_LIMIT: u64 = 3; // How many session at the same time
+
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -54,7 +57,7 @@ async fn main() -> Result<()> {
                 .wrap(Cors::permissive())
                 .wrap(middleware::Logger::default())
                                                             //handling GET request
-                .service(handler::get::systemsettings::get_token_validated)                 // link: /private/api/token/validation
+                // .service(handler::get::systemsettings::get_token_validated)                 // link: /private/api/token/validation
                 .service(handler::get::users::get_logindata)                                // link: /private/api/user/query
                 .service(handler::get::systemsettings::get_statuspage)                      // link: /private/api/settings/status
                 .service(handler::get::systemdnetworkd::get_wanpage)                        // link: /private/api/settings/wirednetwork/status
