@@ -4,30 +4,21 @@ pub mod storage;
 pub mod hostapd;
 
 pub fn create_tables() {
-    let result = std::fs::remove_file("/tmp/lcs.db");
-    let mut error: String = String::new();
-    match result {
-        Ok(()) => (),
-        Err(err) => {
-            error = err.to_string(); 
-        },
-    }
-    
-    if &error == "Operation not permitted (os error 1)"{
-        eprintln!("{}", &error);
-    }
-    else {
-        let connection = sqlite::open("/tmp/lcs.db").unwrap();
-        connection
-            .execute(
-r#"
-CREATE TABLE logindata (variable TXT, value TXT);
-CREATE TABLE storagetable(dev_path TXT, part_uuid TXT, mount_location TXT, filesystem_type TXT);
-CREATE TABLE tokentable(token TXT);
 
-INSERT INTO logindata VALUES ('username', 'NULL');
-INSERT INTO logindata VALUES ('password', 'NULL');
-"#,)
-            .unwrap();
+    if let Err(err) = std::fs::remove_file("/tmp/lcs.db") {
+        if &err.to_string() == "Operation not permitted (os error 1)"{
+            eprintln!("{:#?}", &err);
+        }
     }
+
+    rusqlite::Connection::open("/tmp/lcs.db")
+        .unwrap()
+        .execute_batch(
+            "BEGIN;
+            CREATE TABLE tblStorage(UdevPath CHARACTER, PartUUID VARCHAR, MountLocation VARCHAR, FSysType CHARACTER);
+            CREATE TABLE tblAuth(UserName TXT, CryptedPass TXT, SessionID TXT, IAT UNSIGNED BIG INT);
+            COMMIT;"
+        )
+        .unwrap();
+          
 }

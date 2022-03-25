@@ -1,87 +1,104 @@
-use std::convert::TryInto;
+use rusqlite::{Connection, params};
 
-pub fn insert_into_storage_table(path: &str, uuid: &str, mount: &str, filesystem_type: &str) {
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
-
-    connection
+pub fn insert_into_storage_table(udevpath: &str, partuuid: &str, mountlocation: &str, fsystype: &str) {
+    Connection::open("/tmp/lcs.db")
+        .unwrap()
         .execute(
-            format!("INSERT INTO storagetable VALUES ('{}', '{}', '{}', '{}');", path, uuid, mount, filesystem_type)
+            "INSERT INTO tblStorage VALUES (?, ?, ?, ?)",
+            params![udevpath, partuuid, mountlocation, fsystype]
         )
-            .unwrap();
+        .unwrap();
 }
 
-pub fn delete_from_storage_table(uuid: &str) {
-
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
-
-    connection
+pub fn delete_from_storage_table(partuuid: &str) {
+    Connection::open("/tmp/lcs.db")
+        .unwrap()
         .execute(
-            format!("DELETE FROM storagetable WHERE part_uuid='{}';", uuid)
+            "DELETE FROM tblStorage WHERE PartUUID=?",
+            &[partuuid]
         )
-            .unwrap();
+        .unwrap();
+}
+
+pub fn query_existence_from_storage_table_by_path(udevpath: &str) -> bool {
+
+    let connection = Connection::open("/tmp/lcs.db").unwrap();
+
+    let mut stmt = connection.prepare("SELECT EXISTS(SELECT UdevPath FROM tblStorage WHERE UdevPath=? LIMIT 1);").unwrap();
+    let mut rows = stmt.query(&[udevpath]).unwrap();
+
+    rows.next().unwrap().unwrap().get::<usize, u64>(0).unwrap() != 0
+   
+}
+
+pub fn query_from_storage_table(udevpath: Option<&str>, partuuid: Option<&str>) -> (String, String) {
+    let connection = Connection::open("/tmp/lcs.db").unwrap();
+
+    let mut stmt = connection.prepare(
+        match udevpath {
+            Some(_udevpath) => "SELECT UdevPath,MountLocation FROM tblStorage WHERE UdevPath=?",
+            None => "SELECT UdevPath,MountLocation FROM tblStorage WHERE PartUUID=?"
+        }
+    ).unwrap();
+    let mut rows = stmt.query(
+        params!(
+            match udevpath {
+                Some(udevpath) => udevpath,
+                None => partuuid.unwrap()
+            }
+        )
+    ).unwrap();
+
+    match rows.next().unwrap() {
+        Some(each_row) => (each_row.get("UdevPath").unwrap(), each_row.get("MountLocation").unwrap()),
+        None => (String::new(), String::new())
+    }
 
 }
 
-pub fn query_existence_from_storage_table_by_path(path: &str) -> bool {
+// pub fn query_mount_by_path_from_storage_table(path: &str) -> String {
+//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+//     let mut read_path_mount = connection
+//         .prepare(
+//             format!("SELECT mount_location FROM storagetable WHERE dev_path='{}';", path)
+//         )
+//             .unwrap();
 
-    let mut check_empty_statement = connection
-        .prepare(
-            format!("SELECT EXISTS(SELECT dev_path FROM storagetable WHERE dev_path='{}' LIMIT 1);", path)
-        )
-            .unwrap();
+//     read_path_mount.next().unwrap();
+//     let path: String = read_path_mount.read::<String>(0).unwrap();
 
-    check_empty_statement.next().unwrap();
-    let output: u64 = check_empty_statement.read::<i64>(0).unwrap().try_into().unwrap();
+//     path
+// }
 
-    output!=0
-    
-}
+// pub fn query_mount_by_uuid_from_storage_table(uuid: &str) -> String {
 
-pub fn query_mount_by_path_from_storage_table(path: &str) -> String {
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
-    let mut read_path_mount = connection
-        .prepare(
-            format!("SELECT mount_location FROM storagetable WHERE dev_path='{}';", path)
-        )
-            .unwrap();
+//     let mut read_path_mount = connection
+//         .prepare(
+//             format!("SELECT mount_location FROM storagetable WHERE part_uuid='{}';", uuid)
+//         )
+//             .unwrap();
 
-    read_path_mount.next().unwrap();
-    let path: String = read_path_mount.read::<String>(0).unwrap();
+//     read_path_mount.next().unwrap();
+//     let mount: String = read_path_mount.read::<String>(0).unwrap();
 
-    path
-}
+//     mount
+// }
 
-pub fn query_mount_by_uuid_from_storage_table(uuid: &str) -> String {
+// pub fn query_path_by_uuid_from_storage_table(uuid: &str) -> String {
 
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
+//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
 
-    let mut read_path_mount = connection
-        .prepare(
-            format!("SELECT mount_location FROM storagetable WHERE part_uuid='{}';", uuid)
-        )
-            .unwrap();
+//     let mut read_path_mount = connection
+//         .prepare(
+//             format!("SELECT dev_path FROM storagetable WHERE part_uuid='{}';", uuid)
+//         )
+//             .unwrap();
 
-    read_path_mount.next().unwrap();
-    let mount: String = read_path_mount.read::<String>(0).unwrap();
+//     read_path_mount.next().unwrap();
+//     let mount: String = read_path_mount.read::<String>(0).unwrap();
 
-    mount
-}
-
-pub fn query_path_by_uuid_from_storage_table(uuid: &str) -> String {
-
-    let connection = sqlite::open("/tmp/lcs.db").unwrap();
-
-    let mut read_path_mount = connection
-        .prepare(
-            format!("SELECT dev_path FROM storagetable WHERE part_uuid='{}';", uuid)
-        )
-            .unwrap();
-
-    read_path_mount.next().unwrap();
-    let mount: String = read_path_mount.read::<String>(0).unwrap();
-
-    mount
-}
+//     mount
+// }

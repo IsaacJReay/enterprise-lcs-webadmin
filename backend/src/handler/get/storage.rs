@@ -36,7 +36,7 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
                     if  partition_filesystem_type == "exfat" || partition_filesystem_type == "vfat" || partition_filesystem_type == "ntfs" {
                         let is_mounted = db::storage::query_existence_from_storage_table_by_path(&each_partition);
                         match is_mounted {
-                            true => mounted_partitions_mount.push(db::storage::query_mount_by_path_from_storage_table(&each_partition)),
+                            true => mounted_partitions_mount.push(db::storage::query_from_storage_table(Some(&each_partition), None).1),
                             false => not_mounted_partitions.push(each_partition),
                         }
                     }
@@ -125,7 +125,7 @@ pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpRespon
             if passwordstatus {
                 let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
                 if drive_partuuid != "kmp" {
-                    let path = db::storage::query_mount_by_uuid_from_storage_table(&drive_partuuid);
+                    let path = db::storage::query_from_storage_table(None, Some(&drive_partuuid)).1;
                     let top = config::generate_file_system_struct(&path, "Removeable Device");
                     Ok(
                         HttpResponse::Ok()

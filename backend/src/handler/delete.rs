@@ -174,7 +174,7 @@ pub async fn post_storage_device_remove_filedir(req: HttpRequest, args_vec: web:
 
                 let items_prefix = match args_vec.drive_partuuid.as_str() {
                     "kmp" => "/kmp/webadmin".to_string(),
-                    _ => db::storage::query_mount_by_uuid_from_storage_table(&args_vec.drive_partuuid)
+                    _ => db::storage::query_from_storage_table(None, Some(&args_vec.drive_partuuid)).1
                 };
                 
                 let items_string = args_vec.selected_filedir

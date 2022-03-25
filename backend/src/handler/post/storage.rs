@@ -20,12 +20,12 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
 
                 let source_prefix =  match args_vec.source_uuid.as_str() {
                     "kmp" => "/kmp/webadmin".to_string(),
-                    _ => db::storage::query_mount_by_uuid_from_storage_table(args_vec.source_uuid.as_str()),
+                    _ => db::storage::query_from_storage_table(None, Some(args_vec.source_uuid.as_str())).1,
                 };
 
                 let destination_prefix =  match args_vec.destination_uuid.as_str() {
                     "kmp" => "/kmp/webadmin".to_string(),
-                    _ => db::storage::query_mount_by_uuid_from_storage_table(args_vec.destination_uuid.as_str()),
+                    _ => db::storage::query_from_storage_table(None, Some(args_vec.destination_uuid.as_str())).1,
                 };
 
                 let source_string = args_vec.source_items
@@ -149,7 +149,7 @@ pub async fn post_storage_device_directory_creation(req: HttpRequest, directory_
 
                 let dir_location = match directory_info.drive_partuuid.as_str() {
                     "kmp" => format!("/kmp/webadmin/{}/{}", directory_info.parent_directory, directory_info.directory_name),
-                    _ => format!("{}/{}/{}", db::storage::query_mount_by_uuid_from_storage_table(&directory_info.drive_partuuid), directory_info.parent_directory, directory_info.directory_name)
+                    _ => format!("{}/{}/{}", db::storage::query_from_storage_table(None, Some(&directory_info.drive_partuuid)).1, directory_info.parent_directory, directory_info.directory_name)
                 };
 
                 let (code, output, error) = linux::storage::make_dir(&dir_location);
@@ -220,7 +220,7 @@ pub async fn post_storage_device_unmount(req: HttpRequest, uuid_struct: web::Jso
             let (_username, password) = db::users::query_logindata();
             let passwordstatus: bool = tool::comparedate(olddate);
             if passwordstatus {
-                let full_dev_path = format!("/dev/{}", db::storage::query_path_by_uuid_from_storage_table(&uuid_struct.drive_partuuid));
+                let full_dev_path = format!("/dev/{}", db::storage::query_from_storage_table(None, Some(&uuid_struct.drive_partuuid)).0);
 
                 let (code, output, error) = linux::storage::unmount_partition(&password, &full_dev_path);
 
