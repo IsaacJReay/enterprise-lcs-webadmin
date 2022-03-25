@@ -10,7 +10,7 @@ use crate::{
 };
 use actix_web::HttpRequest;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     aud: String,
     auth: String,
@@ -125,7 +125,7 @@ pub fn extract_auth_from_claims(claims: &Claims) -> Result<(String, String), (u3
 pub fn validate_token(req: &HttpRequest) -> Result<(String, String), (u32, String)> {
     
     let token = match req.headers().get("AUTHORIZATION") {
-        Some(token) => Ok(token.to_str().unwrap()),
+        Some(token) => Ok(token.to_str().unwrap().split_whitespace().last().unwrap()),
         None => Err((410, "Token Missing".to_string()))
     }?;
 
