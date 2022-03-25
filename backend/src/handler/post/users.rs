@@ -44,7 +44,7 @@ pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResp
 pub async fn post_logout(req: HttpRequest) -> Result<HttpResponse> {
 
     let token = match req.headers().get("AUTHORIZATION") {
-        Some(token) => Ok(token.to_str().unwrap()),
+        Some(token) => Ok(token.to_str().unwrap().split_whitespace().last().unwrap()),
         None => Err(
             HttpResponse::Unauthorized().json(
                 HttpResponseCustom {
