@@ -130,12 +130,6 @@ pub struct StatusPageResult {
     pub wlan_qos: bool,
 }
 
-#[derive(Serialize)]
-pub struct HttpResponseCustom {
-    pub operation_status: String,
-    pub reason: String,
-}
-
 #[derive(Serialize, Deserialize, Clone)]
 pub struct DnsZonesInfo {
     pub domain_name: String,

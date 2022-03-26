@@ -25,8 +25,7 @@ use std::{
     }
 };
 use crate::{
-    CHUNK_SIZE,
-    db, 
+    CHUNK_SIZE, 
     linux,
     structs::{
         PartialRangeIter,
@@ -256,12 +255,11 @@ pub fn createfile(filename: &str, content: &[u8]) -> std::io::Result<()> {
 
 }
 
-pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
+pub fn config_hostapd(password: &str, hostapdparam: HostapdParam) -> (bool, bool, bool){
 
     let write_hostapd_status: bool;
     let move_hostapd_status: bool;
     let restart_hostapd_status: bool;
-    let (_username, password) = db::users::query_logindata();
 
     let conf: String = templates::gen_hostapd_conf(&hostapdparam.ssid, hostapdparam.hide_ssid, &hostapdparam.hw_mode, &hostapdparam.channel, hostapdparam.wpa, &hostapdparam.passphrase, hostapdparam.hw_n_mode, hostapdparam.qos);
 
@@ -286,11 +284,9 @@ pub fn config_hostapd(hostapdparam: HostapdParam) -> (bool, bool, bool){
     (write_hostapd_status, move_hostapd_status, restart_hostapd_status)
 }
 
-pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool){
+pub fn config_systemd_networkd_wireless(password: &str, wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool){
 
     // Create Status variables
-    let (_username, password) = db::users::query_logindata();
-
     let write_networkd_status: bool;
     let write_acl_status: bool;
     let write_options_status: bool;
@@ -395,9 +391,8 @@ pub fn config_systemd_networkd_wireless(wirelessnetworkparam: WirelessNetworkPar
     )
 }
 
-pub fn config_named() -> (bool, bool) {
-    
-    let (_username, password) = db::users::query_logindata();
+pub fn config_named(password: &str) -> (bool, bool) {
+
     let named_conf: String = templates::gen_named_conf();
     let named_conf_zones: String = templates::gen_named_conf_internal_zones();
     let named_conf_logging: String = templates::gen_named_conf_logging();
@@ -454,8 +449,8 @@ pub fn config_named() -> (bool, bool) {
 
 }
 
-pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool) {
-    let (_username, password) = db::users::query_logindata();
+pub fn config_systemd_networkd_wired_static(password: &str, staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool) {
+    
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;
@@ -492,8 +487,8 @@ pub fn config_systemd_networkd_wired_static(staticwirednetworkparam: StaticWired
 
 }
 
-pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool) {
-    let (_username, password) = db::users::query_logindata();
+pub fn config_systemd_networkd_wired_dynamic(password: &str) -> (bool, bool, bool) {
+    
     let move_networkd_status: bool;
     let restart_networkd_status: bool;
     let write_networkd_status: bool;
@@ -522,130 +517,3 @@ pub fn config_systemd_networkd_wired_dynamic() -> (bool, bool, bool) {
 
     (write_networkd_status, move_networkd_status, restart_networkd_status)
 }
-
-// pub fn config_name_conf_external_zones() -> (bool, bool, bool, bool) {
-//     let (_username, password) = db::users::query_logindata();
-//     let zone_vec  = db::named::read_dnszones();
-//     // println!("Inside {:#?}", zone_vec);
-//     let mut record_vec: Vec<ZoneRecords>;
-//     let mut write_var_zone_status: bool = true;
-//     let mut move_var_zone_status: bool = true;
-//     let cleanup_exzone_status: bool;
-//     let cleanup_var_named_status: bool;
-//     let write_exzone_status: bool;
-//     let move_exzone_status: bool;
-//     let restart_named_status: bool;
-
-
-//     let conf: String = templates::gen_named_conf_external_zones();
-
-//     let (code, _output, _error) = linux::storage::remove_filedir_root(&password, "/etc/named.conf.external.zones");
-//     match code {
-//         0 => cleanup_exzone_status = true,
-//         _ => cleanup_exzone_status = false,
-//     }
-
-//     let (code, _output, _error) = linux::storage::remove_filedir_root(&password, "/var/named/*.external.zone");
-//     match code {
-//         0 => cleanup_var_named_status = true,
-//         _ => cleanup_var_named_status = false,
-//     }
-
-//     let result = createfile("named.conf.external.zones", conf.as_bytes());
-//     match result {
-//         Ok(()) => write_exzone_status = true,
-//         Err(_err) => write_exzone_status = false,
-//     }
-
-//     for increments in 0..zone_vec.len(){
-//         let filename: String = zone_vec[increments].domain_name.to_owned() + ".external.zone";
-//         // println!("{}", filename);
-    
-//         record_vec = db::named::read_zonerecords_by_foreign_key(&zone_vec[increments].id.to_owned());
-//         let mut partial_record_vec: Vec<PartialZoneRecords> = Vec::new();
-
-//         for partial_increments in 0..record_vec.len(){
-//             partial_record_vec.insert(
-//                 partial_increments, 
-//                 PartialZoneRecords{
-//                     subdomain_name: record_vec[increments].partial_zonerecords.subdomain_name.to_owned(),
-//                     dns_type: record_vec[increments].partial_zonerecords.dns_type.to_owned(),
-//                     address: record_vec[increments].partial_zonerecords.address.to_owned(),
-//                     foreign_key: record_vec[increments].partial_zonerecords.foreign_key.to_owned(),
-//                 },
-//             );
-//         }
-
-//         let current_conf: String = templates::gen_var_named_one_zone(partial_record_vec);
-//         let result = createfile(&filename, current_conf.as_bytes());
-//         match result {
-//             Ok(()) => (),
-//             Err(_err) => write_var_zone_status = false,
-//         }
-//     };
-
-//     let (code, _ouput, _error) = linux::storage::move_filedir_root(&password, "named.conf.external.zones", "/etc/");
-//     match code {
-//         0 => move_exzone_status = true,
-//         _ => move_exzone_status = false,
-//     }
-
-//     for increments in 0..zone_vec.len(){
-//         let filename: String = zone_vec[increments].domain_name.to_owned() + ".external.zone";
-//         let (code, _ouput, _error) = linux::storage::move_filedir_root(&password, &filename, "/var/named/");
-//         match code {
-//             0 => (),
-//             _ => move_var_zone_status = false,
-//         }
-//     };
-
-//     let (code, _output, _error) = linux::restartservice(&password, "named");
-//     match code {
-//         0 => restart_named_status = true,
-//         _ => restart_named_status = false,
-//     }
-
-//     let write_named_status: bool = write_exzone_status && write_var_zone_status;
-//     let move_named_status: bool = move_exzone_status && move_var_zone_status;
-//     let cleanup_named_status: bool = cleanup_exzone_status && cleanup_var_named_status;
-    
-
-//     (cleanup_named_status, write_named_status, move_named_status, restart_named_status)
-// }
-
-// pub fn config_var_named_external_zones(zone_vec: Vec<PartialZoneRecords>) -> (bool, bool, bool){
-//     let (_username, password) = db::users::query_logindata();
-
-//     let dns_vec = db::named::read_dnszones();
-//     let mut filename: String = String::new();
-
-//     for increments in 0..dns_vec.len(){
-//         if dns_vec[increments].id == zone_vec[0].foreign_key{
-//             filename = dns_vec[increments].domain_name.to_owned() + ".external.zone";
-//         }
-//     }
-
-//     let write_var_zone_status: bool;
-//     let move_var_zone_status: bool;
-//     let restart_named_status: bool;
-
-//     let conf: String = templates::gen_var_named_one_zone(zone_vec);
-//     let result = createfile(&filename, conf.as_bytes());
-//     match result {
-//         Ok(()) => write_var_zone_status = true,
-//         Err(_err) => write_var_zone_status = false,
-//     }
-
-//     let (code, _output, _error) = linux::storage::move_filedir_root(&password, &&filename, "/var/named");
-//     match code {
-//         0 => move_var_zone_status = true,
-//         _ => move_var_zone_status = false,
-//     }
-
-//     let (code, _output, _error) = linux::restartservice(&password, "named");
-//     match code {
-//         0 => restart_named_status = true,
-//         _ => restart_named_status = false,
-//     }
-//     (write_var_zone_status, move_var_zone_status, restart_named_status)
-// }

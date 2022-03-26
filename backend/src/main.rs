@@ -30,6 +30,9 @@ const CHUNK_SIZE: u32 = 409599;
 const IP_ADDRESS: &str = "0.0.0.0:8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
+const TOKEN_EXPIRATION_SEC: u64 = 6; // Cannot Exceed u64
+const SESSION_LIMIT: u64 = 3; // How many session at the same time
+
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -54,7 +57,7 @@ async fn main() -> Result<()> {
                 .wrap(Cors::permissive())
                 .wrap(middleware::Logger::default())
                                                             //handling GET request
-                .service(handler::get::systemsettings::get_token_validated)                 // link: /private/api/token/validation
+                // .service(handler::get::systemsettings::get_token_validated)                 // link: /private/api/token/validation
                 .service(handler::get::users::get_logindata)                                // link: /private/api/user/query
                 .service(handler::get::systemsettings::get_statuspage)                      // link: /private/api/settings/status
                 .service(handler::get::systemdnetworkd::get_wanpage)                        // link: /private/api/settings/wirednetwork/status
@@ -69,7 +72,7 @@ async fn main() -> Result<()> {
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password
                 .service(handler::post::systemsettings::post_settings_import)               // link: /private/api/settings/import
-                .service(handler::post::systemsettings::post_settings_export)               // link: /private/api/settings/export
+                // .service(handler::post::systemsettings::post_settings_export)               // link: /private/api/settings/export
                 .service(handler::post::systemsettings::post_settings_reset)                // link: /private/api/settings/reset
                 .service(handler::post::hostapd::post_hostapd_settings)                     // link: /private/api/settings/hostapd
                 .service(handler::post::systemdnetworkd::post_wireless_network_settings)    // link: /private/api/settings/wirelessnetwork
@@ -87,7 +90,7 @@ async fn main() -> Result<()> {
                 .service(handler::delete::delete_delete_zone_record)                        // link: /private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}
                 .service(handler::delete::post_storage_device_remove_filedir)               // link: /private/api/settings/storage/device/deletion
                 //                                             //handling PUT request
-                .service(handler::put::put_rename_domain_name)                              // link: /private/api/settings/dns/domain_name/rename/{old_domain_name}/{new_domain_name}
+                .service(handler::put::put_rename_domain_name)                              // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
         }
     )
         .bind(IP_ADDRESS)?

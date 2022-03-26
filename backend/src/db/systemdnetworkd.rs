@@ -1,31 +1,34 @@
-use wildmatch::WildMatch;
 use ipnetwork::Ipv4Network;
 use crate::{ 
     tool,
-    db::read_lines,
+    config,
 };
 
-pub fn read_resolvconf() -> String {
+use run_script::{
+    ScriptOptions, 
+    run_script
+};
 
-    let mut resolv_dns: String = String::new();
+pub fn read_resolvconf(interface_name: &str) -> String {
 
-    if let Ok(file) = read_lines("/etc/resolv.conf") {
-        // Consumes the iterator, returns an (Optional) String
-        for lines in file {
-            if let Ok(line) = lines {
-                if WildMatch::new("nameserver *").matches(&line){
-                    let dns_vec = line.split_whitespace().collect::<Vec<&str>>();
-                    resolv_dns = format!("{} {}", resolv_dns, dns_vec[1]);
-                }
-            }
-        }
-    }
-    resolv_dns
+    let options = ScriptOptions::new();
+
+    let _command = r#"resolvectl dns | grep INTERFACE_NAME | awk -F': ' '{printf $2}'"#;
+    let command = _command.replace("INTERFACE_NAME", interface_name);
+
+    let (_code, output, _error) = run_script!(
+        &format!("{}", command),
+        &vec![],
+        &options
+    ).unwrap();
+
+    output
 }
 
 pub fn read_wlan_networkd() -> (String, String, String, String, String, String, String, String) {
 
-    let mut full_ip_address: String = String::new();
+    let mut router_ip = String::new();
+    let mut prefix_length: u8 = 0;
     let mut pool_offset: String = String::new();
     let mut pool_size: String = String::new();
     let mut dns: String = String::new();
@@ -33,48 +36,39 @@ pub fn read_wlan_networkd() -> (String, String, String, String, String, String, 
     let mut max_lease: String = String::new();
     let mut timezone: String = String::new();
 
-    if let Ok(file) = read_lines("/etc/systemd/network/20-wireless.network") {
-        // Consumes the iterator, returns an (Optional) String
-        for lines in file {
-            if let Ok(line) = lines {
-                if WildMatch::new("Address=*").matches(&line){
-                    let vec = line.split("=").collect::<Vec<&str>>();
-                    full_ip_address = vec[1].to_owned();
-                }
-                else if WildMatch::new("PoolOffset=*").matches(&line){
-                    let vec = line.split("=").collect::<Vec<&str>>();
-                    pool_offset = vec[1].to_owned();
-                }
-                else if WildMatch::new("PoolSize=*").matches(&line){
-                    let vec = line.split("=").collect::<Vec<&str>>();
-                    pool_size = vec[1].to_owned();
-                }
-                else if WildMatch::new("DNS=*").matches(&line){
-                    let vec = line.split("=").collect::<Vec<&str>>();
-                    dns = vec[1].to_owned();
-                }
-                else if WildMatch::new("DefaultLeaseTimeSec=*").matches(&line){
-                    let vec = line.split("=").collect::<Vec<&str>>();
-                    default_lease = vec[1].to_owned();
-                }
-                else if WildMatch::new("MaxLeaseTimeSec=*").matches(&line){
-                    let vec = line.split("=").collect::<Vec<&str>>();
-                    max_lease = vec[1].to_owned();
-                }
-                else if WildMatch::new("Timezone=*").matches(&line){
-                    let vec = line.split("=").collect::<Vec<&str>>();
-                    timezone = vec[1].to_owned();
-                }
+    let config = config::read_file("/etc/systemd/network/20-wireless.network");
+
+    config
+        .lines()
+        .for_each(|each_line| {
+            if each_line.contains("Address="){
+                router_ip = each_line.to_owned().split(&['=', '/'][..]).nth(1).unwrap().to_string();
+                prefix_length = each_line.to_owned().split(&['=', '/'][..]).nth(2).unwrap().parse::<u8>().unwrap();
+            }
+            else if each_line.contains("PoolOffset="){
+                pool_offset = each_line.split("=").last().unwrap().to_string();
+            }
+            else if each_line.contains("PoolSize="){
+                pool_size = each_line.split("=").last().unwrap().to_string();
+            }
+            else if each_line.contains("DNS="){
+                dns = each_line.split("=").last().unwrap().to_string();
+            }
+            else if each_line.contains("DefaultLeaseTimeSec="){
+                default_lease = each_line.split("=").last().unwrap().to_string();
+            }
+            else if each_line.contains("MaxLeaseTimeSec="){
+                max_lease = each_line.split("=").last().unwrap().to_string();
+            }
+            else if each_line.contains("Timezone="){
+                timezone = each_line.split("=").last().unwrap().to_string();
             }
         }
-    }
-    let splited_full_ip_address: Vec<&str> = full_ip_address.split("/").collect::<Vec<&str>>();
-    let router_ip = splited_full_ip_address[0].to_string();
-    let prefix_length = splited_full_ip_address[1].to_string();
+    );
 
     let struct_ipv4network = Ipv4Network::new(
         router_ip.parse().unwrap(), 
-        prefix_length.parse::<u8>().unwrap()
+        prefix_length
     )   
         .unwrap();
 
@@ -92,66 +86,23 @@ pub fn read_wlan_networkd() -> (String, String, String, String, String, String, 
 
 }
 
-pub fn read_wan_networkd() -> (bool, String, String, String, String){
+pub fn read_wan_networkd() -> (bool, String, String, String, String){       
 
-    let mut dhcp_status: bool = true;
-    let mut full_ip_address: String = String::new();
-    let mut gateway: String = String::new();
-    let mut dns: String = String::new();
-    let internet_ip: String;
-    let netmask: String;
+    let config = config::read_file("/etc/systemd/network/20-wired.network");
+    let dhcp_status = match config
+        .lines()
+        .find(|each_line| each_line.contains("DHCP="))
+        .unwrap()
+        .split("=")
+        .last()
+        .unwrap() {
+            "yes" => true,
+            _ => false
+        };
+    
 
-    if let Ok(file) = read_lines("/etc/systemd/network/20-wired.network") {
-        // Consumes the iterator, returns an (Optional) String
-        for lines in file {
-            if let Ok(line) = lines {
-                if WildMatch::new("DHCP=*").matches(&line){
-                    let split = line.split("=").collect::<Vec<&str>>();
-                    match split[1] {
-                        "yes" => dhcp_status = true,
-                        _ => dhcp_status = false,
-                    }
-                    
-                }  
-            }
-        }
-    }
-    if dhcp_status == false {
-        if let Ok(file) = read_lines("/etc/systemd/network/20-wired.network") {
-            // Consumes the iterator, returns an (Optional) String
-            for lines in file {
-                if let Ok(line) = lines {
-                    if WildMatch::new("Address=*").matches(&line){
-                        let vec = line.split("=").collect::<Vec<&str>>();
-                        full_ip_address = vec[1].to_owned();
-                    }
-                    else if WildMatch::new("Gateway=*").matches(&line){
-                        let vec = line.split("=").collect::<Vec<&str>>();
-                        gateway = vec[1].to_owned();
-                    }
-                    else if WildMatch::new("DNS=*").matches(&line){
-                        let vec = line.split("=").collect::<Vec<&str>>();
-                        dns = vec[1].to_owned();
-                    }
-                }
-            }
-        }
-        let splited_ip = full_ip_address.split("/").collect::<Vec<&str>>();
-        internet_ip = splited_ip[0].to_string();
-        let prefix = splited_ip[1].parse::<u8>().unwrap();
-
-        let ip_struct = Ipv4Network::new(internet_ip.parse().unwrap(), prefix).unwrap();
-
-        netmask = ip_struct.mask().to_string();
-    }
-    else {
-        let (_macaddr_output, ipaddr_output, eth0_subnetmask, gateway_output) = read_eth0();
-        let resolve_dns = read_resolvconf();
-        internet_ip = ipaddr_output;
-        netmask = eth0_subnetmask;
-        gateway = gateway_output;
-        dns = resolve_dns;
-    }    
+    let (_macaddr_output, internet_ip, netmask, gateway) = read_eth0();
+    let dns = read_resolvconf("eth0");
 
     (dhcp_status, internet_ip, netmask, gateway, dns)
 }

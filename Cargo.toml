@@ -1,4 +1,27 @@
 [workspace]
-members = [
-    "backend",
-]
+members = ["backend"]
+
+[profile.dev]
+opt-level = 0
+debug = true
+split-debuginfo = "packed"
+debug-assertions = true
+overflow-checks = true
+lto = "off"
+panic = 'unwind'
+incremental = true
+codegen-units = 256
+rpath = false
+
+
+[profile.release]
+opt-level = 3
+debug = false
+split-debuginfo = "off"
+debug-assertions = false
+overflow-checks = false
+lto = false
+panic = 'unwind'
+incremental = true
+codegen-units = 1
+rpath = false

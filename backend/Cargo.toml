@@ -2,31 +2,31 @@
 name = "backend"
 version = "0.1.0"
 authors = ["IsaacJReay <isaacjacksonreay@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-cors="*"
+actix-cors = "*"
 actix-files = "*"
 actix-multipart = "*"
 actix-web = "*"
 aes-gcm-siv = "*"
-base64="*"
+base64 = "*"
 block-utils = "*"
 chrono = "*"
 flate2 = "*"
 fork = "*"
 futures = "*"
 ipnetwork = "*"
+jsonwebtoken = "*"
 pam = "*"
 reqwest = { version = "*", features = ["blocking"] }
 run_script = "*"
 sanitize-filename = "*"
-serde = "*"
-sqlite = "*"
-wildmatch = "*"
-rand="*"
+serde = { version = "*", features=["derive"] }
+rusqlite = "*"
+rand = "*"
 tar = "*"
 toml = "*"
 walkdir = "*"

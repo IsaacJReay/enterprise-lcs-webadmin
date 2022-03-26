@@ -1,7 +1,5 @@
 use crate::{
     config,
-    linux,
-    DECRYPT_KEY,
     DECRYPT_NONCE
 };
 use aes_gcm_siv::{Aes256GcmSiv, Key, Nonce}; // Or `Aes128GcmSiv`
@@ -46,7 +44,7 @@ pub fn encrypt(plaintext: String, key: Vec<u8>) -> String {
 
 }
 
-pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> String {
+pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> Result<String, String> {
 
     let mut ciphertext = encrypted_text.split_whitespace().map(|each_arg| each_arg.parse::<u8>().unwrap()).collect::<Vec<u8>>();
     ciphertext.reverse();
@@ -55,34 +53,36 @@ pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> String {
     let cipher = Aes256GcmSiv::new(key);
     let nonce = Nonce::from_slice(DECRYPT_NONCE.as_bytes());
 
-
-    let plaintext = cipher.decrypt(nonce, ciphertext.as_ref())
-        .expect("decryption failure!");  // NOTE: handle this error to avoid panics!
-
-    String::from_utf8(plaintext).unwrap()
+    match cipher.decrypt(nonce, ciphertext.as_ref()) {
+        Ok(binary) => match String::from_utf8(binary) {
+            Ok(string) => Ok(string),
+            Err(message) => Err(message.to_string())
+        },
+        Err(message) => Err(message.to_string())
+    }
     
 }
 
 
-pub fn encrypt_file(filename: &str, password: &str) -> String {
-    let mut byte_file = config::get_file_as_byte_vec(&filename.to_string());
+// pub fn encrypt_file(filename: &str, password: &str) -> String {
+//     let mut byte_file = config::get_file_as_byte_vec(&filename.to_string());
 
-    byte_file.reverse();
+//     byte_file.reverse();
 
-    let mut string_file = String::new();
+//     let mut string_file = String::new();
 
-    for each_u8 in byte_file {
-        string_file = each_u8.to_string() + " " + string_file.as_str();
-    }
+//     for each_u8 in byte_file {
+//         string_file = each_u8.to_string() + " " + string_file.as_str();
+//     }
 
-    let enc_o_string = encrypt(string_file, padding_convert(password));
+//     let enc_o_string = encrypt(string_file, padding_convert(password));
 
-    let processed_file = filename.replace("tar.zst", "kconf");
+//     let processed_file = filename.replace("tar.zst", "kconf");
 
-    let _result = config::createfile(&processed_file, enc_o_string.as_bytes());
+//     let _result = config::createfile(&processed_file, enc_o_string.as_bytes());
 
-    processed_file
-}
+//     processed_file
+// }
 
 pub fn decrypt_file(filename: &str, password: &str) -> String {
     let byte_file = String::from_utf8(config::get_file_as_byte_vec(&filename.to_string())).unwrap();
@@ -94,7 +94,7 @@ pub fn decrypt_file(filename: &str, password: &str) -> String {
         string_byte_file = each_str.to_owned() + " " + string_byte_file.as_str();
     }
 
-    let decrypted_byte = decrypt(string_byte_file, padding_convert(password));
+    let decrypted_byte = decrypt(string_byte_file, padding_convert(password)).unwrap();
 
     let decrypted_byte_vec_str = decrypted_byte.split_whitespace().collect::<Vec<&str>>();
 
@@ -111,45 +111,19 @@ pub fn decrypt_file(filename: &str, password: &str) -> String {
     file
 }
 
-pub fn generate_token(username: &str, password: &str) -> String{
+pub fn generate_random(string_len: usize, custom_charset: Option<String>) -> String{
 
-    let (_code, output, _error) = linux::query_date_for_calculate();
+    let custom_charset = match custom_charset {
+        Some(set) => set,
+        None => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789)(*&^%$#@!~".to_string()
+    };
 
-
-
-    let encrypted_userame = encrypt(username.to_string(), padding_convert(DECRYPT_KEY));
-    let encrypted_password= encrypt(password.to_string(), padding_convert(DECRYPT_KEY));
-    let encrypted_time = encrypt(output, padding_convert(DECRYPT_KEY));
-
-    
-    let random_text1 = encrypt(generate_random(32), padding_convert(DECRYPT_KEY));
-
-    let random_text2 = encrypt(generate_random(32), padding_convert(DECRYPT_KEY));
-
-    let token: String = format!("{}.{}.{}.{}.{}", base64::encode(random_text1), base64::encode(encrypted_userame), base64::encode(encrypted_password), base64::encode(encrypted_time), base64::encode(random_text2));
-
-    token
-}
-
-pub fn extract_token(auth: &str) -> u64 {
-    let auth_split_whitespace_vec=auth.split_ascii_whitespace().collect::<Vec<&str>>();
-    let auth_split_dot_vec: Vec<&str> = auth_split_whitespace_vec[1].split(".").collect::<Vec<&str>>();
-    let decoded_base64 = base64::decode(auth_split_dot_vec[3]).unwrap();
-    let base64_string = String::from_utf8(decoded_base64).unwrap();
-    let decrypted_base64 = decrypt(base64_string, padding_convert("Koompi-Onelab")).parse::<u64>().unwrap();               
-    decrypted_base64
-}
-
-fn generate_random(string_len: usize) -> String{
-    const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
-                            abcdefghijklmnopqrstuvwxyz\
-                            0123456789)(*&^%$#@!~";
     let mut rng = rand::thread_rng();
 
     let random_string: String = (0..string_len)
         .map(|_| {
-            let idx = rng.gen_range(0..CHARSET.len());
-            CHARSET[idx] as char
+            let idx = rng.gen_range(0..custom_charset.as_bytes().len());
+            custom_charset.as_bytes()[idx] as char
         })
         .collect();
 
