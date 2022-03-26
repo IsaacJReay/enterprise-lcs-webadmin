@@ -6,6 +6,7 @@ members = [
 [profile.dev]
 opt-level = 0
 debug = true
+split-debuginfo = "packed"
 debug-assertions = true
 overflow-checks = true
 lto = "off"
@@ -18,6 +19,7 @@ rpath = false
 [profile.release]
 opt-level = 3
 debug = false
+split-debuginfo = "off"
 debug-assertions = false
 overflow-checks = false
 lto = false
