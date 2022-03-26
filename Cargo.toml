@@ -1,7 +1,5 @@
 [workspace]
-members = [
-    "backend",
-]
+members = ["backend"]
 
 [profile.dev]
 opt-level = 0
