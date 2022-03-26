@@ -4,13 +4,14 @@ use actix_web::{
     Result,
     HttpResponse,
     HttpRequest,
+    error,
+    http
 };
 use crate::{
     handler,
     linux,
     structs::{
         Timezone,
-        HttpResponseCustom,
         TimeDate,
     },
 };
@@ -22,22 +23,8 @@ pub async fn post_set_timezone(req: HttpRequest, timezone_struct: web::Json<Time
 
     let (code, _output, error) = linux::systemsettings::set_timezone(&password, &timezone_struct.timezone);
     match code {
-        0 => Ok(
-                HttpResponse::Ok().json(
-                    HttpResponseCustom {
-                        operation_status: "Success".to_string(),
-                        reason: "".to_string(),
-                    }
-                )
-            ),
-        _ => Ok(
-                HttpResponse::InternalServerError().json(
-                    HttpResponseCustom {
-                        operation_status: "Failed".to_string(),
-                        reason: format!("{}", error),
-                    }
-                )
-            ),
+        0 => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        _ => Err(error::ErrorInternalServerError(error))
     }
 }
 
@@ -48,21 +35,7 @@ pub async fn post_set_time(req: HttpRequest, time_struct: web::Json<TimeDate>) -
 
     let (code, _output, error) = linux::systemsettings::set_time(&password, &time_struct.date, &time_struct.time);
     match code {
-        0 => Ok(
-                HttpResponse::Ok().json(
-                    HttpResponseCustom {
-                        operation_status: "Success".to_string(),
-                        reason: "".to_string(),
-                    }
-                )
-            ),
-        _ => Ok(
-                HttpResponse::InternalServerError().json(
-                    HttpResponseCustom {
-                        operation_status: "Failed".to_string(),
-                        reason: format!("{}", error),
-                    }
-                )
-            ),
+        0 => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        _ => Err(error::ErrorInternalServerError(error))
     }
 }

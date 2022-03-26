@@ -10,8 +10,6 @@ use crate::{
     handler,
 };
 
-// use crate::{db, security, structs::{GetZoneRecords, HttpResponseCustom}, tool};
-
 #[get("/private/api/settings/dns/status/{zone}")]
 pub async fn get_dns_page(req: HttpRequest) -> Result<HttpResponse> { 
 

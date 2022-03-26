@@ -4,21 +4,13 @@ use actix_web::{
     get, 
     HttpRequest,
 };
-use crate::{
-    handler,
-    structs::UserName
-};
 
 #[get("/private/api/user/query")]
 pub async fn get_logindata(req: HttpRequest) -> Result<HttpResponse> {
 
-    let (current_username, _password) = handler::handle_validate_token_response(&req)?;
+    let (current_username, _password) = crate::handler::handle_validate_token_response(&req)?;
 
     Ok(
-        HttpResponse::Ok().json(
-            UserName{
-                username: current_username
-            }
-        )
+        HttpResponse::Ok().json(current_username)
     )
 }

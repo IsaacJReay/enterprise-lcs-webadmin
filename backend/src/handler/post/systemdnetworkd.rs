@@ -4,13 +4,14 @@ use actix_web::{
     Result,
     web,
     post,
+    http,
+    error,
 };
 use crate::{
     handler,
     config,
     structs::{
         WirelessNetworkParam,
-        HttpResponseCustom,
         StaticWiredNetworkParam,
     },
 };
@@ -55,22 +56,8 @@ pub async fn post_wireless_network_settings(req: HttpRequest, wirelessnetworkpar
         restart_networkd_status && 
         restart_named_service 
     {
-        true => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Success".to_string(),
-                    reason: "".to_string(),
-                }
-            )
-        ),
-        false => Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "file_ops_error".to_string(),
-                }
-            )
-        )
+        true => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        false => Err(error::ErrorUnauthorized("file_ops_error"))    
     }
 }
 
@@ -93,22 +80,8 @@ pub async fn post_static_wired_network(req: HttpRequest, staticwirednetworkparam
     ) = config::config_systemd_networkd_wired_static(password.as_ref(), deserialparam);
 
     match  write_networkd_status && move_networkd_status && restart_networkd_status {
-        true => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Success".to_string(),
-                    reason: "".to_string(),
-                }
-            )
-        ),
-        false => Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "file_ops_error".to_string(),
-                }
-            )
-        )
+        true => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        false => Err(error::ErrorUnauthorized("file_ops_error"))
     }
 }
 
@@ -124,22 +97,8 @@ pub async fn post_dynamic_wired_network(req: HttpRequest) -> Result<HttpResponse
     ) = config::config_systemd_networkd_wired_dynamic(password.as_ref());
 
     match  write_networkd_status && move_networkd_status && restart_networkd_status {
-        true => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Success".to_string(),
-                    reason: "".to_string(),
-                }
-            )
-        ),
-        false => Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "file_ops_error".to_string(),
-                }
-            )
-        )
+        true => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        false => Err(error::ErrorUnauthorized("file_ops_error"))
     }
 }
 

@@ -5,6 +5,8 @@ use actix_web::{
     web,
     post,
     Result,
+    error,
+    http,
 };
 use futures::{
     StreamExt, 
@@ -16,8 +18,6 @@ use crate::{
     linux,
     config,
     structs::{
-        BackupParam,
-        HttpResponseCustom,
         RestoreParam,
         HostapdParam,
         WirelessNetworkParam,
@@ -25,37 +25,37 @@ use crate::{
     },
 };
 use actix_multipart::Multipart;
-use actix_files::NamedFile;
+// use actix_files::NamedFile;
 
-#[post("/private/api/settings/export")]
-pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<BackupParam>) -> Result<NamedFile, HttpResponse> {
+// #[post("/private/api/settings/export")]
+// pub async fn post_settings_export(req: HttpRequest, backupparam: web::Json<BackupParam>) -> Result<NamedFile, HttpResponse> {
 
-    let (_username, _password) = handler::handle_validate_token_response(&req)?;
+//     let (_username, _password) = handler::handle_validate_token_response(&req)?;
 
-    let (code, _output, _error, filepath) = linux::systemsettings::tar_config(&backupparam.filename);
-    let mut backup_name: String = String::new();
-    let tar_status: bool;
+//     let (code, _output, _error, filepath) = linux::systemsettings::tar_config(&backupparam.filename);
+//     let mut backup_name: String = String::new();
+//     let tar_status: bool;
 
-    match code {
-        0 => tar_status = true,
-        _ => tar_status = false,
-    }
+//     match code {
+//         0 => tar_status = true,
+//         _ => tar_status = false,
+//     }
     
-    if tar_status {
-        backup_name = security::encrypt_file(&filepath, &backupparam.password);
-        Ok(NamedFile::open(backup_name).unwrap())
-    }
-    else {
-        Err(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom{
-                    operation_status: "Failed".to_string(),
-                    reason: format!("tar-{}-failed", backup_name),
-                }
-            )
-        )
-    }
-}
+//     if tar_status {
+//         backup_name = security::encrypt_file(&filepath, &backupparam.password);
+//         Ok(NamedFile::open(backup_name).unwrap())
+//     }
+//     else {
+//         Err(
+//             HttpResponse::InternalServerError().json(
+//                 HttpResponseCustom{
+//                     operation_status: "Failed".to_string(),
+//                     reason: format!("tar-{}-failed", backup_name),
+//                 }
+//             )
+//         )
+//     }
+// }
 
 #[post("/private/api/settings/import")]
 pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<RestoreParam>, mut payload: Multipart) -> Result<HttpResponse> {
@@ -68,7 +68,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
     let restart_service_status: bool;
 
     while let Ok(Some(mut field)) = payload.try_next().await {
-        let content_type = field.content_disposition().unwrap();
+        let content_type = field.content_disposition();
         let filename = content_type.get_filename().unwrap();
         let filepath = format!("/tmp/{}", sanitize_filename::sanitize(&filename));
 
@@ -81,7 +81,7 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
         while let Some(chunk) = field.next().await {
             let data = chunk.unwrap();
             // filesystem operations are blocking, we have to use threadpool
-            f = web::block(move || f.write_all(&data).map(|_| f)).await.unwrap();
+            f = web::block(move || f.as_ref().unwrap().write_all(&data).map(|_| f)).await.unwrap().unwrap()
         }
     }
 
@@ -108,22 +108,8 @@ pub async fn post_settings_import(req: HttpRequest, restoreparam: web::Json<Rest
     }
 
     match untar_status && mv_etc_status && restart_service_status {
-        true => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Success".to_string(),
-                    reason: "".to_string(),
-                }
-            )
-        ),
-        false => Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "file_ops_error".to_string(),
-                }
-            )
-        )
+        true => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        false => Err(error::ErrorInternalServerError("file_ops_error"))
     }
 }
 
@@ -185,21 +171,7 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
         restart_hostapd_status && 
         restart_named_status 
     {
-        true => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Success".to_string(),
-                    reason: "".to_string(),
-                }
-            )
-        ),
-        false => Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "file_ops_error".to_string(),
-                }
-            )
-        )
+        true => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        false => Err(error::ErrorInternalServerError("file_ops_error"))
     }
 }

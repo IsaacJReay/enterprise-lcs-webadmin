@@ -1,6 +1,8 @@
 use actix_web::{
     post,
     web,
+    http,
+    error,
     HttpRequest,
     HttpResponse,
     Result,
@@ -8,10 +10,7 @@ use actix_web::{
 use crate::{
     handler,
     config,
-    structs::{
-        HostapdParam,
-        HttpResponseCustom,
-    },
+    structs::HostapdParam
 };
 
 #[post("/private/api/settings/hostapd")]
@@ -37,23 +36,7 @@ pub async fn post_hostapd_settings(req: HttpRequest, hostapdparam: web::Json<Hos
     ) = config::config_hostapd(password.as_ref(), deserial_param);
 
     match write_hostapd_status &&move_hostapd_status && restart_hostapd_status {
-        true 
-        => Ok(
-                HttpResponse::Ok().json(
-                    HttpResponseCustom {
-                        operation_status: "Success".to_string(),
-                        reason: "".to_string(),
-                    }
-                )
-            ),
-        false
-        => Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "file_operatio_error".to_string(),
-                }
-            )
-        )
+        true => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        false => Err(error::ErrorInternalServerError("file_operation_error"))
     }
 }

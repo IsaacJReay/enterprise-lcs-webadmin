@@ -72,7 +72,7 @@ async fn main() -> Result<()> {
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password
                 .service(handler::post::systemsettings::post_settings_import)               // link: /private/api/settings/import
-                .service(handler::post::systemsettings::post_settings_export)               // link: /private/api/settings/export
+                // .service(handler::post::systemsettings::post_settings_export)               // link: /private/api/settings/export
                 .service(handler::post::systemsettings::post_settings_reset)                // link: /private/api/settings/reset
                 .service(handler::post::hostapd::post_hostapd_settings)                     // link: /private/api/settings/hostapd
                 .service(handler::post::systemdnetworkd::post_wireless_network_settings)    // link: /private/api/settings/wirelessnetwork

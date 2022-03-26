@@ -2,9 +2,19 @@ use actix_web::{
     HttpResponse, 
     Result, 
     get,
+    error,
     HttpRequest,
 };
-use crate::{config, db, linux, handler, structs::{DriveDescription, HttpResponseCustom, PartUUID}};
+use crate::{
+    config, 
+    db, 
+    linux, 
+    handler, 
+    structs::{
+        DriveDescription, 
+        PartUUID
+    }
+};
 
 #[get("/private/api/settings/storage/status")]
 pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
@@ -59,14 +69,15 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
         )
     }
     else {
-        Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom{
-                    operation_status: "Failed".to_string(),
-                    reason: "mount-Failed".to_string(),
-                }  
-            )
-        )
+        Err(error::ErrorInternalServerError("mount-failed"))
+        // Ok(
+        //     HttpResponse::InternalServerError().json(
+        //         HttpResponseCustom{
+        //             operation_status: "Failed".to_string(),
+        //             reason: "mount-Failed".to_string(),
+        //         }  
+        //     )
+        // )
     }
 }
 

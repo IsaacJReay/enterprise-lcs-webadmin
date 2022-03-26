@@ -1,18 +1,19 @@
 use actix_web::{
     web,
     post,
+    error,
     Result,
     HttpRequest,
     HttpResponse,
+    http,
+    body,
 };
 use crate::{
     db,
     handler,
     linux, 
     structs::{
-        HttpResponseCustom, 
         LoginParam, 
-        LoginResponse, 
         PasswdParam
     }
 };
@@ -21,22 +22,8 @@ use crate::{
 pub async fn post_pam_login(logindata: web::Json<LoginParam>) -> Result<HttpResponse> {
 
     match db::users::login(logindata.username.as_ref(), logindata.password.as_ref()) {
-        Ok(current_token) => Ok(
-            HttpResponse::Ok().json(
-                LoginResponse {
-                    operation_status: "Success".to_string(),
-                    token: current_token,
-                }
-            )
-        ),
-        Err(_) => Ok(
-            HttpResponse::Unauthorized().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "wrong_username_or_password".to_string(),
-                }
-            )
-        )
+        Ok(current_token) => Ok(HttpResponse::with_body(http::StatusCode::from_u16(200).unwrap(), body::BoxBody::new(current_token))),
+        Err(_) => Err(error::ErrorUnauthorized("wrong_username_or_password"))
     }
 }
 
@@ -45,57 +32,20 @@ pub async fn post_logout(req: HttpRequest) -> Result<HttpResponse> {
 
     let token = match req.headers().get("AUTHORIZATION") {
         Some(token) => Ok(token.to_str().unwrap().split_whitespace().last().unwrap()),
-        None => Err(
-            HttpResponse::Unauthorized().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "wrong_username_or_password".to_string(),
-                }
-            )
-        )
+        None => Err(error::ErrorUnauthorized("wrong_username_or_password"))
     }?;
 
     let claims = match db::users::extract_claims_from_token(&token) {
         Ok(claims) => Ok(claims),
         Err((code, message)) => match code {
-            401 
-            => Err(
-                    HttpResponse::Gone().json(
-                        HttpResponseCustom{
-                            operation_status: "Failed".to_string(),
-                            reason: message,
-                        }
-                    )
-                ),
-            _ 
-            => Err(
-                    HttpResponse::Unauthorized().json(
-                        HttpResponseCustom{
-                            operation_status: "Failed".to_string(),
-                            reason: message,
-                        }
-                    )
-                )
+            401 => Err(error::ErrorGone(message)),
+            _ => Err(error::ErrorUnauthorized(message))
         }
     }?;
 
     match db::users::logout(&claims) {
-        Ok(()) => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Success".to_string(),
-                    reason: "".to_string(),
-                }
-            )
-        ),
-        Err(_) => Ok(
-            HttpResponse::Unauthorized().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: "wrong_username_or_password".to_string(),
-                }
-            )
-        )
+        Ok(()) => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),
+        Err(err) => Err(error::ErrorUnauthorized(err))
     }
 }
 
@@ -104,25 +54,9 @@ pub async fn post_reset_password(req: HttpRequest, passwdparam: web::Json<Passwd
 
     let (username, _password) = handler::handle_validate_token_response(&req)?;
 
-    let (code, _output, error) = linux::passwd(&username, &passwdparam.old_password, &passwdparam.new_password);
-    if code == 0 {
-        Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom {
-                    operation_status: "Success".to_string(),
-                    reason: "".to_string(),
-                }
-            )
-        )
-    }
-    else{
-        Ok(
-            HttpResponse::InternalServerError().json(
-                HttpResponseCustom {
-                    operation_status: "Failed".to_string(),
-                    reason: error,
-                }
-            )
-        )
+    let (code, output, error) = linux::passwd(&username, &passwdparam.old_password, &passwdparam.new_password);
+    match code {
+        0 => Ok(HttpResponse::with_body(http::StatusCode::from_u16(200).unwrap(), body::BoxBody::new(output))),
+        _ => Err(error::ErrorInternalServerError(error))
     }
 }

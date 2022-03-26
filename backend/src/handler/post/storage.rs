@@ -4,6 +4,9 @@ use actix_web::{
     HttpRequest,
     HttpResponse,
     Result,
+    http,
+    body,
+    error
 };
 use crate::{
     db, 
@@ -12,7 +15,6 @@ use crate::{
     structs::{
         MakeDirectoryArgs, 
         MoveOrCopyArgs, 
-        HttpResponseCustom, 
         PartUUID
     }
 };
@@ -50,22 +52,8 @@ pub async fn post_storage_device_copy_or_move(req: HttpRequest, args_vec: web::J
     );
 
     match code {
-        0 => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom{
-                    operation_status: "Success".to_string(),
-                    reason: output.to_string(),
-                }
-            )
-        ),
-        _ => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom{
-                    operation_status: "Failed".to_string(),
-                    reason: error,
-                }
-            )
-        )
+        0 => Ok(HttpResponse::with_body(http::StatusCode::from_u16(200).unwrap(), body::BoxBody::new(output))),
+        _ => Err(error::ErrorUnauthorized(error))    
     }   
 }
 
@@ -82,22 +70,8 @@ pub async fn post_storage_device_directory_creation(req: HttpRequest, directory_
     let (code, output, error) = linux::storage::make_dir(&dir_location);
 
     match code {
-        0 => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom{
-                    operation_status: "Success".to_string(),
-                    reason: output,
-                }
-            )
-        ),
-        _ => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom{
-                    operation_status: "Failed".to_string(),
-                    reason: error,
-                }
-            )
-        )
+        0 => Ok(HttpResponse::with_body(http::StatusCode::from_u16(200).unwrap(), body::BoxBody::new(output))),
+        _ => Err(error::ErrorUnauthorized(error))    
     }
 }
 
@@ -112,22 +86,8 @@ pub async fn post_storage_device_unmount(req: HttpRequest, uuid_struct: web::Jso
     match code {
         0 => {
             db::storage::delete_from_storage_table(&uuid_struct.drive_partuuid);
-            Ok(
-                HttpResponse::Ok().json(
-                    HttpResponseCustom{
-                        operation_status: "Success".to_string(),
-                        reason: output,
-                    }
-                )
-            )
+            Ok(HttpResponse::with_body(http::StatusCode::from_u16(200).unwrap(), body::BoxBody::new(output)))
         },
-        _ => Ok(
-            HttpResponse::Ok().json(
-                HttpResponseCustom{
-                    operation_status: "Failed".to_string(),
-                    reason: error,
-                }
-            )
-        )
+        _ => Err(error::ErrorUnauthorized(error))        
     }
 }

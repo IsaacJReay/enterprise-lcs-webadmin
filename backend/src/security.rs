@@ -64,25 +64,25 @@ pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> Result<String, String> {
 }
 
 
-pub fn encrypt_file(filename: &str, password: &str) -> String {
-    let mut byte_file = config::get_file_as_byte_vec(&filename.to_string());
+// pub fn encrypt_file(filename: &str, password: &str) -> String {
+//     let mut byte_file = config::get_file_as_byte_vec(&filename.to_string());
 
-    byte_file.reverse();
+//     byte_file.reverse();
 
-    let mut string_file = String::new();
+//     let mut string_file = String::new();
 
-    for each_u8 in byte_file {
-        string_file = each_u8.to_string() + " " + string_file.as_str();
-    }
+//     for each_u8 in byte_file {
+//         string_file = each_u8.to_string() + " " + string_file.as_str();
+//     }
 
-    let enc_o_string = encrypt(string_file, padding_convert(password));
+//     let enc_o_string = encrypt(string_file, padding_convert(password));
 
-    let processed_file = filename.replace("tar.zst", "kconf");
+//     let processed_file = filename.replace("tar.zst", "kconf");
 
-    let _result = config::createfile(&processed_file, enc_o_string.as_bytes());
+//     let _result = config::createfile(&processed_file, enc_o_string.as_bytes());
 
-    processed_file
-}
+//     processed_file
+// }
 
 pub fn decrypt_file(filename: &str, password: &str) -> String {
     let byte_file = String::from_utf8(config::get_file_as_byte_vec(&filename.to_string())).unwrap();
