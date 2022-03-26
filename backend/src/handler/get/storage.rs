@@ -70,14 +70,6 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
     }
     else {
         Err(error::ErrorInternalServerError("mount-failed"))
-        // Ok(
-        //     HttpResponse::InternalServerError().json(
-        //         HttpResponseCustom{
-        //             operation_status: "Failed".to_string(),
-        //             reason: "mount-Failed".to_string(),
-        //         }  
-        //     )
-        // )
     }
 }
 
