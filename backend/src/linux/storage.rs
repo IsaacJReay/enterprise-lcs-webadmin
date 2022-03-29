@@ -118,7 +118,7 @@ printf "$part_uuid $total_size $free_space $percentage"
         &options
     ).unwrap();
 
-    // println!("Command: {}\nOutput: {}", command, output);
+    println!("Command: {}\nOutput: {}", command, output);
 
     let splited_output = output.split_whitespace().collect::<Vec<&str>>();
     let drive_struct = DriveDescription{
