@@ -102,7 +102,7 @@ pub fn read_wan_networkd() -> (bool, String, String, String, String){
     
 
     let (_macaddr_output, internet_ip, netmask, gateway) = read_eth0();
-    let dns = read_resolvconf("eth0");
+    let dns = read_resolvconf("enp1s0");
 
     (dhcp_status, internet_ip, netmask, gateway, dns)
 }
