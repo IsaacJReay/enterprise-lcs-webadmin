@@ -1,5 +1,5 @@
 use crate::{
-    config,
+    // config,
     DECRYPT_NONCE
 };
 use aes_gcm_siv::{Aes256GcmSiv, Key, Nonce}; // Or `Aes128GcmSiv`
@@ -84,32 +84,32 @@ pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> Result<String, String> {
 //     processed_file
 // }
 
-pub fn decrypt_file(filename: &str, password: &str) -> String {
-    let byte_file = String::from_utf8(config::get_file_as_byte_vec(&filename.to_string())).unwrap();
-    let mut byte_file_sanitized = byte_file.split_whitespace().collect::<Vec<&str>>();
-    byte_file_sanitized.reverse();
-    let mut string_byte_file: String = String::new();
+// pub fn decrypt_file(filename: &str, password: &str) -> String {
+//     let byte_file = String::from_utf8(config::get_file_as_byte_vec(&filename.to_string())).unwrap();
+//     let mut byte_file_sanitized = byte_file.split_whitespace().collect::<Vec<&str>>();
+//     byte_file_sanitized.reverse();
+//     let mut string_byte_file: String = String::new();
 
-    for each_str in byte_file_sanitized {
-        string_byte_file = each_str.to_owned() + " " + string_byte_file.as_str();
-    }
+//     for each_str in byte_file_sanitized {
+//         string_byte_file = each_str.to_owned() + " " + string_byte_file.as_str();
+//     }
 
-    let decrypted_byte = decrypt(string_byte_file, padding_convert(password)).unwrap();
+//     let decrypted_byte = decrypt(string_byte_file, padding_convert(password)).unwrap();
 
-    let decrypted_byte_vec_str = decrypted_byte.split_whitespace().collect::<Vec<&str>>();
+//     let decrypted_byte_vec_str = decrypted_byte.split_whitespace().collect::<Vec<&str>>();
 
-    let mut decrypted_byte_vec_u8: Vec<u8> = Vec::new();
+//     let mut decrypted_byte_vec_u8: Vec<u8> = Vec::new();
 
-    for each_str in decrypted_byte_vec_str {
-        decrypted_byte_vec_u8.push(each_str.parse::<u8>().unwrap());
-    }
+//     for each_str in decrypted_byte_vec_str {
+//         decrypted_byte_vec_u8.push(each_str.parse::<u8>().unwrap());
+//     }
 
-    let file = filename.replace("kconf", "tar.zst");
+//     let file = filename.replace("kconf", "tar.zst");
 
-    let _result = config::createfile(&file, &decrypted_byte_vec_u8);
+//     let _result = config::createfile(&file, &decrypted_byte_vec_u8);
 
-    file
-}
+//     file
+// }
 
 pub fn generate_random(string_len: usize, custom_charset: Option<String>) -> String{
 

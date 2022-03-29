@@ -9,17 +9,6 @@ use chrono::{
 use reqwest::header::HeaderValue;
 use toml::value::Table;
 
-#[derive(Serialize)]
-pub struct UserName {
-    pub username: String,
-}
-
-#[derive(Serialize)]
-pub struct LoginResponse {
-    pub operation_status: String,
-    pub token: String,
-}
-
 #[derive(Deserialize)]
 pub struct LoginParam {
     pub username: String,
@@ -97,6 +86,15 @@ pub struct PasswdParam {
     pub new_password: String,
 }
 
+impl PasswdParam {
+    pub fn default(old: &str) -> Self {
+        Self {
+            old_password: old.to_string(),
+            new_password: String::from("123")
+        }
+    }
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct StaticWiredNetworkParam {
     pub internet_ip: String,
@@ -135,6 +133,29 @@ pub struct DnsZonesInfo {
     pub domain_name: String,
     pub status: bool,
     pub zone_record: Option<Vec<DnsRecords>>
+}
+
+impl DnsZonesInfo {
+    pub fn default(wan_ip: Option<&str>) -> Self{
+
+        Self {
+            domain_name: "koompi.com".to_string(),
+            status: true,
+            zone_record: Some(vec![
+                DnsRecords { subdomain_name: "ns".to_string(), dns_type: "A".to_string(), address: wan_ip.unwrap_or_else(||"10.100.100.1").to_string() },
+                DnsRecords { subdomain_name: "sala".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "salabackend".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "rachel".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "admin".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "w3".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "phet".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "admin".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "wiktionary".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "wikipedia".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
+                DnsRecords { subdomain_name: "wikibook".to_string(), dns_type: "A".to_string(), address: "ns".to_string()}
+            ])
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]

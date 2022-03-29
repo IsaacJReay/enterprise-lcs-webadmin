@@ -71,7 +71,7 @@ async fn main() -> Result<()> {
                                                             //handling POST request
                 .service(handler::post::users::post_pam_login)                              // link: /private/api/user/login
                 .service(handler::post::users::post_reset_password)                         // link: /private/api/user/password
-                .service(handler::post::systemsettings::post_settings_import)               // link: /private/api/settings/import
+                // .service(handler::post::systemsettings::post_settings_import)               // link: /private/api/settings/import
                 // .service(handler::post::systemsettings::post_settings_export)               // link: /private/api/settings/export
                 .service(handler::post::systemsettings::post_settings_reset)                // link: /private/api/settings/reset
                 .service(handler::post::hostapd::post_hostapd_settings)                     // link: /private/api/settings/hostapd

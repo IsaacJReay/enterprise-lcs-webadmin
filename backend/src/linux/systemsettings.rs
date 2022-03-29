@@ -91,49 +91,4 @@ pub fn query_ntp_status() -> (i32, String, String) {
     (code, output, error)
 }
 
-// pub fn tar_config(filename: &str) -> (i32, String, String, String){
 
-//     let options = ScriptOptions::new();
-
-//     let _command = 
-// r#"
-// mkdir -p /tmp/lcs-export/hostapd
-// mkdir -p /tmp/lcs-export/systemd/network/
-// cp /etc/named.conf*  /tmp/lcs-export/
-// cp /etc/hostapd/hostapd.conf /tmp/lcs-export/hostapd
-// cp /etc/systemd/network/*/tmp/lcs-export/systemd/network/
-// tar --zstd -cpf /tmp/filename.tar.zst -C /tmp lcs-export/
-// "#;
-//     let command = _command.replace("filename", filename);
-
-//     let (code, output, error) = run_script!(
-//         &format!("{}", command),
-//         &vec![],
-//         &options
-//     ).unwrap();
-
-//     let filepath: String = format!("/tmp/{}.tar.zst", filename);
-//     (code, output, error, filepath)
-// }
-
-pub fn untar_config(filename: &str) -> (i32, String, String, String) {
-    let options = ScriptOptions::new();
-
-    let _command = 
-r#"
-mkdir -p /tmp/lcs-import
-tar --zstd -xpf filename -C /tmp/lcs-import/
-mv /tmp/lcs-import/lcs-export/* /tmp/lcs-import
-rm -r /tmp/lcs-import/lcs-export
-"#;
-    let command = _command.replace("filename", filename);
-
-    let (code, output, error) = run_script!(
-        &format!("{}", command),
-        &vec![],
-        &options
-    ).unwrap();
-
-    
-    (code, output, error, "/tmp/lcs-import".to_string())
-}

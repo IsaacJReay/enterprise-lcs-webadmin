@@ -6,7 +6,8 @@ use walkdir::WalkDir;
 use flate2::read::GzDecoder;
 use reqwest::{
     StatusCode, header::{
-        CONTENT_LENGTH, RANGE
+        CONTENT_LENGTH, 
+        RANGE
     }
 };
 use toml::value::Value;
@@ -21,7 +22,7 @@ use std::{
     fs::{
         OpenOptions,
         File, 
-        metadata
+        // metadata
     }
 };
 use crate::{
@@ -238,15 +239,6 @@ pub fn build_tree(current_node: &mut DirectoryInfo, current_parts_list: &Vec<Str
     }
 }
 
-pub fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
-    let mut f = File::open(&filename).expect("no file found");
-    let metadata = metadata(&filename).expect("unable to read metadata");
-    let mut buffer = vec![0; metadata.len() as usize];
-    f.read(&mut buffer).expect("buffer overflow");
-
-    buffer
-}
-
 pub fn createfile(filename: &str, content: &[u8]) -> std::io::Result<()> {
 
     let mut file = File::create(filename)?;
@@ -255,206 +247,62 @@ pub fn createfile(filename: &str, content: &[u8]) -> std::io::Result<()> {
 
 }
 
-pub fn config_hostapd(password: &str, hostapdparam: HostapdParam) -> (bool, bool, bool){
-
-    let write_hostapd_status: bool;
-    let move_hostapd_status: bool;
-    let restart_hostapd_status: bool;
+pub fn config_hostapd(password: &str, hostapdparam: HostapdParam) -> Result<(), String>{
 
     let conf: String = templates::gen_hostapd_conf(&hostapdparam.ssid, hostapdparam.hide_ssid, &hostapdparam.hw_mode, &hostapdparam.channel, hostapdparam.wpa, &hostapdparam.passphrase, hostapdparam.hw_n_mode, hostapdparam.qos);
+    createfile("hostapd.conf", &conf.as_bytes()).unwrap();
+    linux::storage::move_filedir_root(&password, "hostapd.conf", "/etc/hostapd");
+    match linux::restartservice(&password, "hostapd").0 {
+        0 => Ok(()),
+        _ => Err("hostapd_error")
+    }?;
 
-    let result = createfile("hostapd.conf", &conf.as_bytes());
-    match result {
-        Ok(()) => write_hostapd_status = true,
-        Err(_err) => write_hostapd_status = false,
-    }
-
-    let (code,_output,_error) = linux::storage::move_filedir_root(&password, "hostapd.conf", "/etc/hostapd");
-    match &code {
-        0 => move_hostapd_status = true,
-        _ => move_hostapd_status = false,
-    }
-
-    let (code,_output,_error) = linux::restartservice(&password, "hostapd");
-    match &code {
-        0 => restart_hostapd_status = true,
-        _ => restart_hostapd_status = false,
-    }
-
-    (write_hostapd_status, move_hostapd_status, restart_hostapd_status)
+    Ok(())
 }
 
-pub fn config_systemd_networkd_wireless(password: &str, wirelessnetworkparam: WirelessNetworkParam) -> (bool, bool, bool, bool, bool, bool){
-
-    // Create Status variables
-    let write_networkd_status: bool;
-    let write_acl_status: bool;
-    let write_options_status: bool;
-    let write_named_status: bool;
-
-    let move_networkd_status: bool;
-    let move_acl_status: bool;
-    let move_options_status: bool;
-    let move_named_status: bool;
-
-    let restart_networkd_status: bool;
-    let restart_named_status: bool;
-
-
-    // Create File Variables
+pub fn config_systemd_networkd_wireless(password: &str, wlanparam: WirelessNetworkParam) -> Result<(), String>{
 
     let networkd_conf: String = templates::gen_systemd_networkd_wireless(
-        &wirelessnetworkparam.router_ip, 
-        &wirelessnetworkparam.netmask, 
-        &wirelessnetworkparam.range_start, 
-        &wirelessnetworkparam.range_end, 
-        &wirelessnetworkparam.dns, 
-        &wirelessnetworkparam.default_lease, 
-        &wirelessnetworkparam.max_lease, 
-        &wirelessnetworkparam.timezone
+        &wlanparam.router_ip, 
+        &wlanparam.netmask, 
+        &wlanparam.range_start, 
+        &wlanparam.range_end, 
+        &wlanparam.dns, 
+        &wlanparam.default_lease, 
+        &wlanparam.max_lease, 
+        &wlanparam.timezone
     );
     
     let named_conf_acl: String = templates::gen_named_conf_acl(
-        &wirelessnetworkparam.router_ip, 
-        &wirelessnetworkparam.netmask
+        &wlanparam.router_ip, 
+        &wlanparam.netmask
     );
 
-    let named_conf_options: String = templates::gen_named_conf_options(&wirelessnetworkparam.dns);
+    let named_conf_options: String = templates::gen_named_conf_options(&wlanparam.dns);
 
 
     // Match Create File statuses
-    {
-        let result = createfile("named.conf.acl", &named_conf_acl.as_bytes());
-        match result {
-            Ok(()) => write_acl_status = true,
-            Err(_err) => write_acl_status = false,        
-        }
 
-        let result = createfile("named.conf.options", &named_conf_options.as_bytes());
-        match result {
-            Ok(()) => write_options_status = true,
-            Err(_err) => write_options_status = false,        
-        }
+    createfile("named.conf.acl", &named_conf_acl.as_bytes()).unwrap();
+    createfile("named.conf.options", &named_conf_options.as_bytes()).unwrap();
+    createfile("20-wireless.network", &networkd_conf.as_bytes()).unwrap();
+    linux::storage::move_filedir_root(&password, "20-wireless.network", "/etc/systemd/network/");
+    linux::storage::move_filedir_root(&password, "named.conf.acl named.conf.options", "/etc/");
+    match linux::restartservice(&password, "systemd-networkd").0 {
+        0 => Ok(()),
+        _ => Err("systemd-networkd_error".to_string())
+    }?;
+    match linux::restartservice(&password, "named").0 {
+        0 => Ok(()),
+        _ => Err("named_error".to_string())
+    }?;
 
-        let result = createfile("20-wireless.network", &networkd_conf.as_bytes());
-        match result {
-            Ok(()) => write_networkd_status = true,
-            Err(_err) => write_networkd_status = false,
-        }
-
-        // Match Move File Statuses
-
-        let (code,_output,_error) = linux::storage::move_filedir_root(&password, "20-wireless.network", "/etc/systemd/network/");
-        match &code {
-            0 => move_networkd_status = true,
-            _ => move_networkd_status = false,
-        }
-
-        let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.acl", "/etc/");
-        match &code {
-            0 => move_acl_status = true,
-            _ => move_acl_status = false,
-        }
-
-        let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.options", "/etc/");
-        match &code {
-            0 => move_options_status = true,
-            _ => move_options_status = false,
-        }
-
-
-        //Match Restart Service Status
-
-        let (code,_output,_error) = linux::restartservice(&password, "systemd-networkd");
-        match &code {
-            0 => restart_networkd_status = true,
-            _ => restart_networkd_status = false,
-        }
-
-        let (code,_output,_error) = linux::restartservice(&password, "named");
-        match &code {
-            0 => restart_named_status = true,
-            _ => restart_named_status = false,
-        }
-    }
-    
-    write_named_status = write_acl_status && write_options_status;
-    move_named_status = move_acl_status && move_options_status;
-
-    (
-    write_networkd_status, 
-    write_named_status,  
-    move_networkd_status, 
-    move_named_status, 
-    restart_networkd_status, 
-    restart_named_status
-    )
-}
-
-pub fn config_named(password: &str) -> (bool, bool) {
-
-    let named_conf: String = templates::gen_named_conf();
-    // let named_conf_zones: String = templates::gen_named_conf_internal_zones();
-    let named_conf_logging: String = templates::gen_named_conf_logging();
-
-    let write_conf_status: bool;
-    // let write_zones_status: bool;
-    let write_logging_status: bool;
-    let write_named_status: bool;
-
-    let move_conf_status: bool;
-    let move_zones_status: bool;
-    let move_logging_status: bool;
-    let move_named_status: bool;
-
-    let result = createfile("named.conf", &named_conf.as_bytes());
-    match result {
-        Ok(()) => write_conf_status = true,
-        Err(_e) => write_conf_status = false,
-    }
-
-    let result = createfile("named.conf.logging", &named_conf_logging.as_bytes());
-    match result {
-        Ok(()) => write_logging_status = true,
-        Err(_e) => write_logging_status = false,
-    }
-    // let result = createfile("named.conf.internal.zones", &named_conf_zones.as_bytes());
-    // match result {
-    //     Ok(()) => write_zones_status = true,
-    //     Err(_e) => write_zones_status = false,
-    // }
-
-    let (code, _output, _error) = linux::storage::move_filedir_root(&password, "named.conf", "/etc/");
-    match &code {
-        0 => move_conf_status = true,
-        _ => move_conf_status = false,
-    }
-
-    let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.logging", "/etc/");
-    match &code {
-        0 => move_logging_status = true,
-        _ => move_logging_status = false,
-    }
-    
-    let (code,_output,_error) = linux::storage::move_filedir_root(&password, "named.conf.internal.zones", "/etc/");
-    match &code {
-        0 => move_zones_status = true,
-        _ => move_zones_status = false,
-    }
-
-    write_named_status = write_logging_status && write_conf_status;
-    move_named_status = move_conf_status && move_logging_status && move_zones_status;
-
-    (write_named_status, move_named_status)
+    Ok(())
 
 }
 
-pub fn config_systemd_networkd_wired_static(password: &str, staticwirednetworkparam: StaticWiredNetworkParam) -> (bool, bool, bool) {
+pub fn config_systemd_networkd_wired_static(password: &str, staticwirednetworkparam: StaticWiredNetworkParam) -> Result<(), String> {
     
-    let move_networkd_status: bool;
-    let restart_networkd_status: bool;
-    let write_networkd_status: bool;
-
     let networkd_conf = templates::gen_systemd_networkd_wired_static(
         &staticwirednetworkparam.internet_ip, 
         &staticwirednetworkparam.netmask, 
@@ -462,58 +310,26 @@ pub fn config_systemd_networkd_wired_static(password: &str, staticwirednetworkpa
         &staticwirednetworkparam.dns
     );
 
-    let result = createfile("20-wired.network", networkd_conf.as_bytes());
+    createfile("20-wired.network", networkd_conf.as_bytes()).unwrap();
+    linux::storage::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
+    match linux::restartservice(&password, "systemd-networkd").0 {
+        0 => Ok(()),
+        _ => Err("systemd-networkd_error")
+    }?;
 
-    match result {
-        Ok(()) => write_networkd_status = true,
-        Err(_err) => write_networkd_status = false,
-    }
-
-    let (code, _output, _error) = linux::storage::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
-
-    match code {
-        0 => move_networkd_status = true,
-        _ => move_networkd_status = false,
-    }
-
-    let (code, _output, _error) = linux::restartservice(&password, "systemd-networkd");
-
-    match code {
-        0 => restart_networkd_status = true,
-        _ => restart_networkd_status = false,
-    }
-
-    (write_networkd_status, move_networkd_status, restart_networkd_status)
+    Ok(())
 
 }
 
-pub fn config_systemd_networkd_wired_dynamic(password: &str) -> (bool, bool, bool) {
-    
-    let move_networkd_status: bool;
-    let restart_networkd_status: bool;
-    let write_networkd_status: bool;
+pub fn config_systemd_networkd_wired_dynamic(password: &str) -> Result<(), String> {
 
     let networkd_conf = templates::gen_systemd_networkd_wired_dynamic();
+    createfile("20-wired.network", networkd_conf.as_bytes()).unwrap();
+    linux::storage::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
+    match linux::restartservice(&password, "systemd-networkd").0 {
+        0 => Ok(()),
+        _ => Err("systemd-networkd_error"),
+    }?;
 
-    let result = createfile("20-wired.network", networkd_conf.as_bytes());
-    match result {
-        Ok(()) => write_networkd_status = true,
-        Err(_err) => write_networkd_status = false,
-    }
-
-    let (code, _output, _error) = linux::storage::move_filedir_root(&password, "20-wired.network", "/etc/systemd/network/");
-
-    match code {
-        0 => move_networkd_status = true,
-        _ => move_networkd_status = false,
-    }
-
-    let (code, _output, _error) = linux::restartservice(&password, "systemd-networkd");
-    
-    match code {
-        0 => restart_networkd_status = true,
-        _ => restart_networkd_status = false,
-    }
-
-    (write_networkd_status, move_networkd_status, restart_networkd_status)
+    Ok(())
 }
