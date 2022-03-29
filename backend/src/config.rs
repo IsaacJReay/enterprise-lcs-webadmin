@@ -394,11 +394,11 @@ pub fn config_systemd_networkd_wireless(password: &str, wirelessnetworkparam: Wi
 pub fn config_named(password: &str) -> (bool, bool) {
 
     let named_conf: String = templates::gen_named_conf();
-    let named_conf_zones: String = templates::gen_named_conf_internal_zones();
+    // let named_conf_zones: String = templates::gen_named_conf_internal_zones();
     let named_conf_logging: String = templates::gen_named_conf_logging();
 
     let write_conf_status: bool;
-    let write_zones_status: bool;
+    // let write_zones_status: bool;
     let write_logging_status: bool;
     let write_named_status: bool;
 
@@ -418,11 +418,11 @@ pub fn config_named(password: &str) -> (bool, bool) {
         Ok(()) => write_logging_status = true,
         Err(_e) => write_logging_status = false,
     }
-    let result = createfile("named.conf.internal.zones", &named_conf_zones.as_bytes());
-    match result {
-        Ok(()) => write_zones_status = true,
-        Err(_e) => write_zones_status = false,
-    }
+    // let result = createfile("named.conf.internal.zones", &named_conf_zones.as_bytes());
+    // match result {
+    //     Ok(()) => write_zones_status = true,
+    //     Err(_e) => write_zones_status = false,
+    // }
 
     let (code, _output, _error) = linux::storage::move_filedir_root(&password, "named.conf", "/etc/");
     match &code {
@@ -442,7 +442,7 @@ pub fn config_named(password: &str) -> (bool, bool) {
         _ => move_zones_status = false,
     }
 
-    write_named_status = write_logging_status && write_conf_status && write_zones_status;
+    write_named_status = write_logging_status && write_conf_status;
     move_named_status = move_conf_status && move_logging_status && move_zones_status;
 
     (write_named_status, move_named_status)

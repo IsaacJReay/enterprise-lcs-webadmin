@@ -150,7 +150,7 @@ pub fn gen_systemd_networkd_wired_static(internet_ip: &str, netmask: &str, gatew
     format!(
 "
 [Match]
-Name=eth0
+Name=enp1s0
 
 [Network]
 DHCP=no
@@ -163,7 +163,7 @@ IPv6PrivacyExtensions=yes", internet_address, gateway, dns)
 pub fn gen_systemd_networkd_wired_dynamic() -> String {
     r#"
 [Match]
-Name=eth0
+Name=enp1s0
 
 [Network]
 DHCP=yes
@@ -176,11 +176,19 @@ RouteMetric=1024
 
 pub fn gen_named_conf() -> String {
     r#"
-include "/etc/named.conf.options";
-include "/etc/named.conf.internal.zones";
-include "/etc/named.conf.external.zones";
 include "/etc/named.conf.acl";
-include "/etc/named.conf.logging";"#.to_string()
+include "/etc/named.conf.options";
+include "/etc/named.conf.logging";
+view "internal-view" {
+    match-clients {local-networks; };
+    include "/etc/named.conf.common.zones";
+    include "/etc/named.conf.internal.zones";
+};
+view "external-view" {
+    match-clients {any; };
+    include "/etc/named.conf.common.zones";
+    include "/etc/named.conf.external.zones";
+};"#.to_string()
 }
 
 pub fn gen_named_conf_acl(router_ip: &str, netmask: &str) -> String {
@@ -216,8 +224,8 @@ pub fn gen_named_conf_options(dns: &str)-> String {
 
     format!(r#"options {{
     directory "/var/named";
-    pid-file "/run/named/named.pid";
-    session-keyfile "/run/named/session.key";
+    pid-file "/var/named/run/named.pid";
+    session-keyfile "/var/named/run/session.key";
 
     allow-query       {{ local-networks; }};
     allow-recursion   {{ local-networks; }};
@@ -238,28 +246,28 @@ pub fn gen_named_conf_options(dns: &str)-> String {
 }};"#, joint_dns)
 }
 
-pub fn gen_named_conf_internal_zones() -> String {
-    r#"zone "localhost" IN {
-    type master;
-    file "localhost.zone";
-};
+// pub fn gen_named_conf_internal_zones() -> String {
+//     r#"zone "localhost" IN {
+//     type master;
+//     file "localhost.zone";
+// };
 
-zone "0.0.127.in-addr.arpa" IN {
-    type master;
-    file "127.0.0.zone";
-};
+// zone "0.0.127.in-addr.arpa" IN {
+//     type master;
+//     file "127.0.0.zone";
+// };
 
-zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa" {
-    type master;
-    file "localhost.ip6.zone";
-};
-zone "koompi.com" IN {
-    type master;
-    file "koompi.zone";
-    allow-update { none; };
-    notify no;
-};"#.to_string()
-}
+// zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa" {
+//     type master;
+//     file "localhost.ip6.zone";
+// };
+// zone "koompi.com" IN {
+//     type master;
+//     file "koompi.zone";
+//     allow-update { none; };
+//     notify no;
+// };"#.to_string()
+// }
 
 pub fn gen_named_conf_logging() -> String {
     r#"logging {{
