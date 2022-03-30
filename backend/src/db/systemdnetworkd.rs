@@ -102,16 +102,16 @@ pub fn read_wan_networkd() -> (bool, String, String, String, String){
     
 
     let (_macaddr_output, internet_ip, netmask, gateway) = read_eth0();
-    let dns = read_resolvconf("enp1s0");
+    let dns = read_resolvconf("eth0");
 
     (dhcp_status, internet_ip, netmask, gateway, dns)
 }
 
 pub fn read_eth0() -> (String, String, String, String){
     let options = run_script::ScriptOptions::new();
-    let eth0_macaddress = r#"ip address show enp1s0 | grep link/ether | awk -F' ' '{printf $2}'"#;   
-    let eth0_ipaddress = r#"ip address | grep enp1s0 |grep inet | awk -F' ' '{printf $2}' |awk -F '/' '{printf $1}'"#;   
-    let eth0_prefixaddr = r#"ip address | grep enp1s0 |grep inet | awk -F' ' '{printf $2}'"#;
+    let eth0_macaddress = r#"ip address show eth0 | grep link/ether | awk -F' ' '{printf $2}'"#;   
+    let eth0_ipaddress = r#"ip address | grep eth0 |grep inet | awk -F' ' '{printf $2}' |awk -F '/' '{printf $1}'"#;   
+    let eth0_prefixaddr = r#"ip address | grep eth0 |grep inet | awk -F' ' '{printf $2}'"#;
     let eth0_gateway = r#"ip route | awk 'NR==1' | awk -F ' ' '{printf $3}'"#;
     let (_code, macaddr_output, _error) = run_script::run_script!(
         &format!("{}", eth0_macaddress),

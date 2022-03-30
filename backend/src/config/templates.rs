@@ -150,7 +150,7 @@ pub fn gen_systemd_networkd_wired_static(internet_ip: &str, netmask: &str, gatew
     format!(
 "
 [Match]
-Name=enp1s0
+Name=eth0
 
 [Network]
 DHCP=no
@@ -163,7 +163,7 @@ IPv6PrivacyExtensions=yes", internet_address, gateway, dns)
 pub fn gen_systemd_networkd_wired_dynamic() -> String {
     r#"
 [Match]
-Name=enp1s0
+Name=eth0
 
 [Network]
 DHCP=yes
