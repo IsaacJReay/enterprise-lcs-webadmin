@@ -51,14 +51,6 @@
 >>   "wlan_qos": true
 >> }
 >> ```
->>
->> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
 >> - Response 410 
 >> ```text
 >> Token expired or incorrect
