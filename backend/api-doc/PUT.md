@@ -18,36 +18,17 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```

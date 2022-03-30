@@ -15,18 +15,12 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "token": "actual_token_goes_here"
->>  }
+>> ```
+>> token_goes_here
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "wrong_username_or_password"
->>  }
+>> ```
+>> wrong_username_or_password
 >> ```
 
 > ### - /private/api/user/password
@@ -44,159 +38,21 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
+>> ```
 >> ``` 
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 >> **Note:** New Password must not be the same as Old Password
-
-> ### - /private/api/settings/import
->>
->> | Header Parameter | Data Type |
->> | ---------------- | --------- |
->> | Authorization    | `String`  |
->> 
->>  - Body
->>
->> | Body Parameter | Data Type |
->> | -------------- | --------- |
->> | File           | `Multiload` |
->> | Password       | `String`  | 
->>
->> ```json
->>  {
->>    "password": "ABCabc123"
->>  }
->> ```
->>
->> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
->> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
->> - Response 415 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "untar_file_error"
->>  }
->> ``` 
->> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
->> **Note:** `Password` must not exceed 16 Characters
-
-> ### - /private/api/settings/export
->>
->> | Header Parameter | Data Type |
->> | ---------------- | --------- |
->> | Authorization    | `String`  |
->> 
->>  - Body
->>
->> ```json
->>  {
->>    "filename": "lcs_backup-2020",    
->>    "password": "ABCabc123"
->>  }
->> ```
->>
->> - Response 200 
->>
->> | Body Parameter | Data Type |
->> | -------------- | --------- |
->> | File           | `Multiload` |
->> | Text Response  | `Json`    | 
->>
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
->> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
->> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
->> **Note:** `Password` must not exceed 16 Characters; `Filename` cannot have space or any symbol           
 
 > ### - /private/api/settings/reset
 >>
@@ -209,38 +65,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 >> **Note:** Everything goes to default factory configuration
 
@@ -265,38 +102,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 >> **Note:** `WPA` can only be 1 or 2; `Channel` can only range from 1 to 14
 
@@ -321,40 +139,20 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
-
 
 > ### - /private/api/settings/wirednetwork/static
 >>
@@ -373,38 +171,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/wirednetwork/dynamic
@@ -418,38 +197,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/dns/new/{zone}
@@ -494,39 +254,20 @@
 >>   }
 >> ```
 >>
->> - Response 200
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
+>> - Response 200 
+>> ```text
 >> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_error_goes_here"
->>  }
+>> - Response 500 
+>> ```text
+>> actual_error_goes_here
 >> ```
->>
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 >>
 >> **Note:** `subdomain_name` must be a subdomain without its main website name after and is also website form; `dns_type` must only be A, AAAA, CNAME, MX 10, PTR, CAA, SRV, TXT, SOA.
@@ -546,38 +287,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 >> **Note:** `time` and `date` must follow the format shown in body.
 
@@ -595,38 +317,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 >> **Note:** `timezone` must be a valid timezone from website https://en.wikipedia.org/wiki/List_of_tz_database_time_zones;
 
@@ -659,38 +362,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 
@@ -710,40 +394,20 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
-
 > ### - /private/api/settings/storage/device/unmount
 >>
 >> | Header Parameter | Data Type |
@@ -758,38 +422,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/update/update
@@ -807,36 +452,17 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
->> ``` 
+>> ```text
+>> ```
 >> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "Another update is in progress"
->>  }
->> ``` 
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```

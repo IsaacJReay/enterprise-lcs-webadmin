@@ -16,45 +16,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
+>> ```
 >> ``` 
->> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_error_goes_here"
->>  }
->> ``` 
->> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}
@@ -74,45 +48,19 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
+>> ```
 >> ``` 
->> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_error_goes_here"
->>  }
->> ``` 
->> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 
@@ -131,36 +79,17 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": ""
->>  }
+>> ```
 >> ``` 
->> - Response 500 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_reason_goes_here"
->>  }
->> ``` 
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```

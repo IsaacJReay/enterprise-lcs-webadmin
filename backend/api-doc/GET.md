@@ -1,44 +1,5 @@
 # GET API Documentations
 
-> ### - /private/api/token/validation
->>
->> | Header Parameter | Data Type |
->> | --------- | --------- |
->> | Authorization | `String` |
->> 
->>  - Body
->> ```
->> ```
->>
->> - Response 200 
->> ```json
->>  {
->>    "operation_status": "Success",
->>    "reason": "token-valid"
->>  }
->> ``` 
->> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
->> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
-
-
 > ### - /private/api/user/query
 >>
 >> | Header Parameter | Data Type |
@@ -50,31 +11,18 @@
 >> ```
 >>
 >> - Response 200 
->> ```json
->>  {
->>    "Current User: isaac"
->>  }
->> ``` 
+>> ```text
+>> isaac
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
->> ```
+>>
 
 > ### - /private/api/settings/status
 >>
@@ -111,18 +59,13 @@
 >>    "reason": "token-timeout"
 >>  }
 >> ```
->> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
+>> - Response 410 
+>> ```text
+>> Token expired or incorrect
 >> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> - Response 401 
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/wirelessnetwork/status
@@ -149,24 +92,12 @@
 >> ```
 >>
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/wirednetwork/status
@@ -192,24 +123,12 @@
 >> ```
 >>
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/hostapd/status
@@ -236,24 +155,12 @@
 >> ```
 >>
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/dns/status/zone
@@ -361,42 +268,20 @@
 >>   }
 >> ]
 >> ```
->>
->> - Response 200
->> ```json
->>  {
->>    "operation_status": "Siccess",
->>    "reason": ""
->>  }
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
 >> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "actual_error_goes_here"
->>  }
->> ```
->>
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 >>
+
 > ### - /private/api/settings/time/status
 >>
 >> | Header Parameter | Data Type |
@@ -416,25 +301,17 @@
 >> }
 >> ```
 >>
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/storage/status
@@ -496,26 +373,17 @@
 >>   }
 >> ]
 >> ```
->>
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
+>> ```
 >> - Response 410 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "token-timeout"
->>  }
+>> ```text
+>> Token expired or incorrect
 >> ```
 >> - Response 401 
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "incorrect-token"
->>  }
->> ```
->> ```json
->>  {
->>    "operation_status": "Failed",
->>    "reason": "missing-token"
->>  }
+>> ```text
+>> Token invalid
 >> ```
 
 > ### - /private/api/settings/storage/device/status/{drive_partuuid}
@@ -621,6 +489,18 @@
 >>   ]
 >> }
 >> ```
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
+>> ```
+>> - Response 410 
+>> ```text
+>> Token expired or incorrect
+>> ```
+>> - Response 401 
+>> ```text
+>> Token invalid
+>> ```
 
 > ### - /private/api/settings/update/status
 >>
@@ -658,4 +538,16 @@
 >>     }
 >>   ]
 >> }
+>> ```
+>> - Response 500
+>> ```text
+>> actual_error_goes_here
+>> ```
+>> - Response 410 
+>> ```text
+>> Token expired or incorrect
+>> ```
+>> - Response 401 
+>> ```text
+>> Token invalid
 >> ```
