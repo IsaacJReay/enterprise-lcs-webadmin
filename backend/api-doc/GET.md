@@ -497,39 +497,37 @@
 > ### - /private/api/settings/update/status
 >>
 >> | Header Parameter | Data Type |
->> | --------- | --------- |
->> | Authorization | `String` |
+>> | ---------------- | --------- |
+>> | Authorization    | `String`  |
 >> 
 >> - Body
 >> ```json
 >> ```
 >> - Response 200 
 >> ```json
->> {
->>   "update_list": [
->>     {
->>         "id": "1",
->>         "display_name": "First Patch Update",
->>         "update_size": 307,
->>         "sys_update": false,
->>         "status": "Installing",
->>     },
->>     {
->>         "id": "2",
->>         "display_name": "Second Patch Update",
->>         "update_size": 603467495,
->>         "sys_update": false,
->>         "status": "Downloading",
->>     },
->>     {
->>         "id": "3",
->>         "display_name": "Third Patch Update",
->>         "update_size": 157981621,
->>         "sys_update": false,
->>         "status": "New",
->>     }
->>   ]
->> }
+>> [
+>>   {
+>>       "id": "1",
+>>       "display_name": "First Patch Update",
+>>       "update_size": 307,
+>>       "sys_update": false,
+>>       "status": "Installing",
+>>   },
+>>   {
+>>       "id": "2",
+>>       "display_name": "Second Patch Update",
+>>       "update_size": 603467495,
+>>       "sys_update": false,
+>>       "status": "Downloading",
+>>   },
+>>   {
+>>       "id": "3",
+>>       "display_name": "Third Patch Update",
+>>       "update_size": 157981621,
+>>       "sys_update": false,
+>>       "status": "New",
+>>   }
+>> ]
 >> ```
 >> - Response 500
 >> ```text

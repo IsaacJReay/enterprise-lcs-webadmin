@@ -335,8 +335,6 @@ impl DirectoryInfo {
         self
     }
 }
-
-
 pub struct PartialRangeIter {
   pub start: u64,
   pub end: u64,
@@ -407,12 +405,6 @@ impl PartialEq for SystemUpdateInformation {
         self.sys_update == other.sys_update &&
         self.status == other.status 
     }
-}
-
-
-#[derive(Serialize)]
-pub struct SystemUpdateResponse {
-    pub update_list: Vec<SystemUpdateInformation>
 }
 
 #[derive(Deserialize)]

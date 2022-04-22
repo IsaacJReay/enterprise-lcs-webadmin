@@ -6,8 +6,7 @@ use actix_web::{
 };
 use crate::{
     handler,
-    config, 
-    structs::SystemUpdateResponse, 
+    config
 };
 
 #[get("/private/api/settings/update/status")]
@@ -17,9 +16,7 @@ pub async fn get_content_server_update(req: HttpRequest) -> Result<HttpResponse>
 
     Ok(
         HttpResponse::Ok().json(
-            SystemUpdateResponse {
-                update_list: config::update::display_new_update_lists()
-            } 
+            actix_web::rt::task::spawn_blocking(| | config::update::display_new_update_lists()).await.unwrap() 
         )
     )
 
