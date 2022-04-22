@@ -70,17 +70,6 @@ impl WirelessNetworkParam {
 }
 
 #[derive(Deserialize)]
-pub struct BackupParam {
-    pub filename: String,
-    pub password: String,
-}
-
-#[derive(Deserialize)]
-pub struct RestoreParam {
-    pub password: String,
-}
-
-#[derive(Deserialize)]
 pub struct PasswdParam {
     pub old_password: String,
     pub new_password: String,
@@ -136,8 +125,7 @@ pub struct DnsZonesInfo {
 }
 
 impl DnsZonesInfo {
-    pub fn default(wan_ip: Option<&str>) -> Self{
-
+    pub fn default(wan_ip: Option<&str>) -> Self {
         Self {
             domain_name: "koompi.com".to_string(),
             status: true,
@@ -163,12 +151,6 @@ pub struct DnsRecords {
     pub subdomain_name: String,
     pub dns_type: String,
     pub address: String,
-}
-
-#[derive(Deserialize)]
-pub struct RenameDomainName {
-    pub old_domain_name: String,
-    pub new_domain_name: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -232,12 +214,10 @@ pub struct DeleteArgs {
     pub drive_partuuid: String,
     pub selected_filedir: Vec<String>,
 }
-
-
-// #[derive(Debug)]
 pub struct PathPartition {
     pub parts: Vec<String>,
 }
+
 impl PathPartition {
     pub fn new(current_path: &str) -> PathPartition {
         PathPartition {
@@ -312,7 +292,7 @@ pub struct DirectoryInfo {
 impl DirectoryInfo {
     pub fn new(new_child_name: &str, meta: Option<ItemMetaData>) -> DirectoryInfo {
         DirectoryInfo {
-            meta: meta,
+            meta,
             name: new_child_name.to_string(),
             children: Vec::<Box<DirectoryInfo>>::new(),
         }
@@ -336,9 +316,9 @@ impl DirectoryInfo {
     }
 }
 pub struct PartialRangeIter {
-  pub start: u64,
-  pub end: u64,
-  pub buffer_size: u32,
+    pub start: u64,
+    pub end: u64,
+    pub buffer_size: u32,
 }
 
 impl PartialRangeIter {
@@ -411,4 +391,10 @@ impl PartialEq for SystemUpdateInformation {
 pub struct SystemUpdateRequest {
     pub id: String,
     pub sys_update: bool
+}
+
+#[derive(Serialize)]
+pub struct TempLogin {
+    pub operation_status: String,
+    pub token: String
 }
