@@ -392,9 +392,3 @@ pub struct SystemUpdateRequest {
     pub id: String,
     pub sys_update: bool
 }
-
-#[derive(Serialize)]
-pub struct TempLogin {
-    pub operation_status: String,
-    pub token: String
-}
