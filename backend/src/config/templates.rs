@@ -1,7 +1,6 @@
 use ipnetwork::Ipv4Network;
 use crate::{
     tool,
-    linux,
     structs::DnsRecords,
 };
 
@@ -25,8 +24,7 @@ pub fn generate_zone_config(domain_name: &str, status: bool, zone_is_internal: b
 pub fn generate_records_for_zone(domain_name: &str, vec_record: Option<Vec<DnsRecords>>) -> String {
     
     let mut records_str: String = String::new();
-    let mut date = linux::query_date_for_calculate().1;
-    date.truncate(10);
+    let date = chrono::Utc::now().format("%Y%m%d%H%M").to_string().parse::<u64>().unwrap();
 
     if let Some(vec_record) = vec_record {
         vec_record

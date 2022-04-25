@@ -65,22 +65,3 @@ pub fn restartservice(password: &str, servicename: &str) -> (i32, String, String
     (code, output, error)
 
 }
-
-pub fn query_date_for_calculate() -> (i32, String, String){
-
-    let options = ScriptOptions::new();
-
-    let command = r#"date +"%y%m%d%H%M%S""#;
-
-    let (code, mut output, error) = run_script!(
-        &format!("{}", command),
-        &vec![],
-        &options
-    ).unwrap();
-
-    output.truncate(output.len() - 1 );
-
-    (code, output, error)
-
-}
-

@@ -10,7 +10,7 @@ use crate::{
     }
 };
 
-use std::path::{ PathBuf};
+use std::path::PathBuf;
 use block_utils::{
     get_block_partitions, 
     get_mountpoint
