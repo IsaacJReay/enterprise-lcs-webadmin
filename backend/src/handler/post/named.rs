@@ -18,11 +18,11 @@ pub async fn post_handle_new_domain_name_and_record(req: HttpRequest, args_struc
 
     let (_username, password) = handler::handle_validate_token_response(&req)?;
 
-    match &args_struct.domain_name.contains(" ") {
-        true => Ok(()),
-        false => Err(
+    match &args_struct.domain_name.contains(char::is_whitespace) {
+        true => Err(
             error::ErrorNotAcceptable("unacceptable_space")
-        )
+        ),
+        false => Ok(())
     }?;
 
     let zone_is_internal = match req.match_info().get("zone").unwrap() {
