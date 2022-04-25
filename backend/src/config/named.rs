@@ -55,7 +55,7 @@ pub fn read_zone_config_file(zone_is_internal: bool, include_records: bool) -> V
     zone_vec
 }
 
-fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<DnsRecords>{
+pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<DnsRecords>{
 
     let file_data = config::read_file(&(format!("/var/named/{}",domain_name)+match zone_is_internal {
         true => ".internal.zone",
