@@ -64,6 +64,7 @@ async fn main() -> Result<()> {
                 .service(handler::get::systemdnetworkd::get_wlanpage)                       // link: /private/api/settings/wirelessnetwork/status
                 .service(handler::get::hostapd::get_wifipage)                               // link: /private/api/settings/hostapd/status
                 .service(handler::get::named::get_dns_page)                                 // link: /private/api/settings/dns/status/{internal_or_external}
+                .service(handler::get::named::get_dns_page_domain_name)                                 // link: /private/api/settings/dns/status/{internal_or_external}/{domain_name}
                 .service(handler::get::timedatectl::get_timedatepage)                       // link: /private/api/settings/time/status
                 .service(handler::get::storage::get_storage_page)                           // link: /private/api/settings/storage/status
                 .service(handler::get::storage::get_storage_device_page_test)               // link: /private/api/settings/storage/device/status/{drive_partuuid}
