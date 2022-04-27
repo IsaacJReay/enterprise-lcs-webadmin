@@ -39,15 +39,15 @@ const Backup = () => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Failed") {
-          setLoading(true);
-          message.error("Operation Failed! ");
-          setLoading(false);
-        } else {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           fileDownload(res.data, data.filename + ".tar.zst");
           message.success("Successful!");
           form.resetFields();
+          setLoading(false);
+        } else {
+          setLoading(true);
+          message.error("Operation Failed! ");
           setLoading(false);
         }
       })
@@ -56,54 +56,49 @@ const Backup = () => {
 
   return (
     <React.Fragment>
-      <div className="card">
-        <div className="container">
-          <div className="container-header">
-            <h1>Backup Config</h1>
-          </div>
-          <hr />
-          <div className="backup-container">
-            <Form {...layout} onFinish={handleExport} form={form}>
-              <Form.Item
-                label="Name"
-                name="filename"
-                rules={[
-                  {
-                    required: true,
-                    message: "Name is required!",
-                  },
-                ]}
-              >
-                <Input size="large" className="label-info" />
-              </Form.Item>
+      <Form
+        {...layout}
+        onFinish={handleExport}
+        form={form}
+        className="backup-container"
+      >
+        <Form.Item
+          label="File Name"
+          name="filename"
+          rules={[
+            {
+              required: true,
+              message: "Name is required!",
+            },
+          ]}
+        >
+          <Input size="large" className="label-info" />
+        </Form.Item>
 
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Input Password!",
-                  },
-                ]}
-              >
-                <Input.Password className="label-info" size="large" />
-              </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Input Password!",
+            },
+          ]}
+        >
+          <Input.Password className="label-info" size="large" />
+        </Form.Item>
 
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="button-apply3"
-                  size="large"
-                >
-                  Export
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-        </div>
-      </div>
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="button-export"
+            size="large"
+          >
+            EXPORT
+          </Button>
+        </Form.Item>
+      </Form>
     </React.Fragment>
   );
 };

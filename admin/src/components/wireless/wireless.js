@@ -11,8 +11,10 @@ import {
   Radio,
   message,
   Spin,
+  Space,
 } from "antd";
 import axios from "axios";
+import { IoIosHelpCircle } from "react-icons/io";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -44,9 +46,9 @@ const WirelessSetting = () => {
 
   // ----------get data -------------
 
-  useEffect(async () => {
+  useEffect(() => {
     setLoading(true);
-    await axios({
+    axios({
       method: "GET",
       url: `${baseUrl}/settings/hostapd/status`,
       headers: {
@@ -105,7 +107,7 @@ const WirelessSetting = () => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           message.success("Successful!");
           setLoading(false);
@@ -135,14 +137,13 @@ const WirelessSetting = () => {
               <div className="card">
                 <div className="container">
                   <div className="container-header">
-                    <h1>Wireless Setting</h1>
+                    <h1>WIRELESS SETTING</h1>
                   </div>
-                  <hr />
 
-                  <div className="desc-container-banner">
+                  <div className="desc-container-banner2">
                     <Form.Item label="Network Name SSID">
                       <Row gutter={[12, 0]}>
-                        <Col>
+                        <Col span={16}>
                           <Form.Item
                             name="ssid_name"
                             rules={[
@@ -155,70 +156,80 @@ const WirelessSetting = () => {
                             <Input size="large" placeholder="Text here ..." />
                           </Form.Item>
                         </Col>
-                        <Col>
+                        <Col span={8}>
                           <Form.Item name="hide_ssid" valuePropName="checked">
                             <Checkbox>Hide SSID</Checkbox>
                           </Form.Item>
                         </Col>
                       </Row>
                     </Form.Item>
-                    {/* <Form.Item label="Security " name="security">
-                    <Select size="large" className="select-option-wireless">
-                      <Option value="1">WPA</Option>
-                      <Option value="2">WPA2-Personal (Recommended)</Option>
-                    </Select>
-                  </Form.Item> */}
-                    <Form.Item label="Version " name="version">
-                      <Radio.Group valuePropName="checked">
-                        <Radio value={1}>WPA-SPK</Radio>
-                        <Radio value={2}>WPA2-SPK</Radio>
-                      </Radio.Group>
-                    </Form.Item>
-                    <Form.Item
-                      label="Password "
-                      name="password"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Password is require!",
-                        },
-                      ]}
-                    >
-                      <Input.Password
-                        size="large"
-                        placeholder="password"
-                        className="label-info"
-                      />
-                    </Form.Item>
-                    <Form.Item label="Mood" name="mode">
-                      <Select size="large" className="select-option-wireless">
-                        <Option value="g">g</Option>
-                        <Option value="b">b</Option>
-                      </Select>
-                    </Form.Item>
+                    <Row gutter={[0, 24]}>
+                      <Col span={24}>
+                        <Form.Item label="Version " name="version">
+                          <Radio.Group valuePropName="checked">
+                            <Radio value={1}>WPA-SPK</Radio>
+                            <Radio value={2}>WPA2-SPK</Radio>
+                          </Radio.Group>
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <Form.Item
+                          label="Password "
+                          name="password"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Password is require!",
+                            },
+                          ]}
+                        >
+                          <Input.Password
+                            size="large"
+                            placeholder="password"
+                            className="label-info"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <Form.Item label="Mood" name="mode">
+                          <Select
+                            size="large"
+                            className="select-option-wireless"
+                          >
+                            <Option value="g">g</Option>
+                            <Option value="b">b</Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
 
-                    <Form.Item label="Channel" name="channel">
-                      <Select size="large" className="select-option">
-                        {options}
-                      </Select>
-                    </Form.Item>
-                    <div className="wireless-radios-options">
-                      <Form.Item name="qos" valuePropName="checked">
-                        <Checkbox value="QOS">QOS</Checkbox>
-                      </Form.Item>
-                      <Form.Item name="hw_n_mode" valuePropName="checked">
-                        <Checkbox value="802.11N">802.11N</Checkbox>
-                      </Form.Item>
-                    </div>
+                      <Col span={24}>
+                        <Form.Item label="Channel" name="channel">
+                          <Select size="large" className="select-option">
+                            {options}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <div className="wireless-radios-options">
+                          <Form.Item name="qos" valuePropName="checked">
+                            <Checkbox value="QOS">QOS</Checkbox>
+                          </Form.Item>
+                          <Form.Item name="hw_n_mode" valuePropName="checked">
+                            <Checkbox value="802.11N">802.11N</Checkbox>
+                          </Form.Item>
+                        </div>
+                      </Col>
+                    </Row>
                   </div>
+
                   <Form.Item>
                     <Button
                       type="primary"
                       htmlType="submit"
-                      className="button-apply3"
+                      className="button-apply4"
                       size="large"
                     >
-                      Apply
+                      SAVE & APPLY
                     </Button>
                   </Form.Item>
                 </div>
@@ -229,10 +240,12 @@ const WirelessSetting = () => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
                 <div>
-                  <h2>Wireless Settings Help</h2>
                   <p>
                     <strong>Note:</strong> The operating distance or range of
                     your wireless connection varies significantly based on the

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Col, Row, Spin } from "antd";
+import { Layout, Col, Row, Spin, Space } from "antd";
 import axios from "axios";
+import { IoIosHelpCircle } from "react-icons/io";
 
 const { Content } = Layout;
 const baseUrl = process.env.REACT_APP_API_URL;
@@ -8,7 +9,7 @@ const getToken = localStorage.getItem("token");
 
 const StatusPage = () => {
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState([]);
+  const [status, setStatus] = useState({});
 
   useEffect(() => {
     setLoading(true);
@@ -45,105 +46,121 @@ const StatusPage = () => {
       <Content>
         <Row gutter={12}>
           <Col span={16}>
-            <div className="card">
-              <div className="container">
-                <div className="container-header">
-                  <h1>STATUS</h1>
-                </div>
-                <hr />
-                <div className="desc-container-banner">
-                  <Row gutter={[64, 0]}>
-                    <Col>
-                      <div className="desc-details-left">
-                        <p>Fireware Version : </p>
-                        <p>Hardware Version : </p>
-                      </div>
-                    </Col>
-                    <Col>
-                      <div className="desc-details-right">
-                        <p>32.2.3 Build 2021 </p>
-                        <p>kmpv2021.1 </p>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-                <hr />
-                <div className="container-details">
-                  <h2>WAN</h2>
-                  <div className="desc-container">
-                    <Row gutter={[64, 0]}>
-                      {status && (
-                        <React.Fragment>
-                          <Col>
-                            <div className="desc-details-left">
-                              <p>MAC address : </p>
-                              <p>IP Address : </p>
-                              <p>Subnet Mask : </p>
-                              <p>Default Getway : </p>
-                            </div>
-                          </Col>
-                          <Col>
-                            <div className="desc-details-right">
-                              <p>{status.wan_macaddress} </p>
-                              <p>{status.wan_ip} </p>
-                              <p>{status.wan_netmask}</p>
-                              <p>{status.wan_gateway}</p>
-                            </div>
-                          </Col>
-                        </React.Fragment>
-                      )}
-                    </Row>
+            <Row gutter={[0, 12]}>
+              <Col span={24}>
+                <div className="card3">
+                  <div className="container">
+                    <div className="container-header">
+                      <h1>STATUS</h1>
+                    </div>
+                    <div className="desc-container-banner">
+                      <Row gutter={[64, 0]}>
+                        <Col>
+                          <div className="desc-details-left">
+                            <p>Fireware Version : 32.2.3 Build 2021</p>
+                          </div>
+                        </Col>
+                        <div className="vertical-line" />
+                        <Col>
+                          <div className="desc-details-right">
+                            <p>Hardware Version : kmpv2021.1</p>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
                   </div>
                 </div>
-                <hr />
-                <div className="container-details">
-                  <h2>WLAN</h2>
-                  <div className="desc-container">
-                    <Row gutter={[64, 0]}>
-                      {status && (
-                        <React.Fragment>
-                          <Col>
-                            <div className="desc-details-left">
-                              <p>MAC Address : </p>
-                              <p>IP Address : </p>
-                              <p>Subnet Mask : </p>
-                              <p>DNS : </p>
-                              <p>SSID : </p>
-                              <p>HW mode : </p>
-                              <p>Channel : </p>
-                              <p>HW n mode : </p>
-                              <p>QOS : </p>
-                            </div>
-                          </Col>
-                          <Col>
-                            <div className="desc-details-right">
-                              <p>{status.wlan_macaddress} </p>
-                              <p>{status.wlan_ip} </p>
-                              <p>{status.wlan_netmask} </p>
-                              <p>{status.wlan_dns} </p>
-                              <p>{status.wlan_ssid} </p>
-                              <p>{status.wlan_hw_mode} </p>
-                              <p>{status.wlan_channel} </p>
-                              <p>{status.wlan_hw_n_mode ? "true" : "false"} </p>
-                              <p>{status.wlan_qos ? "true" : "false"} </p>
-                            </div>
-                          </Col>
-                        </React.Fragment>
-                      )}
-                    </Row>
+              </Col>
+              <Col span={24}>
+                <div className="card3">
+                  <div className="container">
+                    <div className="container-header">
+                      <h1>WAN</h1>
+                    </div>
+                    <div className="desc-container-banner">
+                      <Row gutter={[64, 0]}>
+                        {status && (
+                          <React.Fragment>
+                            <Col>
+                              <div className="desc-details-left">
+                                <p>MAC address : </p>
+                                <p>IP Address : </p>
+                                <p>Subnet Mask : </p>
+                                <p>Default Getway : </p>
+                              </div>
+                            </Col>
+                            <Col>
+                              <div className="desc-details-right">
+                                <p>{status.wan_macaddress} </p>
+                                <p>{status.wan_ip} </p>
+                                <p>{status.wan_netmask}</p>
+                                <p>{status.wan_gateway}</p>
+                              </div>
+                            </Col>
+                          </React.Fragment>
+                        )}
+                      </Row>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </Col>
+              <Col span={24}>
+                <div className="card3">
+                  <div className="container">
+                    <div className="container-header">
+                      <h1>WLAN</h1>
+                    </div>
+                    <div className="desc-container-banner">
+                      <Row gutter={[64, 0]}>
+                        {status && (
+                          <React.Fragment>
+                            <Col>
+                              <div className="desc-details-left">
+                                <p>MAC Address : </p>
+                                <p>IP Address : </p>
+                                <p>Subnet Mask : </p>
+                                <p>DNS : </p>
+                                <p>SSID : </p>
+                                <p>HW mode : </p>
+                                <p>Channel : </p>
+                                <p>HW n mode : </p>
+                                <p>QOS : </p>
+                              </div>
+                            </Col>
+                            <Col>
+                              <div className="desc-details-right">
+                                <p>{status.wlan_macaddress} </p>
+                                <p>{status.wlan_ip} </p>
+                                <p>{status.wlan_netmask} </p>
+                                <p>{status.wlan_dns} </p>
+                                <p>{status.wlan_ssid} </p>
+                                <p>{status.wlan_hw_mode} </p>
+                                <p>{status.wlan_channel} </p>
+                                <p>
+                                  {status.wlan_hw_n_mode ? "true" : "false"}{" "}
+                                </p>
+                                <p>{status.wlan_qos ? "true" : "false"} </p>
+                              </div>
+                            </Col>
+                          </React.Fragment>
+                        )}
+                      </Row>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
           </Col>
           <Col span={8}>
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
                 <div>
-                  <h2>Status Help</h2>
                   <p>
                     The Status page displays the Router's current status and
                     configuration. All information is read-only.{" "}

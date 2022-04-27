@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, message, Spin } from "antd";
+import { Form, Input, Button, message, Spin, Row, Col } from "antd";
 import axios from "axios";
 
 const getToken = localStorage.getItem("token");
@@ -33,8 +33,12 @@ const WANStatic = () => {
         },
       })
         .then((res) => {
-          const { internet_ip, gateway, netmask, dns } =
-            res.data.wired_network_param;
+          const {
+            internet_ip,
+            gateway,
+            netmask,
+            dns,
+          } = res.data.wired_network_param;
           form.setFieldsValue({
             internet_ip: internet_ip,
             gateway: gateway,
@@ -68,7 +72,7 @@ const WANStatic = () => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setTimeout(() => {
             message.success("Successful!");
           }, 1000);
@@ -98,55 +102,68 @@ const WANStatic = () => {
   return (
     <React.Fragment>
       <Form {...layout} onFinish={handleApply} form={form}>
-        <Form.Item
-          label="Internet IP"
-          name="internet_ip"
-          rules={[
-            {
-              required: true,
-              message: "Input Internet IP!",
-            },
-          ]}
-        >
-          <Input size="large" className="label-info" />
-        </Form.Item>
-        <Form.Item
-          label="Subnet Mask"
-          name="netmask"
-          rules={[
-            {
-              required: true,
-              message: "Input Subnet Mask!",
-            },
-          ]}
-        >
-          <Input size="large" className="label-info" />
-        </Form.Item>
+        <Row gutter={[0, 24]}>
+          <Col span={24}>
+            {" "}
+            <Form.Item
+              label="Internet IP"
+              name="internet_ip"
+              rules={[
+                {
+                  required: true,
+                  message: "Input Internet IP!",
+                },
+              ]}
+            >
+              <Input size="large" className="label-info" />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            {" "}
+            <Form.Item
+              label="Subnet Mask"
+              name="netmask"
+              rules={[
+                {
+                  required: true,
+                  message: "Input Subnet Mask!",
+                },
+              ]}
+            >
+              <Input size="large" className="label-info" />
+            </Form.Item>
+          </Col>
 
-        <Form.Item
-          label="Default Getway"
-          name="gateway"
-          rules={[
-            {
-              required: true,
-              message: "Input Default Getway!",
-            },
-          ]}
-        >
-          <Input size="large" className="label-info" />
-        </Form.Item>
-        <Form.Item
-          label="DNS"
-          name="dns"
-          rules={[
-            {
-              required: true,
-              message: "Input DNS!",
-            },
-          ]}
-        >
-          <Input size="large" className="label-info" />
-        </Form.Item>
+          <Col span={24}>
+            {" "}
+            <Form.Item
+              label="Default Getway"
+              name="gateway"
+              rules={[
+                {
+                  required: true,
+                  message: "Input Default Getway!",
+                },
+              ]}
+            >
+              <Input size="large" className="label-info" />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              label="DNS"
+              name="dns"
+              rules={[
+                {
+                  required: true,
+                  message: "Input DNS!",
+                },
+              ]}
+            >
+              <Input size="large" className="label-info" />
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item>
           <Button
             type="primary"
@@ -154,7 +171,7 @@ const WANStatic = () => {
             className="button-apply"
             size="large"
           >
-            Apply
+            SAVE & APPLY
           </Button>
         </Form.Item>
       </Form>

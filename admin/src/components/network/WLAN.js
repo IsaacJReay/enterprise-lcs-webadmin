@@ -9,8 +9,10 @@ import {
   Form,
   message,
   Spin,
+  Space,
 } from "antd";
 import axios from "axios";
+import { IoIosHelpCircle } from "react-icons/io";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -48,11 +50,11 @@ const WLANSetting = () => {
 
   // ----------get data -------------
 
-  useEffect(async () => {
+  useEffect(() => {
     setLoading(true);
-    await axios({
+    axios({
       method: "GET",
-      url: ` ${baseUrl}/settings/wirelessnetwork/status`,
+      url: `${baseUrl}/settings/wirelessnetwork/status`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -107,7 +109,7 @@ const WLANSetting = () => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setTimeout(() => {
             message.success("Successful!");
           }, 1000);
@@ -143,132 +145,151 @@ const WLANSetting = () => {
               <div className="card">
                 <div className="container">
                   <div className="container-header">
-                    <h1>WLAN Setting</h1>
+                    <h1>WLAN SETTING</h1>
                   </div>
-                  <hr />
-
-                  <div className="desc-container-banner">
-                    <Form.Item
-                      label="Router Address"
-                      name="router"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Input Router Address!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        size="large"
-                        placeholder="0.0.0.0"
-                        className="label-info"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Netmask"
-                      name="netmask"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Input Netmask!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        size="large"
-                        placeholder="0.0.0.0"
-                        className="label-info"
-                      />
-                    </Form.Item>
-                    <Form.Item label="Range " style={{ marginBottom: 0 }}>
-                      <Form.Item
-                        name="start_range"
-                        rules={[
-                          { required: true, message: "Input Start Range!" },
-                        ]}
-                        style={{
-                          display: "inline-block",
-                          width: "calc(50% - 8px)",
-                        }}
-                      >
-                        <Input placeholder="0.0.0.0" size="large" />
-                      </Form.Item>
-                      <Form.Item
-                        name="end_range"
-                        rules={[
-                          { required: true, message: "Input End Range!" },
-                        ]}
-                        style={{
-                          display: "inline-block",
-                          width: "calc(50% - 8px)",
-                          margin: "0 8px",
-                        }}
-                      >
-                        <Input placeholder="0.0.0.0" size="large" />
-                      </Form.Item>
-                    </Form.Item>
-                    <Form.Item
-                      label="DNS "
-                      name="dns"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Input DNS!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        size="large"
-                        placeholder="0.0.0.0"
-                        className="label-info"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Default Lease time"
-                      name="default_time"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Input Default Lease time!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        size="large"
-                        placeholder="0000"
-                        className="label-info"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Max Lease time"
-                      name="max_time"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Input Max Lease time!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        size="large"
-                        placeholder="0000"
-                        className="label-info"
-                      />
-                    </Form.Item>
-                    <Form.Item label="Timezone ">
-                      <Select
-                        defaultValue={defalutTime}
-                        size="large"
-                        className="select-Option"
-                        showSearch
-                        optionFilterProp="children"
-                        onChange={onChange}
-                      >
-                        {moments.map((res) => {
-                          return <Option value={res}>{res}</Option>;
-                        })}
-                      </Select>
-                    </Form.Item>
+                  <div className="desc-container-banner2">
+                    <Row gutter={[0, 24]}>
+                      <Col span={24}>
+                        <Form.Item
+                          label="Router Address"
+                          name="router"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Input Router Address!",
+                            },
+                          ]}
+                        >
+                          <Input
+                            size="large"
+                            placeholder="0.0.0.0"
+                            className="label-info"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        {" "}
+                        <Form.Item
+                          label="Netmask"
+                          name="netmask"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Input Netmask!",
+                            },
+                          ]}
+                        >
+                          <Input
+                            size="large"
+                            placeholder="0.0.0.0"
+                            className="label-info"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        {" "}
+                        <Form.Item label="Range " style={{ marginBottom: 0 }}>
+                          <Form.Item
+                            name="start_range"
+                            rules={[
+                              { required: true, message: "Input Start Range!" },
+                            ]}
+                            style={{
+                              display: "inline-block",
+                              width: "calc(50% - 8px)",
+                            }}
+                          >
+                            <Input placeholder="0.0.0.0" size="large" />
+                          </Form.Item>
+                          <Form.Item
+                            name="end_range"
+                            rules={[
+                              { required: true, message: "Input End Range!" },
+                            ]}
+                            style={{
+                              display: "inline-block",
+                              width: "calc(50% - 8px)",
+                              margin: "0 8px",
+                            }}
+                          >
+                            <Input placeholder="0.0.0.0" size="large" />
+                          </Form.Item>
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        {" "}
+                        <Form.Item
+                          label="DNS "
+                          name="dns"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Input DNS!",
+                            },
+                          ]}
+                        >
+                          <Input
+                            size="large"
+                            placeholder="0.0.0.0"
+                            className="label-info"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        {" "}
+                        <Form.Item
+                          label="Default Lease time"
+                          name="default_time"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Input Default Lease time!",
+                            },
+                          ]}
+                        >
+                          <Input
+                            size="large"
+                            placeholder="0000"
+                            className="label-info"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        {" "}
+                        <Form.Item
+                          label="Max Lease time"
+                          name="max_time"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Input Max Lease time!",
+                            },
+                          ]}
+                        >
+                          <Input
+                            size="large"
+                            placeholder="0000"
+                            className="label-info"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={24}>
+                        <Form.Item label="Timezone ">
+                          <Select
+                            defaultValue={defalutTime}
+                            size="large"
+                            className="select-Option"
+                            showSearch
+                            optionFilterProp="children"
+                            onChange={onChange}
+                          >
+                            {moments.map((res) => {
+                              return <Option value={res}>{res}</Option>;
+                            })}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
                   </div>
                   <Form.Item>
                     <Button
@@ -277,7 +298,7 @@ const WLANSetting = () => {
                       className="button-apply3"
                       size="large"
                     >
-                      Apply
+                      SAVE & APPLY
                     </Button>
                   </Form.Item>
                 </div>
@@ -288,10 +309,12 @@ const WLANSetting = () => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
                 <div>
-                  <h2>WLAN Help</h2>
                   <p>
                     You can configure the IP parameters of LAN on this page.
                   </p>

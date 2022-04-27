@@ -1,10 +1,25 @@
-// const getToken = localStorage.getItem("token");
+import React from "react";
 
-// function auth() {
-//   const token = {
-//     Authorization: "Bearer " + getToken,
-//   };
-//   return token;
-// }
+const parseJwt = () => {
+  try {
+    const user = localStorage.getItem("token");
+    return user;
+  } catch (e) {
+    return null;
+  }
+};
 
-// export { auth };
+const Utils = (props) => {
+  props.history.listen(() => {
+    const user = localStorage.getItem("token");
+    if (user) {
+      const decodedJwt = parseJwt(user);
+      if (decodedJwt.exp * 1000 < Date.now()) {
+        props.logOut();
+      }
+    }
+  });
+  return <div></div>;
+};
+
+export default Utils;

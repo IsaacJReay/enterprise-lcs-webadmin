@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Layout, Menu } from "antd";
+import React, { useEffect, useState } from "react";
+import { Layout, Menu, Tooltip } from "antd";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import {
   SwitcherOutlined,
   ShareAltOutlined,
@@ -8,16 +9,47 @@ import {
   UngroupOutlined,
   CloudServerOutlined,
   SettingOutlined,
-  ReadOutlined,
 } from "@ant-design/icons";
+import { BiLogOutCircle } from "react-icons/bi";
+import { FiEdit } from "react-icons/fi";
+import Avatar1 from "../../assets/images/avatar/avatar.png";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 const rootSubmenuKeys = ["/network", "/management"];
 
+const baseUrl = process.env.REACT_APP_API_URL;
+const getToken = localStorage.getItem("token");
+
 const SideNavBar = () => {
   const [openKeys, setOpenKeys] = useState(["/status"]);
+  const [currentUser, setCurrentUser] = useState();
+  const [, setLoading] = useState(false);
+
+  // -------------get user ----------
+
+  useEffect(() => {
+    setLoading(true);
+    const auth = {
+      Authorization: "Bearer " + getToken,
+    };
+    axios({
+      method: "GET",
+      url: `${baseUrl}/user/query`,
+      headers: {
+        "content-type": "application/json",
+        ...auth,
+      },
+    })
+      .then((res) => {
+        setCurrentUser(res.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const onOpenChange = (keys) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -35,112 +67,55 @@ const SideNavBar = () => {
           boxShadow: " 18px 0px 35px 0px rgba(0, 0, 0, 0.02)",
         }}
         theme="light"
-        width="280px"
+        width="400px"
         breakpoint="lg"
         collapsedWidth="0"
       >
+        <div className="logos">
+          <Link to="/status">
+            <img
+              src="/images/icons/Koompi-white.png"
+              className="logo-content-server"
+              alt="logo"
+            />
+
+            <span>CONTENT SERVER</span>
+          </Link>
+          <div className="logout-icon">
+            <Link to="/logout">
+              <Tooltip placement="right" title="Logout">
+                <BiLogOutCircle className="logo-logout" />
+              </Tooltip>
+            </Link>
+          </div>
+        </div>
+        <div className="side-profile">
+          <center>
+            <img className="avatarNavbar" src={Avatar1} alt="avatar" />
+            <div className="icon-user-setting">
+              <Link to="/management/users-account">
+                <Tooltip placement="right" title="User Setting">
+                  <FiEdit className="account-icon" />
+                </Tooltip>
+              </Link>
+            </div>
+            <div className="popover-text">{currentUser}</div>
+          </center>
+        </div>
         <Menu
+          defaultSelectedKeys="/status"
           openKeys={openKeys}
+          onOpenChange={onOpenChange}
           theme="light"
           mode="inline"
-          onOpenChange={onOpenChange}
         >
           <Menu.Item
             key="/status"
-            icon={<SwitcherOutlined />}
-            className="menu-navbar"
+            icon={<SwitcherOutlined className="menu-icons" />}
           >
-            <Link to="/status">Status</Link>
+            <Link to="/status">STATUS</Link>
           </Menu.Item>
-
-          <SubMenu
-            key="/network"
-            icon={<ShareAltOutlined />}
-            title="Network"
-            className="menu-navbar"
-          >
-            <Menu.Item key="/network/wan" className="container-submenu">
-              <Link to="/network/wan">WAN</Link>
-            </Menu.Item>
-            <Menu.Item key="/network/wlan" className="container-submenu">
-              <Link to="/network/wlan">WLAN</Link>
-            </Menu.Item>
-          </SubMenu>
-
-          <Menu.Item
-            key="/wireless"
-            icon={<WifiOutlined />}
-            className="menu-navbar"
-          >
-            <Link to="/wireless">Wireless</Link>
-          </Menu.Item>
-
-          <Menu.Item
-            key="/dns"
-            icon={<UngroupOutlined />}
-            className="menu-navbar"
-          >
-            <Link to="/dns">DNS</Link>
-          </Menu.Item>
-
-          <Menu.Item
-            key="/storages"
-            icon={<CloudServerOutlined />}
-            className="menu-navbar"
-          >
-            <Link to="/storages">Storages</Link>
-          </Menu.Item>
-
-          <SubMenu
-            key="/management"
-            icon={<SettingOutlined />}
-            title="Management"
-            className="menu-navbar"
-          >
-            {/* <Menu.Item
-              key="/management/system-update"
-              className="container-submenu"
-            >
-              <Link to="/management/system-update">System Updates</Link>
-            </Menu.Item> */}
-            <Menu.Item
-              key="/management/users-account"
-              className="container-submenu"
-            >
-              <Link to="/management/users-account">Users Account</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/management/backup-restore"
-              className="container-submenu"
-            >
-              <Link to="/management/backup-restore">Backup & Restore</Link>
-            </Menu.Item>
-            <Menu.Item key="/management/reset" className="container-submenu">
-              <Link to="/management/reset">Reset All</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="/management/time-setting"
-              className="container-submenu"
-            >
-              <Link to="/management/time-setting">Time Settings</Link>
-            </Menu.Item>
-          </SubMenu>
-          <Menu.Item
-            key="/about-us"
-            icon={<ReadOutlined />}
-            className="menu-navbar"
-          >
-            <Link to="/about-us">About us</Link>
-          </Menu.Item>
-        </Menu>
-
-        {/* <Menu defaultSelectedKeys="/status" theme="light" mode="inline">
-        
-
-          <Menu.Item key="/status" icon={<SwitcherOutlined />}>
-            <Link to="/status">Status</Link>
-          </Menu.Item>
-          <SubMenu key="/network" icon={<ShareAltOutlined />} title="Network">
+          <SubMenu key="/network" icon={<ShareAltOutlined />} title="NETWORK">
             <Menu.Item key="/network/wan">
               <Link to="/network/wan">WAN</Link>
             </Menu.Item>
@@ -149,49 +124,37 @@ const SideNavBar = () => {
             </Menu.Item>
           </SubMenu>
           <Menu.Item key="/wireless" icon={<WifiOutlined />}>
-            <Link to="/wireless">Wireless</Link>
+            <Link to="/wireless">WIRELESS</Link>
           </Menu.Item>
           <Menu.Item key="/dns" icon={<UngroupOutlined />}>
             <Link to="/dns">DNS</Link>
           </Menu.Item>
           <Menu.Item key="/storages" icon={<CloudServerOutlined />}>
-            <Link to="/storages">Storages</Link>
+            <Link to="/storages">STOGRAGES</Link>
           </Menu.Item>
 
           <SubMenu
             key="/management"
             icon={<SettingOutlined />}
-            title="Management"
+            title="SETTINGS"
           >
             <Menu.Item key="/management/system-update">
-              <Link to="/management/system-update">System Updates</Link>
+              <Link to="/management/system-update">SYSTEM UPDATE</Link>
             </Menu.Item>
             <Menu.Item key="/management/users-account">
-              <Link to="/management/users-account">Users Account</Link>
+              <Link to="/management/users-account">USER ACCOUNT</Link>
             </Menu.Item>
             <Menu.Item key="/management/backup-restore">
-              <Link to="/management/backup-restore">Backup & Restore</Link>
+              <Link to="/management/backup-restore">BACKUP & RESTORE</Link>
             </Menu.Item>
             <Menu.Item key="/management/reset">
-              <Link to="/management/reset">Reset All</Link>
+              <Link to="/management/reset">RESET ALL</Link>
             </Menu.Item>
             <Menu.Item key="/management/time-setting">
-              <Link to="/management/time-setting">Time Settings</Link>
+              <Link to="/management/time-setting">TIME SETTING</Link>
             </Menu.Item>
-          </SubMenu> */}
-
-        {/* <SubMenu key="/website" icon={<GlobalOutlined />} title="Website">
-            <Menu.Item key="/website/custom">
-              <Link to="/website/custom">Custom Hosting</Link>
-            </Menu.Item>
-            <Menu.Item key="/website/internal">
-              <Link to="/website/internal">Internal Website</Link>
-            </Menu.Item>
-            <Menu.Item key="/website/download">
-              <Link to="/website/download">Download Website</Link>
-            </Menu.Item>
-          </SubMenu>          */}
-        {/* </Menu> */}
+          </SubMenu>
+        </Menu>
       </Sider>
     </React.Fragment>
   );

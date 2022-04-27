@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, message, Spin } from "antd";
+import { Form, Input, Button, message, Spin, Row, Col } from "antd";
 import axios from "axios";
 
 const getToken = localStorage.getItem("token");
@@ -53,7 +53,7 @@ const WANDynamic = () => {
       },
     })
       .then(async (res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setTimeout(() => {
             message.success("Successful!");
           }, 1000);
@@ -83,42 +83,52 @@ const WANDynamic = () => {
   return (
     <React.Fragment>
       <Form {...layout} onFinish={handleApply}>
-        <Form.Item label="Internet IP">
-          <Input
-            disabled
-            size="large"
-            placeholder="0.0.0.0"
-            className="label-info"
-            value={items.internet_ip}
-          />
-        </Form.Item>
-        <Form.Item label="Subnet Mask">
-          <Input
-            disabled
-            size="large"
-            placeholder="0.0.0.0"
-            className="label-info"
-            value={items.netmask}
-          />
-        </Form.Item>
-        <Form.Item label="Default Getway">
-          <Input
-            disabled
-            size="large"
-            placeholder="0.0.0.0"
-            className="label-info"
-            value={items.gateway}
-          />
-        </Form.Item>
-        <Form.Item label="DNS">
-          <Input
-            disabled
-            size="large"
-            placeholder="0.0.0.0"
-            className="label-info"
-            value={items.dns}
-          />
-        </Form.Item>
+        <Row gutter={[0, 24]}>
+          <Col span="24">
+            <Form.Item label="Internet IP">
+              <Input
+                disabled
+                size="large"
+                placeholder="0.0.0.0"
+                className="label-info"
+                value={items.internet_ip}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item label="Subnet Mask">
+              <Input
+                disabled
+                size="large"
+                placeholder="0.0.0.0"
+                className="label-info"
+                value={items.netmask}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item label="Default Getway">
+              <Input
+                disabled
+                size="large"
+                placeholder="0.0.0.0"
+                className="label-info"
+                value={items.gateway}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item label="DNS">
+              <Input
+                disabled
+                size="large"
+                placeholder="0.0.0.0"
+                className="label-info"
+                value={items.dns}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item>
           <Button
             type="primary"
@@ -126,7 +136,7 @@ const WANDynamic = () => {
             className="button-apply"
             size="large"
           >
-            Apply
+            SAVE & APPLY
           </Button>
         </Form.Item>
       </Form>

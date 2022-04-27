@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Button, Form, Col, Row, message } from "antd";
+import { Input, Button, Form, Col, Row, message, notification } from "antd";
 import axios from "axios";
 import image from "../assets/images/login2.png";
 import icon from "../assets/images/icons/koompi-black.png";
@@ -15,10 +15,10 @@ const Login = () => {
       password: data.password,
     };
     await axios
-      .post(`${baseUrl}/user/login`, adminLogin, setLoading(true))
+      .post(`${baseUrl}/user/login`, adminLogin)
       .then((res) => {
-        localStorage.setItem("token", res.data.token);
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
+          localStorage.setItem("token", res.data.token);
           setLoading(true);
           message.success("Successful!");
           window.location.replace("/status");

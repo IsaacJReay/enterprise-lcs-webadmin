@@ -39,7 +39,7 @@ function App() {
           <PrivateRoute exact path="/dns" component={DNSSetting} />
           <PrivateRoute
             exact
-            path="/dns-management/:id"
+            path="/dns-management/:zones/:slug"
             component={DNSManagement}
           />
           <PrivateRoute exact path="/storages" component={Storages} />

@@ -42,7 +42,7 @@ const CustomeTime = ({ pick }) => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           showPromiseConfirm();
           setLoading(false);
@@ -95,11 +95,11 @@ const CustomeTime = ({ pick }) => {
             <Form.Item>
               <Button
                 size="large"
-                className="button-update"
+                className="button-update-time2"
                 type="primary"
                 htmlType="submit"
               >
-                Apply
+                SAVE & APPLY
               </Button>
             </Form.Item>
           </React.Fragment>
@@ -131,12 +131,12 @@ const CustomeTime = ({ pick }) => {
             <Form.Item>
               <Button
                 size="large"
-                className="button-update"
+                className="button-update-time2"
                 type="primary"
                 htmlType="submit"
                 disabled
               >
-                Apply
+                SAVE & APPLY
               </Button>
             </Form.Item>
           </React.Fragment>

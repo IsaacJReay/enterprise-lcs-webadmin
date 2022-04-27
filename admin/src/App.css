@@ -17,17 +17,36 @@ b {
 .ant-layout.ant-layout-has-sider > .ant-layout,
 .ant-layout.ant-layout-has-sider > .ant-layout-content {
   overflow-x: hidden;
-  background-color: #eff1f7;
+  /* background-color: #000; */
+  background-image: url("../src/assets/images/background-1.png");
   padding: 10px;
 }
 .avatarNavbar {
   border: 3px solid rgb(212, 207, 207);
   position: relative;
-  width: 45px;
-  height: 45px;
-  margin-right: 8px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   cursor: pointer;
+}
+.icon-user-setting {
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+  background: #1890ff;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 5px;
+  position: absolute;
+  top: 70px;
+  right: 160px;
+}
+.account-icon {
+  color: #fff;
+}
+.side-profile {
+  position: relative;
+  top: -50px;
 }
 .popover-text {
   font-size: 20px;
@@ -43,13 +62,29 @@ b {
   cursor: pointer;
 }
 .card {
-  background-color: #fff;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(14.9px);
+  -webkit-backdrop-filter: blur(14.9px);
+  border-radius: 8px;
+}
+.card3 {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(14.9px);
+  -webkit-backdrop-filter: blur(14.9px);
   border-radius: 8px;
 }
 .card2 {
-  background-color: #fff;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(14.9px);
+  -webkit-backdrop-filter: blur(14.9px);
   border-radius: 8px;
   min-height: 95% !important;
+}
+.vertical-line {
+  border-left: 2px solid #c4c4c4;
+  height: 60px;
+  position: relative;
+  top: -10px;
 }
 .accountNavbarhover {
   transition: 0.3s;
@@ -69,35 +104,77 @@ b {
   border: 4px solid #fff;
 }
 .logo-content-server {
-  width: 40px;
+  width: 50px;
   position: relative;
   top: -2px;
 }
+
+.ant-layout-sider {
+  padding-left: 0px !important;
+}
 .logos {
-  position: relative;
-  left: -30px;
+  height: 150px;
+  background-color: #1890ff;
+  padding-top: 50px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: row;
 }
 .logos span {
   font-family: "Play", sans-serif;
   font-size: 22px;
   font-weight: 900;
   color: #ffffff;
-  padding-left: 5px;
+  padding-left: 10px;
+}
+.logout-icon {
+  position: relative;
+  left: 40px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  padding: 7px;
+  background-color: #1b4f9d;
+  top: -7px;
+}
+.logo-logout {
+  font-size: 35px;
+  color: #fff;
 }
 .ant-layout-sider-light {
   background: #eff1f7 !important;
   box-shadow: none !important;
 }
-.ant-menu {
-  background: #eff1f7 !important;
+.ant-layout-sider-children {
+  background: #dae0e5 !important;
+  backdrop-filter: blur(20px) !important;
 }
+.ant-menu-root.ant-menu-inline {
+  background: #dae0e5 !important;
+  margin-top: -50px;
+}
+.ant-menu-sub.ant-menu-inline {
+  border-radius: 12px !important;
+}
+.ant-menu {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) !important;
+  padding: 0px 20px !important;
+}
+.ant-menu-submenu-selected {
+  color: #000 !important;
+}
+
 .ant-layout-sider .ant-layout-sider-light {
   box-shadow: none !important;
 }
-
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-  height: 55px !important;
+  height: 65px !important;
+  font-weight: bolder !important;
+  border-radius: 12px !important;
+  color: #fff;
 }
+
 .ant-menu-vertical .ant-menu-item,
 .ant-menu-vertical-left .ant-menu-item,
 .ant-menu-vertical-right .ant-menu-item,
@@ -106,8 +183,7 @@ b {
 .ant-menu-vertical-left .ant-menu-submenu-title,
 .ant-menu-vertical-right .ant-menu-submenu-title,
 .ant-menu-inline .ant-menu-submenu-title {
-  margin-top: 10px !important;
-  margin-bottom: 0px;
+  margin-top: 0px !important;
 }
 
 .ant-menu-vertical > .ant-menu-item,
@@ -125,6 +201,16 @@ b {
   background: #fff;
   border-radius: 8px;
   min-height: 55px !important;
+}
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: #1890ff !important;
+}
+/* .ant-menu-item a {
+  color: #8c9aab !important;
+  font-weight: bold;
+} */
+.ant-menu-item-selected a {
+  color: #fff !important;
 }
 .ant-menu-sub.ant-menu-inline {
   background: #fff !important;
@@ -156,8 +242,9 @@ b {
 .ant-menu-submenu-title .ant-menu-item-icon,
 .ant-menu-item .anticon,
 .ant-menu-submenu-title .anticon {
-  font-size: 25px !important;
+  font-size: 30px !important;
 }
+
 .ant-menu-title-content {
   font-size: 18px;
   color: #000;
@@ -291,8 +378,14 @@ b {
   text-align: center;
   margin-bottom: 0 !important;
 }
-.card2 .container {
-  min-height: 90vh !important;
+.card2 .container,
+.card .container {
+  min-height: 97vh !important;
+}
+.icon-help {
+  font-size: 30px;
+  position: relative;
+  top: -2px;
 }
 .container {
   width: 100% auto;
@@ -300,26 +393,17 @@ b {
   padding: 20px 20px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
-.container-header {
-  background-color: #1b262c;
-  padding: 0px 20px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
+
 .container-header h1 {
-  color: #fff;
-  font-weight: 700;
-  font-size: 22px;
-  position: relative;
-  top: 5px;
+  font-size: 18px;
+  font-weight: bolder;
 }
 .desc-container-banner {
-  width: 80%;
+  width: 100%;
   margin: auto;
   margin-top: 25px;
+  display: grid;
+  place-items: center;
 }
 .desc-container-banner p {
   font-size: 18px;
@@ -358,7 +442,9 @@ b {
 }
 .ant-form-item .ant-select,
 .ant-form-item .ant-cascader-picker {
-  width: 276px !important;
+  /* width: 412px !important; */
+  position: relative;
+  left: -5px;
 }
 
 .detect-button {
@@ -367,70 +453,135 @@ b {
 
 .spin {
   margin: 20% 50%;
-  /* padding: 30px 50px; */
   text-align: center;
+}
+.desc-container-banner2 {
+  width: 65%;
+  justify-content: center;
+  margin: auto;
+  margin-top: 22px;
 }
 
 .label-info {
-  width: 50% !important;
+  width: 100% !important;
   border-radius: 4px !important;
+}
+.label-container {
+  width: 70%;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+.adding-record {
+  border-radius: 8px !important;
+  padding: 5px 50px !important;
+  position: relative;
+  left: 315px;
+  top: 20px;
 }
 .button-apply {
   border-radius: 8px !important;
   padding: 5px 50px !important;
-  margin-top: 30px;
+  height: 50px !important;
   position: absolute;
-  left: 140% !important;
-  background: #0caedc !important;
-  border-color: #0caedc !important;
+  left: 112% !important;
+  top: 400px;
+  font-weight: bolder !important;
 }
 .button-apply2 {
   float: right;
   margin-top: 40px;
-  background: #0caedc !important;
-  border-color: #0caedc !important;
+
   border-radius: 8px !important;
   padding: 5px 50px !important;
 }
 .button-apply3 {
   border-radius: 8px !important;
   padding: 5px 50px !important;
-  margin-top: 30px;
+  height: 50px !important;
   position: absolute;
-  left: 125% !important;
-  background: #0caedc !important;
-  border-color: #0caedc !important;
+  left: 112% !important;
+  top: 220px;
+  font-weight: bolder !important;
 }
 .button-apply4 {
   border-radius: 8px !important;
   padding: 5px 50px !important;
-  margin-top: 30px;
+  height: 50px !important;
   position: absolute;
-  left: 120% !important;
-  background: #0caedc !important;
-  border-color: #0caedc !important;
+  left: 112% !important;
+  top: 310px;
+  font-weight: bolder !important;
 }
-.button-update {
-  background: #0caedc !important;
-  border-color: #0caedc !important;
+.button-apply5 {
+  float: right;
+  margin-top: 600px;
+
   border-radius: 8px !important;
   padding: 5px 50px !important;
 }
+.button-export {
+  border-radius: 8px !important;
+  padding: 5px 50px !important;
+  height: 50px !important;
+  margin-top: 530px;
+  margin-left: 780px !important;
+}
+.button-export2 {
+  border-radius: 8px !important;
+  padding: 5px 50px !important;
+  height: 50px !important;
+  margin-top: 367px;
+  margin-left: 780px !important;
+}
+.button-reset {
+  border-radius: 8px !important;
+  padding: 5px 50px !important;
+  height: 50px !important;
+  position: relative;
+  top: 680px;
+  left: 83%;
+}
+.button-update {
+  border-radius: 4px !important;
+  padding: 5px 30px !important;
+  position: relative;
+  top: 14px;
+}
 .button-update2 {
-  background: #0caedc !important;
   border-color: #0caedc !important;
   border-radius: 8px !important;
   padding: 5px 30px !important;
 }
+.button-update-time {
+  border-radius: 8px !important;
+  padding: 5px 30px !important;
+}
+.button-update-time2 {
+  border-radius: 8px !important;
+  padding: 5px 30px !important;
+  position: relative;
+  top: 50px;
+}
+.select-option {
+  width: 417px !important;
+}
+.select-option2 {
+  width: 120px !important;
+}
+.select-option3 {
+  width: 417px;
+}
 .select-option-wireless {
-  width: 350px !important;
+  width: 417px !important;
   margin-bottom: 6px !important;
 }
 .ant-form-item-label > label {
-  font-size: 18px !important;
+  font-size: 16px !important;
   justify-content: end;
   text-align: end;
   margin-right: 30px;
+  font-weight: bolder;
 }
 .ant-form-item-control-input-content .ant-input {
   border-radius: 8px !important;
@@ -489,9 +640,7 @@ b {
   border-radius: 4px !important;
 }
 .container-adding-records {
-  padding-top: 30px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-top: 40px;
 }
 .content-padding {
   padding: 30px 50px;
@@ -597,8 +746,6 @@ b {
 }
 .ant-btn-circle {
   border-radius: 50px !important;
-  background-color: #0caedc !important;
-  border: 1px solid #0caedc !important;
 }
 .back-btn {
   font-size: 25px;
@@ -634,8 +781,9 @@ b {
   padding: 5px 30px !important;
 }
 .local-data-container {
-  padding: 5px 20px;
+  padding: 5px 10px;
   max-width: 100%;
+  height: 700px;
   overflow: scroll;
   scroll-behavior: smooth;
   scrollbar-width: thin;
@@ -658,14 +806,16 @@ b {
 }
 .icons-update {
   font-weight: 600;
+  cursor: pointer;
 }
 .updates {
   margin-right: 5px;
 }
+
 .container-update {
   padding: 30px 15px;
-  max-height: 250px;
-  height: 250px;
+  max-height: 800px;
+  height: 750px;
   overflow-y: scroll;
   margin-top: 20px;
 }
@@ -700,10 +850,15 @@ b {
 }
 .restore-checkbox {
   position: relative;
-  left: 33vh;
+  left: 26vh;
 }
 .backup-container {
-  margin-top: 30px;
+  padding-top: 80px !important;
+  width: 80%;
+  height: 100% !important;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 }
 .reset-container {
   padding: 30px 25px;

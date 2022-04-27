@@ -8,17 +8,18 @@ import {
   Table,
   Select,
   Tag,
-  Popover,
   Popconfirm,
   message,
   Collapse,
   Checkbox,
+  Space,
 } from "antd";
 import { FiEdit } from "react-icons/fi";
 import DNSRename from "./rename";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import AddRecord from "./adding-record";
 import { PlusOutlined, CaretRightOutlined } from "@ant-design/icons";
+import { IoIosHelpCircle } from "react-icons/io";
 import axios from "axios";
 
 const { Content } = Layout;
@@ -28,14 +29,11 @@ const { Panel } = Collapse;
 const DNSManagement = ({ match }) => {
   const [visible, setVisible] = useState(false);
   const [records, setRecords] = useState(false);
-  const [doid, setDoId] = useState({});
-  const [doname, setDoname] = useState({});
+  const [domainStatus, setDomainStatus] = useState({});
   const [, setLoading] = useState(false);
   const [items, setItems] = useState({});
   const [subdomain, setSubdomain] = useState([]);
   const [form] = Form.useForm();
-
-  const key = match.params.id;
 
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
@@ -44,11 +42,14 @@ const DNSManagement = ({ match }) => {
     Authorization: "Bearer " + getToken,
   };
 
+  let { slug } = useParams();
+  const zone = match.params.zones;
+
   // ----------get data -------------
 
   async function fetchData() {
     await axios
-      .get(`${baseUrl}/settings/dns/zone_records/status/${key}`, {
+      .get(`${baseUrl}/settings/dns/status/${zone}/${slug}`, {
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -57,7 +58,8 @@ const DNSManagement = ({ match }) => {
       .then((res) => {
         setLoading(true);
         setItems(res.data);
-        setSubdomain(res.data.record_table);
+        setSubdomain(res.data.zone_record);
+        setDomainStatus(res.data.status);
         const { status } = res.data;
         form.setFieldsValue({
           status: status,
@@ -75,21 +77,16 @@ const DNSManagement = ({ match }) => {
 
   //  --------delete record ----------
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (name) => {
     await axios
-      .delete(
-        `${baseUrl}/settings/dns/zone_record/deletion`,
-
-        {
-          headers: {
-            "content-type": "application/json",
-            ...auth,
-          },
-          data: { id: `${id}`, foreign_key: `${match.params.id}` },
-        }
-      )
+      .delete(`${baseUrl}/settings/dns/delete/${zone}/${slug}/${name}`, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           message.success("Successful!");
           fetchData();
           setLoading(false);
@@ -112,11 +109,13 @@ const DNSManagement = ({ match }) => {
   // ---------- hosting domain ----------
   const handleApply = async (data) => {
     const inputData = {
-      id: key,
+      domain_name: slug,
       status: data.status,
+      zone_record: null,
     };
+    console.log(inputData);
     await axios
-      .put(`${baseUrl}/settings/dns/status/update`, inputData, {
+      .post(`${baseUrl}/settings/dns/new/${zone}`, inputData, {
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -124,7 +123,7 @@ const DNSManagement = ({ match }) => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           message.success("Successful!");
           fetchData();
           setLoading(false);
@@ -146,8 +145,6 @@ const DNSManagement = ({ match }) => {
 
   const showModalRename = () => {
     setVisible(true);
-    setDoId(`${match.params.id}`);
-    setDoname(items.domain_name);
   };
 
   const handleCancel = () => {
@@ -162,22 +159,15 @@ const DNSManagement = ({ match }) => {
 
   const showAddRecords = () => {
     setRecords(true);
-    setDoId(`${match.params.id}`);
   };
 
   const columns = [
-    {
-      title: "N0",
-      dataIndex: "id",
-      key: "id",
-      width: "10%",
-    },
     {
       title: "Sub Domain",
       dataIndex: "subdomain_name",
       key: "subdomain_name",
       editable: true,
-      width: "20%",
+      width: "40%",
     },
     {
       title: "Address",
@@ -190,6 +180,7 @@ const DNSManagement = ({ match }) => {
       title: "Type",
       dataIndex: "dns_type",
       key: "dns_type",
+      width: "20%",
       editable: true,
       render: (dns_type) => {
         return (
@@ -198,7 +189,7 @@ const DNSManagement = ({ match }) => {
               disabled
               defaultValue={dns_type}
               size="large"
-              className="select-option"
+              className="select-option2"
             >
               <Option value="A">A</Option>
               <Option value="MX 10">MX 10</Option>
@@ -225,7 +216,7 @@ const DNSManagement = ({ match }) => {
               }
               okText="Yes"
               cancelText="No"
-              onConfirm={() => handleDelete(id)}
+              onConfirm={() => handleDelete(name)}
             >
               <Tag color="error" style={{ cursor: "pointer" }}>
                 Delete
@@ -240,7 +231,7 @@ const DNSManagement = ({ match }) => {
   const HostingDomain = () => {
     return (
       <React.Fragment>
-        <div className="card">
+        <div className="card3">
           <div className="container">
             <div className="container-header">
               <h1>Domain Setting</h1>
@@ -249,6 +240,7 @@ const DNSManagement = ({ match }) => {
 
             <Collapse
               bordered={false}
+              defaultActiveKey={["1"]}
               expandIcon={({ isActive }) => (
                 <CaretRightOutlined rotate={isActive ? 90 : 0} />
               )}
@@ -267,7 +259,7 @@ const DNSManagement = ({ match }) => {
                       htmlType="submit"
                       size="large"
                     >
-                      Apply
+                      APPLY
                     </Button>
                   </Form.Item>
                 </Form>
@@ -286,16 +278,16 @@ const DNSManagement = ({ match }) => {
           visible={visible}
           handleCancel={handleCancel}
           handleOk={handleOk}
-          doid={doid}
-          doname={doname}
           fetchData={fetchData}
+          zone={zone}
         />
         <AddRecord
           records={records}
           handleCancel={handleCancel}
           handleOk={handleOk}
-          doid={doid}
           fetchData={fetchData}
+          zone={zone}
+          domainStatus={domainStatus}
         />
         <Row gutter={12}>
           <Col span={16}>
@@ -307,13 +299,11 @@ const DNSManagement = ({ match }) => {
               </Col>
               <Col>
                 <Form>
-                  <div className="card">
+                  <div className="card3">
                     <div className="container">
                       <div className="container-header">
-                        <h1>DNS Setting</h1>
+                        <h1>DNS SETTING</h1>
                       </div>
-                      <hr />
-
                       <div className="dns-desc-container">
                         <Form.Item label="Domain Name">
                           <Row gutter={[6, 0]}>
@@ -321,13 +311,7 @@ const DNSManagement = ({ match }) => {
                               <p className="domain_name">{items.domain_name}</p>
                             </Col>
                             <Col>
-                              <Popover
-                                title={null}
-                                content="Rename"
-                                placement="topLeft"
-                              >
-                                <FiEdit onClick={showModalRename} />
-                              </Popover>
+                              <FiEdit onClick={showModalRename} />
                             </Col>
                           </Row>
                         </Form.Item>
@@ -376,7 +360,10 @@ const DNSManagement = ({ match }) => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
               </div>
             </div>

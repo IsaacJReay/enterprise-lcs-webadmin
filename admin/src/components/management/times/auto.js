@@ -34,7 +34,7 @@ const Automaticaly = ({ pick, items }) => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           showPromiseConfirm();
           setLoading(false);
@@ -87,9 +87,9 @@ const Automaticaly = ({ pick, items }) => {
                       size="large"
                       type="primary"
                       htmlType="submit"
-                      className="button-update"
+                      className="button-update-time"
                     >
-                      Update
+                      SAVE & APPLY
                     </Button>
                   </Form.Item>
                 </Col>
@@ -119,10 +119,10 @@ const Automaticaly = ({ pick, items }) => {
                     size="large"
                     type="primary"
                     htmlType="submit"
-                    className="button-update"
+                    className="button-update-time"
                     disabled
                   >
-                    Update
+                    SAVE & APPLY
                   </Button>
                 </Form.Item>
               </Col>

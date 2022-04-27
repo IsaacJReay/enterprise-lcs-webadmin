@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Layout, Radio, Form } from "antd";
+import { Row, Col, Layout, Radio, Form, Space } from "antd";
 import Automaticaly from "./auto";
 import CustomeTime from "./manaul";
 import axios from "axios";
+import { IoIosHelpCircle } from "react-icons/io";
 
 const { Content } = Layout;
 
@@ -55,10 +56,9 @@ const TimeSetting = () => {
             <div className="card">
               <div className="container">
                 <div className="container-header">
-                  <h1>Time Settings</h1>
+                  <h1>TIME SETTTINGS</h1>
                 </div>
-                <hr />
-                <div className="desc-container-banner">
+                <div className="desc-container-banner2">
                   <Form form={form}>
                     <Form.Item name="ntp_status">
                       <Radio.Group
@@ -88,7 +88,10 @@ const TimeSetting = () => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
                 <div>
                   <h1>Time Settings Help</h1>

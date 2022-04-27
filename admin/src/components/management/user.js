@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Layout, Form, Avatar, Input, Button, message } from "antd";
+import {
+  Row,
+  Col,
+  Layout,
+  Form,
+  Avatar,
+  Input,
+  Button,
+  message,
+  Space,
+} from "antd";
 import Avatar1 from "../../assets/images/avatar/avatar.png";
 import axios from "axios";
+import { IoIosHelpCircle } from "react-icons/io";
 
 const { Content } = Layout;
 
@@ -44,14 +55,12 @@ const UserAccount = () => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Failed") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
-          message.error("Operation Failed! ");
-          setLoading(false);
+          window.location.replace("/logout");
         } else {
           setLoading(true);
-          message.success("Successful!");
-          window.location.replace("/logout");
+          message.error("Operation Failed! ");
           setLoading(false);
         }
       })
@@ -86,9 +95,8 @@ const UserAccount = () => {
             <div className="card">
               <div className="container">
                 <div className="container-header">
-                  <h1>Change Password</h1>
+                  <h1>ACCOUNT SETTING</h1>
                 </div>
-                <hr />
                 <div className="user-information">
                   <span>
                     After the password is up to date the site will logout!
@@ -104,65 +112,67 @@ const UserAccount = () => {
                     <h2>{user.username}</h2>
                   </div>
 
-                  <Form.Item
-                    label="Current Password"
-                    name="current_password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Input Current Password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password className="label-info" size="large" />
-                  </Form.Item>
-                  <Form.Item
-                    label="New Password"
-                    name="new_password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Input New Password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password className="label-info" size="large" />
-                  </Form.Item>
-                  <Form.Item
-                    label="Confirm Password"
-                    name="confirm_password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Confirm Password is required!",
-                      },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (
-                            !value ||
-                            getFieldValue("new_password") === value
-                          ) {
-                            return Promise.resolve();
-                          }
-                          return Promise.reject(
-                            new Error(
-                              "The two passwords that you entered do not match!"
-                            )
-                          );
+                  <div className="label-container">
+                    <Form.Item
+                      label="Current Password"
+                      name="current_password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Input Current Password!",
                         },
-                      }),
-                    ]}
-                  >
-                    <Input.Password className="label-info" size="large" />
-                  </Form.Item>
+                      ]}
+                    >
+                      <Input.Password className="label-info" size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      label="New Password"
+                      name="new_password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Input New Password!",
+                        },
+                      ]}
+                    >
+                      <Input.Password className="label-info" size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      label="Confirm Password"
+                      name="confirm_password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Confirm Password is required!",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (
+                              !value ||
+                              getFieldValue("new_password") === value
+                            ) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error(
+                                "The two passwords that you entered do not match!"
+                              )
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password className="label-info" size="large" />
+                    </Form.Item>
+                  </div>
                   <Form.Item>
                     <Button
                       type="primary"
                       htmlType="submit"
-                      className="button-apply3"
+                      className="button-apply4"
                       size="large"
                     >
-                      Apply
+                      SAVE & APPLY
                     </Button>
                   </Form.Item>
                 </Form>
@@ -173,7 +183,10 @@ const UserAccount = () => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
                 <div>
                   <h1>Account Setting</h1>

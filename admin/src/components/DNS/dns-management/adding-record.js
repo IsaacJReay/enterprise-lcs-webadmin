@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Input, Select, message } from "antd";
+import { useParams } from "react-router-dom";
+
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 
 const { Option } = Select;
 
-const AddRecord = ({ handleCancel, handleOk, records, doid, fetchData }) => {
+const AddRecord = ({
+  handleCancel,
+  handleOk,
+  records,
+  fetchData,
+  zone,
+  domainStatus,
+}) => {
   //  -------------state -------------
   const [, setLoading] = useState(false);
+  let { slug } = useParams();
 
   //   // ------- token ----------
   const baseUrl = process.env.REACT_APP_API_URL;
@@ -20,21 +30,26 @@ const AddRecord = ({ handleCancel, handleOk, records, doid, fetchData }) => {
 
   const handleApply = async (data) => {
     const inputData = {
-      subdomain_name: data.subdomain_name,
-      address: data.address,
-      dns_type: data.dns_type,
-      foreign_key: doid,
+      domain_name: slug,
+      status: domainStatus,
+      zone_record: [
+        {
+          subdomain_name: data.subdomain_name,
+          dns_type: data.dns_type,
+          address: data.address,
+        },
+      ],
     };
 
     await axios
-      .post(`${baseUrl}/settings/dns/zone_record/creation`, inputData, {
+      .post(`${baseUrl}/settings/dns/new/${zone}`, inputData, {
         headers: {
           "content-type": "application/json",
           ...auth,
         },
       })
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           message.success("Successful!");
           fetchData();
           handleOk();
@@ -67,7 +82,6 @@ const AddRecord = ({ handleCancel, handleOk, records, doid, fetchData }) => {
   return (
     <React.Fragment>
       <Modal
-        width={800}
         title={null}
         footer={null}
         closeIcon={<FiX className="close-icon" />}
@@ -105,7 +119,7 @@ const AddRecord = ({ handleCancel, handleOk, records, doid, fetchData }) => {
             >
               <Select
                 size="large"
-                className="select-option"
+                className="select-option3"
                 placeholder="Select here ..."
               >
                 <Option value="A">A</Option>
@@ -121,12 +135,12 @@ const AddRecord = ({ handleCancel, handleOk, records, doid, fetchData }) => {
             </Form.Item>
             <Form.Item>
               <Button
-                className="button-apply4"
+                className="adding-record"
                 size="large"
                 htmlType="submit"
                 type="primary"
               >
-                Submit
+                APPLY
               </Button>
             </Form.Item>
           </Form>

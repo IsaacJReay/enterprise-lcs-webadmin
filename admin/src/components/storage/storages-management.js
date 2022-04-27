@@ -76,7 +76,7 @@ const StoragesManagement = ({ match }) => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           message.success("Successful!");
           fetchData();
@@ -131,7 +131,7 @@ const StoragesManagement = ({ match }) => {
         },
       })
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           message.success("Successful!");
           setLoading(false);
@@ -166,7 +166,7 @@ const StoragesManagement = ({ match }) => {
         },
       })
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           message.success("Successful!");
           setLoading(false);
@@ -435,17 +435,17 @@ const StoragesManagement = ({ match }) => {
                   </div>
                   {!loading &&
                     dataStorage.children &&
-                    JSON.parse(JSON.stringify(dataStorage)).children.map(
-                      (item) => (
-                        <StorageItem
-                          data={item}
-                          parent={parent}
-                          setParent={setParent}
-                          setSelected={setSelected}
-                          selected={selected}
-                        />
-                      )
-                    )}
+                    JSON.parse(
+                      JSON.stringify(dataStorage)
+                    ).children.map((item) => (
+                      <StorageItem
+                        data={item}
+                        parent={parent}
+                        setParent={setParent}
+                        setSelected={setSelected}
+                        selected={selected}
+                      />
+                    ))}
                 </div>
               </div>
             </div>

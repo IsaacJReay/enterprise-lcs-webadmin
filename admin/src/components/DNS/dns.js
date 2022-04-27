@@ -11,13 +11,18 @@ import {
   Popconfirm,
   Divider,
   Input,
+  Space,
   Button,
+  Tabs,
 } from "antd";
-
+import { IoIosHelpCircle } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { ControlOutlined, ImportOutlined } from "@ant-design/icons";
+import DNSManagement from "./dns-management/manage-dns";
 
 const { Content } = Layout;
+const { TabPane } = Tabs;
 
 const DNSSetting = () => {
   // ------token ------
@@ -30,6 +35,7 @@ const DNSSetting = () => {
 
   const [, setLoading] = useState(false);
   const [datas, setDatas] = useState([]);
+  const [zones, setZones] = useState("internal");
   const [form] = Form.useForm();
 
   // ----------get data -------------
@@ -37,7 +43,7 @@ const DNSSetting = () => {
   async function fetchData() {
     await axios({
       method: "GET",
-      url: `${baseUrl}/settings/dns/domain_name/status`,
+      url: `${baseUrl}/settings/dns/status/${zones}`,
       headers: {
         "content-type": "application/json",
         ...auth,
@@ -54,21 +60,21 @@ const DNSSetting = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [zones]);
 
   //  --------delete record ----------
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (domain_name) => {
+    console.log(domain_name);
     await axios
-      .delete(`${baseUrl}/settings/dns/domain_name/deletion`, {
+      .delete(`${baseUrl}/settings/dns/delete/${zones}/${domain_name}`, {
         headers: {
           "content-type": "application/json",
           ...auth,
         },
-        data: { id: id },
       })
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           message.success("Successful!");
           fetchData();
           setLoading(false);
@@ -89,9 +95,12 @@ const DNSSetting = () => {
   const handleApply = async (data) => {
     const inputData = {
       domain_name: data.domain_name,
+      status: false,
+      zone_record: null,
     };
+    console.log(inputData);
     await axios
-      .post(`${baseUrl}/settings/dns/domain_name/creation`, inputData, {
+      .post(`${baseUrl}/settings/dns/new/${zones}`, inputData, {
         headers: {
           "content-type": "application/json",
           ...auth,
@@ -99,41 +108,33 @@ const DNSSetting = () => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           message.success("Successful!");
           form.resetFields();
           fetchData();
           setLoading(false);
         } else {
-          setLoading(true);
           message.error("Operation Failed! ");
-          setLoading(false);
         }
       })
 
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-        message.error(err.response.data.reason);
+        message.error("Operation Failed! ");
+        console.log(err);
       });
   };
 
   const columns = [
     {
-      title: "No",
-      width: "10%",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
       title: "Name",
       dataIndex: "domain_name",
       key: "domain_name",
+      width: "60%",
     },
     {
       title: "Status",
       dataIndex: "status",
+      width: "20%",
       key: "status",
       render: (status) => {
         return <Checkbox disabled checked={status} />;
@@ -141,12 +142,13 @@ const DNSSetting = () => {
     },
     {
       title: "Actions",
+      width: "20%",
       dataIndex: "id",
       render: (id, data) => {
         const { domain_name } = data;
         return (
           <React.Fragment>
-            <Link to={`/dns-management/${id}`}>
+            <Link to={`/dns-management/${zones}/${domain_name}`}>
               <Tag color="processing">Control</Tag>
             </Link>
             <Divider type="vertical" />
@@ -159,7 +161,7 @@ const DNSSetting = () => {
               }
               okText="Yes"
               cancelText="No"
-              onConfirm={() => handleDelete(id)}
+              onConfirm={() => handleDelete(domain_name)}
             >
               <Tag color="error" style={{ cursor: "pointer" }}>
                 Delete
@@ -192,7 +194,7 @@ const DNSSetting = () => {
             <Button
               type="primary"
               htmlType="submit"
-              className="button-update"
+              className="button-update2"
               size="large"
             >
               Create
@@ -203,6 +205,10 @@ const DNSSetting = () => {
     );
   };
 
+  function callback(key) {
+    setZones(key);
+  }
+
   return (
     <React.Fragment>
       <Content>
@@ -211,24 +217,61 @@ const DNSSetting = () => {
             <div className="card">
               <div className="container">
                 <div className="container-header">
-                  <h1>DNS Setting</h1>
+                  <h1>DNS MANAGEMENT</h1>
                 </div>
-                <hr />
-                <div className="dns-desc-container">
-                  <CreateDomain />
-                </div>
-                <Form>
-                  <div className="dns-desc-container">
-                    <Form.Item>
-                      <Table
-                        columns={columns}
-                        dataSource={datas}
-                        pagination={false}
-                        scroll={{ y: 450 }}
-                      />
-                    </Form.Item>
-                  </div>
-                </Form>
+
+                <Tabs defaultActiveKey="internal" onChange={callback}>
+                  <TabPane
+                    tab={
+                      <span>
+                        <ControlOutlined />
+                        INTERNAL
+                      </span>
+                    }
+                    key="internal"
+                  >
+                    <div className="dns-desc-container">
+                      <CreateDomain />
+                    </div>
+                    <Form>
+                      <div className="dns-desc-container">
+                        <Form.Item>
+                          <Table
+                            columns={columns}
+                            dataSource={datas}
+                            pagination={false}
+                            scroll={{ y: 600 }}
+                          />
+                        </Form.Item>
+                      </div>
+                    </Form>
+                  </TabPane>
+                  <TabPane
+                    tab={
+                      <span>
+                        <ImportOutlined />
+                        EXTERNAL
+                      </span>
+                    }
+                    key="external"
+                  >
+                    <div className="dns-desc-container">
+                      <CreateDomain />
+                    </div>
+                    <Form>
+                      <div className="dns-desc-container">
+                        <Form.Item>
+                          <Table
+                            columns={columns}
+                            dataSource={datas}
+                            pagination={false}
+                            scroll={{ y: 600 }}
+                          />
+                        </Form.Item>
+                      </div>
+                    </Form>
+                  </TabPane>
+                </Tabs>
               </div>
             </div>
           </Col>
@@ -236,7 +279,10 @@ const DNSSetting = () => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
               </div>
             </div>

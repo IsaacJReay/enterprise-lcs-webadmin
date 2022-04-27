@@ -50,15 +50,15 @@ const Restore = () => {
       })
 
       .then((res) => {
-        if (res.data.operation_status === "Failed") {
-          setLoading(true);
-          message.error("Operation Failed! ");
-          setLoading(false);
-        } else {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           setFileList();
           setUploading(false);
           message.success("Successful!");
+          setLoading(false);
+        } else {
+          setLoading(true);
+          message.error("Operation Failed! ");
           setLoading(false);
         }
       })
@@ -80,67 +80,59 @@ const Restore = () => {
 
   return (
     <React.Fragment>
-      <div className="card">
-        <div className="container">
-          <div className="container-header">
-            <h1>Restore Config</h1>
-          </div>
-          <hr />
-          <Form {...layout} onFinish={handleImport}>
-            <Form.Item
-              className="restore-settting"
-              label="File"
-              rules={[
-                {
-                  required: true,
-                  message: "Select the file!",
-                },
-              ]}
-            >
-              <Upload
-                {...props}
-                maxCount={1}
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                listType="picture"
-                className="upload-list-inline"
-              >
-                <Button className="browse-buttons" size="large">
-                  Browse
-                </Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Input Password!",
-                },
-              ]}
-            >
-              <Input.Password className="label-info" size="large" />
-            </Form.Item>
-            <Form.Item name="confirm">
-              <Checkbox onChange={onChange} className="restore-checkbox">
-                Confirm
-              </Checkbox>
-            </Form.Item>
+      <Form {...layout} onFinish={handleImport} className="backup-container">
+        <Form.Item
+          className="restore-settting"
+          label="File"
+          rules={[
+            {
+              required: true,
+              message: "Select the file!",
+            },
+          ]}
+        >
+          <Upload
+            {...props}
+            maxCount={1}
+            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            listType="picture"
+            className="upload-list-inline"
+          >
+            <Button className="browse-buttons" size="large">
+              Browse
+            </Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Input Password!",
+            },
+          ]}
+        >
+          <Input.Password className="label-info" size="large" />
+        </Form.Item>
+        <Form.Item name="confirm">
+          <Checkbox onChange={onChange} className="restore-checkbox">
+            Confirm
+          </Checkbox>
+        </Form.Item>
 
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="button-apply3"
-                size="large"
-                disabled={fileList.length === 0 || confirm === false}
-              >
-                {uploading ? "Importing" : "Import"}
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      </div>
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="button-export2"
+            size="large"
+            disabled={fileList.length === 0 || confirm === false}
+          >
+            {uploading ? "Importing" : "IMPORT"}
+          </Button>
+        </Form.Item>
+      </Form>
     </React.Fragment>
   );
 };

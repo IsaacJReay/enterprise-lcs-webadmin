@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Col, Row, Collapse, Progress } from "antd";
+import { Layout, Col, Row, Collapse, Progress, Space } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import myImage from "../../assets/images/Hard-Drive3.png";
 import driver from "../../assets/images/Hard-Drive.png";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { IoIosHelpCircle } from "react-icons/io";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -89,8 +90,7 @@ const Storages = () => {
                                       strokeWidth={25}
                                       status="active"
                                       strokeColor={{
-                                        "0%": "#65DDFF",
-                                        "100%": "#E2F516",
+                                        "100%": "#1890ff",
                                       }}
                                     />
                                     <p>
@@ -125,8 +125,7 @@ const Storages = () => {
                                       strokeWidth={25}
                                       status="active"
                                       strokeColor={{
-                                        "0%": "#65DDFF",
-                                        "100%": "#E2F516",
+                                        "100%": "#1890ff",
                                       }}
                                     />
                                     <p>
@@ -149,7 +148,10 @@ const Storages = () => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
               </div>
             </div>

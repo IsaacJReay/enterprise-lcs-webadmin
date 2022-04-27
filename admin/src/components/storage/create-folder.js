@@ -45,7 +45,7 @@ const CreateFolder = ({
       )
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           setLoading(true);
           message.success("Successful!");
           fetchData();

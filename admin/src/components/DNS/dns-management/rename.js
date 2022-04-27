@@ -1,18 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Input, Form, Button, message } from "antd";
+import { useParams } from "react-router-dom";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 
-const DNSRename = ({
-  visible,
-  handleCancel,
-  handleOk,
-  doid,
-  doname,
-  fetchData,
-}) => {
+const DNSRename = ({ visible, handleCancel, handleOk, fetchData, zone }) => {
   //  ----------state -----------
   const [, setLoading] = useState(false);
+  let { slug } = useParams();
 
   //   // ------- token ----------
   const baseUrl = process.env.REACT_APP_API_URL;
@@ -24,22 +19,27 @@ const DNSRename = ({
   //   // ------- apply button ---------
 
   const handleApply = async (data) => {
-    const inputData = {
-      new_domain_name: data.domain_name,
-      foreign_key: { foreign_key: doid },
-    };
+    const new_domain_name = data.new_domain_name;
+    const url = `${baseUrl}/settings/dns/domain_name/rename/${zone}`;
+    const nextUrl = `/dns-management/${zone}/${new_domain_name}`;
+
     await axios
-      .put(`${baseUrl}/settings/dns/domain_name/update`, inputData, {
-        headers: {
-          "content-type": "application/json",
-          ...auth,
-        },
-      })
+      .put(
+        `${baseUrl}/settings/dns/domain_name/rename/${zone}/${slug}`,
+        new_domain_name,
+        {
+          headers: {
+            "content-type": "application/json",
+            ...auth,
+          },
+        }
+      )
 
       .then((res) => {
-        if (res.data.operation_status === "Success") {
+        if ((res.statusCode = 200)) {
           message.success("Successful!");
-          fetchData();
+          window.history.pushState({ url }, null, nextUrl);
+          window.location.reload();
           handleOk();
           setLoading(false);
         } else {
@@ -50,9 +50,6 @@ const DNSRename = ({
       })
 
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
         console.log(err);
         message.error("Operation Failed! ");
       });
@@ -68,8 +65,8 @@ const DNSRename = ({
         closeIcon={<FiX className="close-icon" />}
         footer={null}
       >
-        <Form onFinish={handleApply} initialValues={{ domain_name: doname }}>
-          <Form.Item name="domain_name">
+        <Form onFinish={handleApply} initialValues={{ new_domain_name: slug }}>
+          <Form.Item name="new_domain_name">
             <Input placeholder="Text here ..." size="large" />
           </Form.Item>
           <Form.Item>
@@ -79,7 +76,7 @@ const DNSRename = ({
               size="large"
               className="button-apply2"
             >
-              Submit
+              APPLY
             </Button>
           </Form.Item>
         </Form>
