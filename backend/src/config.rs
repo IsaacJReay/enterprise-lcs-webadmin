@@ -131,48 +131,44 @@ pub fn untar_file(filename: &str, extract_location: &str) -> bool {
     }
 }
 
-fn download_file(download_link: &str, mut output_file: File) -> bool {
+
+fn download_file(download_link: &str, mut output_file: File) -> Result<(), String> {
     
     let client = reqwest::blocking::Client::new();
+    let response = match client.head(download_link).send() {
+        Ok(response) => Ok(response),
+        Err(err) => Err(err.to_string()),
+    }?;
+    let length = match response.headers().get(CONTENT_LENGTH) {
+        Some(length) => Ok(length),
+        None => Err(String::from("No Content Length"))
+    }?;
+    let length = u64::from_str(length.to_str().unwrap()).unwrap();
+    let startingpoint = output_file.metadata().unwrap().len();
+    let whole_range = match PartialRangeIter::new(startingpoint, length - 1, CHUNK_SIZE) {
+        Ok(whole_range) => Ok(whole_range),
+        Err(err) => Err(err.to_string()),
+    }?;
 
-    match client.head(download_link).send() {
-        Ok(response) => {
-            match response.headers().get(CONTENT_LENGTH) {
-                Some(length) => {
-                    match u64::from_str(length.to_str().unwrap()) {
-                        Ok(length) => {
-                            let startingpoint = output_file.metadata().unwrap().len();
-                            match PartialRangeIter::new(startingpoint, length - 1, CHUNK_SIZE) {
-                                Ok(whole_range) => {
-                                    let mut success: bool = true;
-                                    for range in whole_range {    
-                                        match client.get(download_link).header(RANGE, &range).send(){
-                                            Ok(mut response) => {
-                                                let status = response.status();
-                                                match !(status == StatusCode::OK || status == StatusCode::PARTIAL_CONTENT) {
-                                                    true => std::io::copy(&mut response, &mut output_file).unwrap(),
-                                                    false => {success = false; 0}
-                                                }
-                                            },
-                                            Err(_) => {success = false; 0}
-                                        };
-                                    }
-                                    match success {
-                                        true => true,
-                                        false => false,
-                                    }
-                                },
-                                Err(_) => false,
-                            }
-                        },
-                        Err(_) => false,
-                    }
-                },
-                None => false,
-            }
-        },
-        Err(_t) => false,
+    for range in whole_range {
+        let mut response = match client.get(download_link).header(RANGE, &range).send(){
+            Ok(response) => Ok(response),
+            Err(err) => Err(err.to_string())
+        }?;
+
+        let status = response.status();
+        match status == StatusCode::OK || status == StatusCode::PARTIAL_CONTENT {
+            true => Ok(()),
+            false => Err("error_status_code".to_string())
+        }?;
+
+        match std::io::copy(&mut response, &mut output_file) {
+            Ok(_) => Ok(()),
+            Err(err) => Err(err.to_string()),
+        }?
     }
+    
+    Ok(())
 }
 
 pub fn generate_file_system_struct(linux_path: &str, drive_label: &str) -> DirectoryInfo {

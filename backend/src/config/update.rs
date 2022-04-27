@@ -20,9 +20,13 @@ use crate::{
     }
 };
 
-pub fn display_new_update_lists() -> Vec<SystemUpdateInformation> {
+pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String> {
 
+<<<<<<< HEAD
     download_file("https://dev.koompi.org/contentserver/update_db.toml", continue_file("/tmp/update_db.toml"));
+=======
+    download_file("https://dev.koompi.org/contentserver/update_db.toml", continue_file("/tmp/update_db.toml"))?;
+>>>>>>> adf4c51 (fix error where download is error)
 
     let new_update = toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml")).unwrap();
     let current_update = toml::from_str::<ContentServerUpdate>(&read_file("/kmp/update_db.toml")).unwrap();
@@ -120,7 +124,7 @@ pub fn display_new_update_lists() -> Vec<SystemUpdateInformation> {
         }
     }
 
-    vec_updatable 
+    Ok(vec_updatable)
 }
 
 pub fn query_updatable_depedencies_update_content_server(id: &str, sys_update: bool) -> Vec<SystemUpdateInformation> {
@@ -128,7 +132,7 @@ pub fn query_updatable_depedencies_update_content_server(id: &str, sys_update: b
     let mut vec_updatable: Vec<SystemUpdateInformation> = Vec::new();
     query_all_depedencies_update_content_server(&mut vec_updatable, id, sys_update);
 
-    display_new_update_lists().iter().for_each(
+    display_new_update_lists().unwrap().iter().for_each(
         |each_update_info| {
             vec_updatable.iter_mut().for_each(
                 |each_current_update_info| {
@@ -264,9 +268,8 @@ fn query_all_depedencies_update_content_server(vec_updatable: &mut Vec<SystemUpd
 pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
     let all_new_update_information = toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml")).unwrap();
     let vec_updatable = query_updatable_depedencies_update_content_server(id, is_sys_update);
-
-    let mut download_status: bool = true;
-    let mut install_status: bool = true;
+    let mut install_status: bool = false;
+    let mut download_status: bool = false;
 
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
@@ -292,8 +295,9 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
 
         let output_file = continue_file(&("/tmp/".to_owned()+filename));
 
-        if !download_file(&("https://dev.koompi.org/contentserver/".to_owned()+filename), output_file) {
-            download_status = false
+        match download_file(&("https://dev.koompi.org/contentserver/".to_owned()+filename), output_file) {
+            Ok(()) => (),
+            Err(_) => download_status = false
         };
     }
 
