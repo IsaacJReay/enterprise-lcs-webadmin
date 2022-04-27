@@ -21,12 +21,8 @@ use crate::{
 };
 
 pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String> {
-
-<<<<<<< HEAD
-    download_file("https://dev.koompi.org/contentserver/update_db.toml", continue_file("/tmp/update_db.toml"));
-=======
+    
     download_file("https://dev.koompi.org/contentserver/update_db.toml", continue_file("/tmp/update_db.toml"))?;
->>>>>>> adf4c51 (fix error where download is error)
 
     let new_update = toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml")).unwrap();
     let current_update = toml::from_str::<ContentServerUpdate>(&read_file("/kmp/update_db.toml")).unwrap();
