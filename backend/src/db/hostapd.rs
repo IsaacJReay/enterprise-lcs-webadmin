@@ -12,10 +12,10 @@ pub fn read_hostapd() -> (String, bool, u8, String, u8, String, bool, bool) {
     let mut qos: bool = false;
 
     config.lines().for_each(|each_line| {
-        if each_line.contains("ssid=") {
-            ssid = each_line.split("=").last().unwrap().to_string();
-        } else if each_line.contains("ignore_broadcast_ssid=") {
+        if each_line.contains("ignore_broadcast_ssid=") {
             hide_ssid = each_line.split("=").last().unwrap().parse::<u8>().unwrap() != 0;
+        } else if each_line.contains("ssid=") {
+            ssid = each_line.split("=").last().unwrap().to_string();
         } else if each_line.contains("wpa=") {
             wpa = each_line.split("=").last().unwrap().parse::<u8>().unwrap();
         } else if each_line.contains("hw_mode=") {
