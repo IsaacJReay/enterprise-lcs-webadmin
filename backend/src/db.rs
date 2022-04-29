@@ -1,12 +1,11 @@
-pub mod users;
-pub mod systemdnetworkd;
-pub mod storage;
 pub mod hostapd;
+pub mod storage;
+pub mod systemdnetworkd;
+pub mod users;
 
 pub fn create_tables() {
-
     if let Err(err) = std::fs::remove_file("/tmp/lcs.db") {
-        if &err.to_string() == "Operation not permitted (os error 1)"{
+        if &err.to_string() == "Operation not permitted (os error 1)" {
             eprintln!("{:#?}", &err);
         }
     }
@@ -20,5 +19,4 @@ pub fn create_tables() {
             COMMIT;"
         )
         .unwrap();
-          
 }

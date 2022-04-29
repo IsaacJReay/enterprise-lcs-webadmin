@@ -1,24 +1,11 @@
-use actix_web::{
-    HttpResponse, 
-    Result, 
-    get,
-    error,
-    HttpRequest,
-};
 use crate::{
-    config, 
-    db, 
-    linux, 
-    handler, 
-    structs::{
-        DriveDescription, 
-        PartUUID
-    }
+    config, db, handler, linux,
+    structs::{DriveDescription, PartUUID},
 };
+use actix_web::{error, get, HttpRequest, HttpResponse, Result};
 
 #[get("/private/api/settings/storage/status")]
 pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
-
     let (_username, password) = handler::handle_validate_token_response(&req)?;
 
     let all_partitions = linux::storage::get_all_partitions();
@@ -30,16 +17,22 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
     let mut mounted_partitions_mount: Vec<String> = Vec::new();
     let mut not_mounted_partitions: Vec<String> = Vec::new();
     let mut drives_description: Vec<DriveDescription> = vec![local_content_storage];
-    
+
     let mut drives_description_length: usize = drives_description.len();
     let mut mount_operation_status: bool = true;
     for each_partition in all_partitions {
-        let (_code, partition_filesystem_type, _error) = linux::storage::get_partition_filesystem_type(&each_partition);
+        let (_code, partition_filesystem_type, _error) =
+            linux::storage::get_partition_filesystem_type(&each_partition);
 
-        if  partition_filesystem_type == "exfat" || partition_filesystem_type == "vfat" || partition_filesystem_type == "ntfs" {
-            let is_mounted = db::storage::query_existence_from_storage_table_by_path(&each_partition);
+        if partition_filesystem_type == "exfat"
+            || partition_filesystem_type == "vfat"
+            || partition_filesystem_type == "ntfs"
+        {
+            let is_mounted =
+                db::storage::query_existence_from_storage_table_by_path(&each_partition);
             match is_mounted {
-                true => mounted_partitions_mount.push(db::storage::query_from_storage_table(Some(&each_partition), None).1),
+                true => mounted_partitions_mount
+                    .push(db::storage::query_from_storage_table(Some(&each_partition), None).1),
                 false => not_mounted_partitions.push(each_partition),
             }
         }
@@ -52,44 +45,37 @@ pub async fn get_storage_page(req: HttpRequest) -> Result<HttpResponse> {
             _ => {
                 mount_operation_status = false;
                 break;
-            },
-        }   
+            }
+        }
     }
 
     if mount_operation_status {
         for each_mount in mounted_partitions_mount {
             let current_drive_description = linux::storage::get_partition_information(&each_mount);
             drives_description.insert(drives_description_length, current_drive_description);
-            drives_description_length +=1;
+            drives_description_length += 1;
         }
-        Ok(
-            HttpResponse::Ok().json(
-                drives_description
-            )
-        )
-    }
-    else {
+        Ok(HttpResponse::Ok().json(drives_description))
+    } else {
         Err(error::ErrorInternalServerError("mount-failed"))
     }
 }
 
 #[get("/private/api/settings/storage/device/status/{drive_partuuid}")]
 pub async fn get_storage_device_page_test(req: HttpRequest) -> Result<HttpResponse> {
-
     let (_username, _password) = handler::handle_validate_token_response(&req)?;
 
     let drive_partuuid = req.match_info().get("drive_partuuid").unwrap();
     if drive_partuuid != "kmp" {
         let path = db::storage::query_from_storage_table(None, Some(&drive_partuuid)).1;
-        Ok(
-            HttpResponse::Ok()
-                .json(config::generate_file_system_struct(&path, "Removeable Device"))
-        )
-    }
-    else{           
-        Ok(
-            HttpResponse::Ok()
-                .json(config::generate_file_system_struct("/kmp/webadmin", "Local Content Storage"))
-        )
+        Ok(HttpResponse::Ok().json(config::generate_file_system_struct(
+            &path,
+            "Removeable Device",
+        )))
+    } else {
+        Ok(HttpResponse::Ok().json(config::generate_file_system_struct(
+            "/kmp/webadmin",
+            "Local Content Storage",
+        )))
     }
 }

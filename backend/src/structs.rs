@@ -1,12 +1,6 @@
-use serde::{
-    Deserialize, 
-    Serialize,
-};
-use chrono::{
-    DateTime, 
-    Utc,
-};
+use chrono::{DateTime, Utc};
 use reqwest::header::HeaderValue;
+use serde::{Deserialize, Serialize};
 use toml::value::Table;
 
 #[derive(Deserialize)]
@@ -17,19 +11,19 @@ pub struct LoginParam {
 
 #[derive(Serialize, Deserialize)]
 pub struct HostapdParam {
-    pub ssid: String, 
+    pub ssid: String,
     pub hide_ssid: bool,
-    pub hw_mode: String, 
-    pub channel: u8, 
+    pub hw_mode: String,
+    pub channel: u8,
     pub wpa: u8,
     pub passphrase: String,
     pub hw_n_mode: bool,
     pub qos: bool,
 }
 
-impl HostapdParam{
+impl HostapdParam {
     pub fn default() -> Self {
-        Self{
+        Self {
             ssid: String::from("Sala"),
             hide_ssid: false,
             hw_mode: String::from("g"),
@@ -51,12 +45,12 @@ pub struct WirelessNetworkParam {
     pub dns: String,
     pub default_lease: String,
     pub max_lease: String,
-    pub timezone: String,   
+    pub timezone: String,
 }
 
 impl WirelessNetworkParam {
     pub fn default() -> Self {
-        Self{
+        Self {
             router_ip: String::from("10.100.100.1"),
             netmask: String::from("255.255.255.0"),
             range_start: String::from("10.100.100.1"),
@@ -64,7 +58,7 @@ impl WirelessNetworkParam {
             dns: String::from("1.1.1.1 8.8.8.8"),
             default_lease: String::from("1800"),
             max_lease: String::from("7200"),
-            timezone: String::from("Asia/Phnom_Penh")
+            timezone: String::from("Asia/Phnom_Penh"),
         }
     }
 }
@@ -79,7 +73,7 @@ impl PasswdParam {
     pub fn default(old: &str) -> Self {
         Self {
             old_password: old.to_string(),
-            new_password: String::from("123")
+            new_password: String::from("123"),
         }
     }
 }
@@ -121,7 +115,7 @@ pub struct StatusPageResult {
 pub struct DnsZonesInfo {
     pub domain_name: String,
     pub status: bool,
-    pub zone_record: Option<Vec<DnsRecords>>
+    pub zone_record: Option<Vec<DnsRecords>>,
 }
 
 impl DnsZonesInfo {
@@ -130,18 +124,62 @@ impl DnsZonesInfo {
             domain_name: "koompi.com".to_string(),
             status: true,
             zone_record: Some(vec![
-                DnsRecords { subdomain_name: "ns".to_string(), dns_type: "A".to_string(), address: wan_ip.unwrap_or_else(||"10.100.100.1").to_string() },
-                DnsRecords { subdomain_name: "sala".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "salabackend".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "rachel".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "admin".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "w3".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "phet".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "admin".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "wiktionary".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "wikipedia".to_string(), dns_type: "A".to_string(), address: "ns".to_string()},
-                DnsRecords { subdomain_name: "wikibook".to_string(), dns_type: "A".to_string(), address: "ns".to_string()}
-            ])
+                DnsRecords {
+                    subdomain_name: "ns".to_string(),
+                    dns_type: "A".to_string(),
+                    address: wan_ip.unwrap_or_else(|| "10.100.100.1").to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "sala".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "salabackend".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "rachel".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "admin".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "w3".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "phet".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "admin".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "wiktionary".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "wikipedia".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "wikibook".to_string(),
+                    dns_type: "A".to_string(),
+                    address: "ns".to_string(),
+                },
+            ]),
         }
     }
 }
@@ -164,7 +202,6 @@ pub struct TimeDateZone {
     pub timedate: TimeDate,
 }
 
-
 #[derive(Serialize)]
 pub struct TimeDateZoneNTP {
     pub ntp_status: bool,
@@ -180,16 +217,15 @@ pub struct TimeDate {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct PartUUID{
+pub struct PartUUID {
     pub drive_partuuid: String,
 }
 #[derive(Deserialize)]
 pub struct MakeDirectoryArgs {
     pub directory_name: String,
     pub parent_directory: String,
-    pub drive_partuuid: String
+    pub drive_partuuid: String,
 }
-
 
 #[derive(Serialize)]
 pub struct DriveDescription {
@@ -197,7 +233,7 @@ pub struct DriveDescription {
     pub drive_partuuid: PartUUID,
     pub free_space: String,
     pub total_space: String,
-    pub percentage: f32
+    pub percentage: f32,
 }
 
 #[derive(Deserialize)]
@@ -225,14 +261,8 @@ impl PathPartition {
                 current_path
                     .to_string()
                     .split("/")
-                    .filter(
-                        |filter_argument| 
-                        !filter_argument.is_empty()
-                    )
-                        .map(
-                            |s|
-                            s.to_string()
-                    )
+                    .filter(|filter_argument| !filter_argument.is_empty())
+                    .map(|s| s.to_string())
                     .collect::<Vec<String>>()
             },
         }
@@ -254,23 +284,19 @@ impl ItemMetaData {
         let modified_date = system_modified_date
             .to_rfc3339()
             .split("T")
-            .map(
-                |argument| {
-                    let new_argument = match argument.contains(".") {
-                        true => argument
-                            .split(".")
-                            .map(
-                                |new_part| new_part.to_string()
-                            )
-                            .collect::<Vec<String>>()
-                            .first()
-                            .unwrap()
-                            .to_string(),
-                        false => argument.to_string(),
-                    };
-                    new_argument
-                }
-            )
+            .map(|argument| {
+                let new_argument = match argument.contains(".") {
+                    true => argument
+                        .split(".")
+                        .map(|new_part| new_part.to_string())
+                        .collect::<Vec<String>>()
+                        .first()
+                        .unwrap()
+                        .to_string(),
+                    false => argument.to_string(),
+                };
+                new_argument
+            })
             .collect::<Vec<String>>()
             .join(" ");
 
@@ -326,13 +352,11 @@ impl PartialRangeIter {
         if buffer_size == 0 {
             panic!("invalid buffer_size, give a value greater than zero.");
         }
-        Ok(
-            PartialRangeIter {
-                start,
-                end,
-                buffer_size,
-            }
-        )
+        Ok(PartialRangeIter {
+            start,
+            end,
+            buffer_size,
+        })
     }
 }
 
@@ -341,11 +365,13 @@ impl Iterator for PartialRangeIter {
     fn next(&mut self) -> Option<Self::Item> {
         if self.start > self.end {
             None
-        }
-        else {
+        } else {
             let prev_start = self.start;
             self.start += std::cmp::min(self.buffer_size as u64, self.end - self.start + 1);
-            Some(HeaderValue::from_str(&format!("bytes={}-{}", prev_start, self.start - 1)).expect("string provided by format!"))
+            Some(
+                HeaderValue::from_str(&format!("bytes={}-{}", prev_start, self.start - 1))
+                    .expect("string provided by format!"),
+            )
         }
     }
 }
@@ -362,7 +388,7 @@ pub struct SystemUpdateInformation {
     pub display_name: String,
     pub update_size: u32,
     pub sys_update: bool,
-    pub status: String
+    pub status: String,
 }
 
 impl SystemUpdateInformation {
@@ -379,16 +405,16 @@ impl SystemUpdateInformation {
 
 impl PartialEq for SystemUpdateInformation {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id &&
-        self.display_name == other.display_name &&
-        self.update_size == other.update_size &&
-        self.sys_update == other.sys_update &&
-        self.status == other.status 
+        self.id == other.id
+            && self.display_name == other.display_name
+            && self.update_size == other.update_size
+            && self.sys_update == other.sys_update
+            && self.status == other.status
     }
 }
 
 #[derive(Deserialize)]
 pub struct SystemUpdateRequest {
     pub id: String,
-    pub sys_update: bool
+    pub sys_update: bool,
 }

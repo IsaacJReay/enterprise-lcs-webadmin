@@ -1,20 +1,8 @@
-use actix_web::{
-    HttpResponse, 
-    Result, 
-    get, 
-    HttpRequest,
-};
-use crate::{
-    linux, 
-    handler,
-    structs::{ 
-        TimeDateZoneNTP, 
-    }, 
-};
+use crate::{handler, linux, structs::TimeDateZoneNTP};
+use actix_web::{get, HttpRequest, HttpResponse, Result};
 
 #[get("/private/api/settings/time/status")]
 pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
-
     let (_username, _password) = handler::handle_validate_token_response(&req)?;
 
     let (_code, output, _error) = linux::systemsettings::query_date_for_display();
@@ -25,18 +13,13 @@ pub async fn get_timedatepage(req: HttpRequest) -> Result<HttpResponse> {
     let (_code, current_ntp_status, _error) = linux::systemsettings::query_ntp_status();
     let status = match current_ntp_status.as_ref() {
         "active" => true,
-        _ => false
+        _ => false,
     };
 
-    Ok(
-        HttpResponse::Ok().json(
-            TimeDateZoneNTP{
-                ntp_status: status,
-                time: current_time.to_string(),
-                date: current_date.to_string(),
-                timezone: current_timezone.to_string(),
-            }
-        )
-    )
-
+    Ok(HttpResponse::Ok().json(TimeDateZoneNTP {
+        ntp_status: status,
+        time: current_time.to_string(),
+        date: current_date.to_string(),
+        timezone: current_timezone.to_string(),
+    }))
 }

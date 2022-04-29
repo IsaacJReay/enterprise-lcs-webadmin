@@ -1,23 +1,18 @@
-use crate::{
-    // config,
-    DECRYPT_NONCE
-};
-use aes_gcm_siv::{Aes256GcmSiv, Key, Nonce}; // Or `Aes128GcmSiv`
+use crate::DECRYPT_NONCE;
 use aes_gcm_siv::aead::{Aead, NewAead};
+use aes_gcm_siv::{Aes256GcmSiv, Key, Nonce}; // Or `Aes128GcmSiv`
 use rand::Rng;
 
 pub fn padding_convert(password: &str) -> Vec<u8> {
-
     let mutpassword: String;
     let mut padding: String = String::new();
 
     if password.len() < 32 {
-        for _i in 0..32-password.len(){
+        for _i in 0..32 - password.len() {
             padding = " ".to_owned() + padding.as_str();
         }
         mutpassword = password.to_owned() + padding.as_str();
-    }
-    else {
+    } else {
         mutpassword = password.to_string();
     }
 
@@ -26,27 +21,27 @@ pub fn padding_convert(password: &str) -> Vec<u8> {
     password_vec
 }
 
-
 pub fn encrypt(plaintext: String, key: Vec<u8>) -> String {
-
     let mut stringciphertext: String = String::new();
 
     let key = Key::from_slice(key.as_slice());
     let cipher = Aes256GcmSiv::new(key);
     let nonce = Nonce::from_slice(DECRYPT_NONCE.as_bytes());
-    let ciphertext = cipher.encrypt(nonce, plaintext.as_bytes().as_ref())
-        .expect("encryption failure!");  // NOTE: handle this error to avoid panics!
+    let ciphertext = cipher
+        .encrypt(nonce, plaintext.as_bytes().as_ref())
+        .expect("encryption failure!"); // NOTE: handle this error to avoid panics!
 
     for array in ciphertext {
         stringciphertext = array.to_string() + " " + stringciphertext.as_str();
     }
-    stringciphertext    
-
+    stringciphertext
 }
 
 pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> Result<String, String> {
-
-    let mut ciphertext = encrypted_text.split_whitespace().map(|each_arg| each_arg.parse::<u8>().unwrap()).collect::<Vec<u8>>();
+    let mut ciphertext = encrypted_text
+        .split_whitespace()
+        .map(|each_arg| each_arg.parse::<u8>().unwrap())
+        .collect::<Vec<u8>>();
     ciphertext.reverse();
 
     let key = Key::from_slice(key.as_slice());
@@ -56,13 +51,11 @@ pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> Result<String, String> {
     match cipher.decrypt(nonce, ciphertext.as_ref()) {
         Ok(binary) => match String::from_utf8(binary) {
             Ok(string) => Ok(string),
-            Err(message) => Err(message.to_string())
+            Err(message) => Err(message.to_string()),
         },
-        Err(message) => Err(message.to_string())
+        Err(message) => Err(message.to_string()),
     }
-    
 }
-
 
 // pub fn encrypt_file(filename: &str, password: &str) -> String {
 //     let mut byte_file = config::get_file_as_byte_vec(&filename.to_string());
@@ -111,11 +104,12 @@ pub fn decrypt(encrypted_text: String, key: Vec<u8>) -> Result<String, String> {
 //     file
 // }
 
-pub fn generate_random(string_len: usize, custom_charset: Option<String>) -> String{
-
+pub fn generate_random(string_len: usize, custom_charset: Option<String>) -> String {
     let custom_charset = match custom_charset {
         Some(set) => set,
-        None => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789)(*&^%$#@!~".to_string()
+        None => {
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789)(*&^%$#@!~".to_string()
+        }
     };
 
     let mut rng = rand::thread_rng();
