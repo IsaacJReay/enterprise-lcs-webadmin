@@ -128,8 +128,10 @@ pub fn read_eth0() -> (String, String, String, String) {
     let (_code, gateway_output, _error) =
         run_script::run_script!(&format!("{}", eth0_gateway), &vec![], &options).unwrap();
 
-    let subnet: Ipv4Network = prefix_output.parse().unwrap();
-    let eth0_subnetmask: String = subnet.mask().to_string();
+    let eth0_subnetmask = match prefix_output.parse::<Ipv4Network>() {
+        Ok(subnet) => subnet.mask().to_string(),
+        Err(_) => "".to_string(),
+    };
 
     (
         macaddr_output,
