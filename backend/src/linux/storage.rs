@@ -37,8 +37,6 @@ printf "$part_uuid $mount_location"
     let command = _command.replacen("partition_name", partition_name, 3);
     let (code, output, error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
 
-    // println!("{}; {}; {}; {}", code, output, error, partition_name);
-
     let splited_output: Vec<&str> = output.split_whitespace().collect::<Vec<&str>>();
 
     let (_code, partition_filesystem_type, _error) = get_partition_filesystem_type(partition_name);
@@ -88,8 +86,6 @@ printf "$part_uuid $total_size $free_space $percentage"
 "#;
     let command = _command.replacen("mount_location", mount_location, 2);
     let (_code, output, _error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
-
-    println!("Command: {}\nOutput: {}", command, output);
 
     let splited_output = output.split_whitespace().collect::<Vec<&str>>();
     let drive_struct = DriveDescription {
