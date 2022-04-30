@@ -19,7 +19,6 @@ import { IoIosHelpCircle } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { ControlOutlined, ImportOutlined } from "@ant-design/icons";
-import DNSManagement from "./dns-management/manage-dns";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -37,6 +36,10 @@ const DNSSetting = () => {
   const [datas, setDatas] = useState([]);
   const [zones, setZones] = useState("internal");
   const [form] = Form.useForm();
+
+  function callback(key) {
+    setZones(key);
+  }
 
   // ----------get data -------------
 
@@ -204,10 +207,6 @@ const DNSSetting = () => {
       </React.Fragment>
     );
   };
-
-  function callback(key) {
-    setZones(key);
-  }
 
   return (
     <React.Fragment>

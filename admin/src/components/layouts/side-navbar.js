@@ -26,14 +26,13 @@ const SideNavBar = () => {
   const [openKeys, setOpenKeys] = useState(["/status"]);
   const [currentUser, setCurrentUser] = useState();
   const [, setLoading] = useState(false);
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
 
   // -------------get user ----------
 
   useEffect(() => {
-    setLoading(true);
-    const auth = {
-      Authorization: "Bearer " + getToken,
-    };
     axios({
       method: "GET",
       url: `${baseUrl}/user/query`,
@@ -44,9 +43,7 @@ const SideNavBar = () => {
     })
       .then((res) => {
         setCurrentUser(res.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        setLoading(false);
       })
       .catch((err) => console.log(err));
   }, []);

@@ -12,7 +12,6 @@ const StatusPage = () => {
   const [status, setStatus] = useState({});
 
   useEffect(() => {
-    setLoading(true);
     const auth = {
       Authorization: "Bearer " + getToken,
     };
@@ -40,6 +39,8 @@ const StatusPage = () => {
       </div>
     );
   }
+
+  console.log(status);
 
   return (
     <React.Fragment>

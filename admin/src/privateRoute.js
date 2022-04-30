@@ -1,22 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { Layout } from "antd";
 import SideNavBar from "./components/layouts/side-navbar";
+import jwt_decode from "jwt-decode";
 
 const { Content } = Layout;
-let token = localStorage.getItem("token");
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
+  let token = localStorage.getItem("token");
+
   const isLogin = () => {
     if (token) {
-      if (token.reason === "token-timeout") {
-        window.location.replace("/logout");
-      }
       return true;
     } else {
       return false;
     }
   };
+
   return (
     <>
       <Route

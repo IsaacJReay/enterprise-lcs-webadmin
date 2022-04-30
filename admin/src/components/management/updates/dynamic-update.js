@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Button } from "antd";
+import { Row, Col, Button, message } from "antd";
 import { SyncOutlined } from "@ant-design/icons";
 import axios from "axios";
 
@@ -42,6 +42,36 @@ const DynamicUpdate = () => {
     window.location.reload();
   };
 
+  // ========= operation update ==========
+
+  const handleUpdates = (e, id, sys_update) => {
+    e.preventDefault();
+    const inputData = {
+      id: id,
+      sys_update: sys_update,
+    };
+
+    axios
+      .post(`${baseUrl}/settings/update/update`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
+
+      .then((res) => {
+        if ((res.statusCode = 200)) {
+          setLoading(true);
+          fetchData();
+        } else {
+          setLoading(true);
+          message.error("Operation Failed! ");
+          setLoading(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <React.Fragment>
       <div className="sub-header">
@@ -76,9 +106,33 @@ const DynamicUpdate = () => {
                   </div>
                 </Col>
                 <Col span={3}>
-                  <Button type="primary" className="button-update">
-                    Update
-                  </Button>
+                  {res.status === "Installing" && (
+                    <Button
+                      type="primary"
+                      className="button-update"
+                      // onClick={(e) => handleUpdates(e, res.id, res.sys_update)}
+                    >
+                      Installing
+                    </Button>
+                  )}
+                  {res.status === "Downloading" && (
+                    <Button
+                      type="primary"
+                      className="button-update"
+                      // onClick={(e) => handleUpdates(e, res.id, res.sys_update)}
+                    >
+                      Downloading
+                    </Button>
+                  )}
+                  {res.status === "New" && (
+                    <Button
+                      type="primary"
+                      className="button-update"
+                      // onClick={(e) => handleUpdates(e, res.id, res.sys_update)}
+                    >
+                      Update
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </div>
