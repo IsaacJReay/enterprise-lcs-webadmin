@@ -21,10 +21,26 @@ pub fn generate_zone_config(domain_name: &str, status: bool, zone_is_internal: b
 pub fn generate_records_for_zone(domain_name: &str, vec_record: Option<Vec<DnsRecords>>) -> String {
     let mut records_str: String = String::new();
     let date = chrono::Utc::now()
-        .format("%Y%m%d%H%M")
+        .format("%y%m%d")
         .to_string()
         .parse::<u64>()
         .unwrap();
+    let hours = chrono::Utc::now()
+        .format("%H")
+        .to_string()
+        .parse::<u64>()
+        .unwrap();
+    let minutes = chrono::Utc::now()
+        .format("%M")
+        .to_string()
+        .parse::<u64>()
+        .unwrap();
+    let seconds = chrono::Utc::now()
+        .format("%S")
+        .to_string()
+        .parse::<u64>()
+        .unwrap();
+    let current_datetime = format!("{}{}", date, hours+minutes+seconds);
 
     if let Some(vec_record) = vec_record {
         vec_record.iter().for_each(|each_record| {
@@ -35,29 +51,19 @@ pub fn generate_records_for_zone(domain_name: &str, vec_record: Option<Vec<DnsRe
                 )
                 .as_ref(),
             );
-            if each_record.dns_type == "A" {
-                records_str.insert_str(
-                    0,
-                    format!(
-                        "                IN      NS      {}\n",
-                        each_record.subdomain_name
-                    )
-                    .as_ref(),
-                );
-            }
         });
     }
 
     records_str.insert_str(
         0,
         format!(
-            "$TTL 7200\n; {}\n@       IN      SOA     ns.{}. admin.{}. (
+            "$TTL 7200\n; {}\n@       IN      SOA     {}. ns.{}. (
                             {} ; Serial
                             28800      ; Refresh
                             1800       ; Retry
                             604800     ; Expire - 1 week
                             86400 )    ; Negative Cache TTL\n",
-            domain_name, domain_name, domain_name, date
+            domain_name, domain_name, domain_name, current_datetime
         )
         .as_ref(),
     );

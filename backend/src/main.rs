@@ -6,7 +6,6 @@ mod security;
 mod structs;
 mod tool;
 
-use crate::{db::create_tables, linux::update::create_update_script};
 use actix_cors::Cors;
 use actix_web::{
     middleware,
@@ -14,37 +13,33 @@ use actix_web::{
     App,
     HttpServer,
 };
-use std::{env::set_var, io::Result};
+use std::io::Result;
 
 const CHUNK_SIZE: u32 = 409599;
-const IP_ADDRESS: &str = "0.0.0.0:8080";
+const IP_ADDRESS: &str = "0.0.0.0";
+const PORT: &str = "8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 const TOKEN_EXPIRATION_SEC: u64 = 3600; // Cannot Exceed u64
-const SESSION_LIMIT: u64 = 3; // How many session at the same time
+const SESSION_LIMIT: u64 = 3; // How many session at the same time for one user
 
 #[actix_web::main]
 async fn main() -> Result<()> {
-    set_var("RUST_LOG", "actix_server=info,actix_web=info");
-    create_update_script();
-    create_tables();
-    // populate_dnszones();
-    // populate_zonerecords();
-    // let production_cors = Cors::default()
-    //           .allowed_origin("http://localhost:3000")
-    //           .allowed_origin("http://127.0.0.1:3000")
-    //           .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-    //           .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-    //           .allowed_header(http::header::CONTENT_TYPE)
-    //           .max_age(900);
-    // let development_cors = Cors::permissive();
+    linux::update::create_update_script();
+    db::create_tables();
 
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Cors::permissive())
+            .wrap(Cors::permissive()) // For Development
+            // .wrap(
+            //     Cors::default()
+            //         .allowed_origin("https://admin.koompi.app")
+            //         .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+            //         .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT, http::header::CONTENT_TYPE])
+            //         .max_age(TOKEN_EXPIRATION_SEC),
+            // ) // For Production
             .wrap(middleware::Logger::default())
             //handling GET request
-            // .service(handler::get::systemsettings::get_token_validated)                 // link: /private/api/token/validation
             .service(handler::get::users::get_logindata) // link: /private/api/user/query
             .service(handler::get::systemsettings::get_statuspage) // link: /private/api/settings/status
             .service(handler::get::systemdnetworkd::get_wanpage) // link: /private/api/settings/wirednetwork/status
@@ -80,8 +75,8 @@ async fn main() -> Result<()> {
             //                                             //handling PUT request
             .service(handler::put::put_rename_domain_name) // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
     })
-    .bind(IP_ADDRESS)?
+    .bind(format!("{}:{}", IP_ADDRESS, PORT))?
     .run();
-    println!("Server running at http://{}", IP_ADDRESS);
+    println!("Server running at {}:{}", IP_ADDRESS, PORT);
     server.await
 }

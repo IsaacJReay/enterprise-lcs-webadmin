@@ -65,7 +65,9 @@ pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<D
     let (three_items, four_items): (Vec<&str>, Vec<&str>) = file_data
         .lines()
         .skip(8)
-        .partition(|each_line| each_line.split_whitespace().count() > 3);
+        .partition(|each_line| each_line.split_whitespace().count() <= 3);
+
+    println!("three: {:#?}\nfour: {:#?}", three_items, four_items);
 
 
     three_items.into_iter().for_each(|each_line| {
@@ -127,32 +129,39 @@ pub fn handle_new_domain_name_and_record(
     let mut vec_all_zone_config: Vec<DnsZonesInfo> = read_zone_config_file(zone_is_internal, true);
     let mut vec_new_zone_record: Vec<DnsRecords> = Vec::new();
 
+    //Check if the domain already exists so we can just only select it and work on its status and zone_records
     if let Some(zone) = vec_all_zone_config
         .clone()
         .into_iter()
         .filter(|each_zone| each_zone.domain_name == args_struct.domain_name)
         .next()
     {
+        // query its location in the main list
         let index = vec_all_zone_config
             .iter()
             .position(|each_zone| each_zone.domain_name == zone.domain_name)
             .unwrap();
+        // add the existed zone_records to a new list to be added before the new zone_records
         if let Some(records) = zone.zone_record {
             records
                 .into_iter()
                 .for_each(|each_record| vec_new_zone_record.push(each_record));
         }
+        // remove the old domain_name from the main list to prepare to add it again with new data
         vec_all_zone_config.remove(index);
         linux::storage::remove_filedir_root(
             password,
             &("/var/named/".to_owned() + zone_record_name.as_ref()),
         );
     }
+
+    //check if the new request has any new zone_records and if so, add it to the list gathered
     if let Some(zone) = args_struct.zone_record {
         zone.into_iter()
             .for_each(|each_zone| vec_new_zone_record.push(each_zone));
     }
 
+    // check if there is nothing in the zone_records vector even after all query (usually meant that the domain is newly and just created)
     let (vec_new_zone_record, vec_new_zone_record_clone): (
         Option<Vec<DnsRecords>>,
         Option<Vec<DnsRecords>>,
@@ -161,18 +170,21 @@ pub fn handle_new_domain_name_and_record(
         _ => (Some(vec_new_zone_record.clone()), Some(vec_new_zone_record)),
     };
 
+    // add the new domain_name, status and the newly gathered zone_records to the main list
     vec_all_zone_config.push(DnsZonesInfo {
         domain_name: args_struct.domain_name.to_owned(),
         status: args_struct.status,
         zone_record: vec_new_zone_record,
     });
 
+    // generate new zone_records config
     let mut zone_config = String::new();
     let zone_record = config::templates::generate_records_for_zone(
         &args_struct.domain_name,
         vec_new_zone_record_clone,
     );
 
+    // generate new domain_name zone config one by one and put into a collective string
     vec_all_zone_config.iter().for_each(|each_zone| {
         zone_config.push_str(
             config::templates::generate_zone_config(
@@ -184,12 +196,15 @@ pub fn handle_new_domain_name_and_record(
         )
     });
 
+    // write each new config for each file
     config::write_file(zone_config.as_bytes(), zone_config_name.as_ref());
     config::write_file(zone_record.as_bytes(), zone_record_name.as_ref());
 
+    // move it out using root to its direction
     linux::storage::move_filedir_root(password, zone_config_name.as_ref(), "/etc");
     linux::storage::move_filedir_root(password, zone_record_name.as_ref(), "/var/named/");
 
+    // change its permission in accordance to BIND9
     linux::chown_chmod(
         password,
         "root",
@@ -205,6 +220,7 @@ pub fn handle_new_domain_name_and_record(
         &("/etc/".to_owned() + zone_config_name.as_ref()),
     );
 
+    // Restart BIND9 service
     let (code, output, _error) = linux::restartservice(password, "named");
     match code {
         0 => Ok(()),

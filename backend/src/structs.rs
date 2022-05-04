@@ -121,23 +121,23 @@ pub struct DnsZonesInfo {
 impl DnsZonesInfo {
     pub fn default(wan_ip: Option<&str>) -> Self {
         Self {
-            domain_name: "koompi.com".to_string(),
+            domain_name: "koompi.app".to_string(),
             status: true,
             zone_record: Some(vec![
                 DnsRecords {
-                    subdomain_name: "ns".to_string(),
+                    subdomain_name: "@".to_string(),
+                    dns_type: "NS".to_string(),
+                    address: wan_ip.unwrap_or_else(|| "10.100.100.1").to_string(),
+                },
+                DnsRecords {
+                    subdomain_name: "".to_string(),
                     dns_type: "A".to_string(),
                     address: wan_ip.unwrap_or_else(|| "10.100.100.1").to_string(),
                 },
                 DnsRecords {
-                    subdomain_name: "sala".to_string(),
+                    subdomain_name: "ns".to_string(),
                     dns_type: "A".to_string(),
-                    address: "ns".to_string(),
-                },
-                DnsRecords {
-                    subdomain_name: "salabackend".to_string(),
-                    dns_type: "A".to_string(),
-                    address: "ns".to_string(),
+                    address: wan_ip.unwrap_or_else(|| "10.100.100.1").to_string(),
                 },
                 DnsRecords {
                     subdomain_name: "rachel".to_string(),
