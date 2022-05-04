@@ -1,18 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Col, Row, Select, Form, Space } from "antd";
 import WANStatic from "./wan-static";
 import WANDynamic from "./wan-dynamic";
 import { IoIosHelpCircle } from "react-icons/io";
+import axios from "axios";
 
 const { Content } = Layout;
 const { Option } = Select;
 
 const WANSetting = () => {
-  const [values, setValues] = useState("Dynamic");
+  const [values, setValues] = useState();
+  const [loading, setLoading] = useState(false);
+  const [wan, setWan] = useState({});
+
+  // ============auth =============
+  const getToken = localStorage.getItem("token");
+  const baseUrl = process.env.REACT_APP_API_URL;
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
 
   const handleChange = (value) => {
-    return setValues(value);
+    setValues(value);
   };
+
+  async function fetchData() {
+    await axios({
+      method: "GET",
+      url: `${baseUrl}/settings/wirednetwork/status`,
+      headers: {
+        "content-type": "application/json",
+        ...auth,
+      },
+    })
+      .then((res) => {
+        setLoading(true);
+        setWan(res.data.wired_network_param);
+        setValues(res.data.dhcp);
+        setLoading(false);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    fetchData();
+    handleChange();
+  }, []);
 
   return (
     <React.Fragment>
@@ -29,12 +62,12 @@ const WANSetting = () => {
                     <Form.Item label="WAN Connection type">
                       <Select
                         onChange={handleChange}
-                        defaultValue="Dynamic"
+                        defaultValue={values === true ? "Dynamic" : "Static"}
                         size="large"
                         className="select-option"
                       >
-                        <Option value="Dynamic">Dynamic</Option>
-                        <Option value="Static">Static</Option>
+                        <Option value={true}>Dynamic</Option>
+                        <Option value={false}>Static</Option>
                       </Select>
                     </Form.Item>
                   </Form>
@@ -43,7 +76,11 @@ const WANSetting = () => {
                 {/* ----------form------ */}
                 <div className="desc-container-banner2">
                   <center>
-                    {values === "Dynamic" ? <WANDynamic /> : <WANStatic />}
+                    {values === true ? (
+                      <WANDynamic wan={wan} fetchData={fetchData} />
+                    ) : (
+                      <WANStatic wan={wan} fetchData={fetchData} />
+                    )}
                   </center>
                 </div>
               </div>

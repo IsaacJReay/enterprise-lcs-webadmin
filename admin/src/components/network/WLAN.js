@@ -114,9 +114,7 @@ const WLANSetting = () => {
             message.success("Successful!");
           }, 1000);
         } else {
-          setLoading(true);
           message.error("Operation Failed! ");
-          setLoading(false);
         }
       })
 

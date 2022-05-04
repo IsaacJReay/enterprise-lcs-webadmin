@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Button, Form, Col, Row, message, notification } from "antd";
+import { Input, Button, Form, Col, Row, message } from "antd";
 import axios from "axios";
 import image from "../assets/images/login2.png";
 import icon from "../assets/images/icons/koompi-black.png";
@@ -15,7 +15,13 @@ const Login = () => {
       password: data.password,
     };
     await axios
-      .post(`${baseUrl}/user/login`, adminLogin)
+      .post(`${baseUrl}/user/login`, adminLogin, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "",
+        },
+        credentials: "same-origin",
+      })
       .then((res) => {
         if ((res.statusCode = 200)) {
           localStorage.setItem("token", res.data.token);
@@ -23,17 +29,11 @@ const Login = () => {
           message.success("Successful!");
           window.location.replace("/status");
         } else {
-          setLoading(true);
           message.error("Invalide username or password ");
-          setLoading(false);
         }
       })
-
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-        message.error(err.response.data.reason);
+        console.log(err);
       });
   };
 

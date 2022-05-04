@@ -61,12 +61,9 @@ const DynamicUpdate = () => {
 
       .then((res) => {
         if ((res.statusCode = 200)) {
-          setLoading(true);
           fetchData();
         } else {
-          setLoading(true);
           message.error("Operation Failed! ");
-          setLoading(false);
         }
       })
       .catch((err) => console.log(err));
@@ -128,7 +125,7 @@ const DynamicUpdate = () => {
                     <Button
                       type="primary"
                       className="button-update"
-                      // onClick={(e) => handleUpdates(e, res.id, res.sys_update)}
+                      onClick={(e) => handleUpdates(e, res.id, res.sys_update)}
                     >
                       Update
                     </Button>

@@ -5,7 +5,7 @@ import axios from "axios";
 const getToken = localStorage.getItem("token");
 const baseUrl = process.env.REACT_APP_API_URL;
 
-const WANStatic = () => {
+const WANStatic = ({ wan, fetchData }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -22,38 +22,17 @@ const WANStatic = () => {
     },
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      await axios({
-        method: "GET",
-        url: `${baseUrl}/settings/wirednetwork/status`,
-        headers: {
-          "content-type": "application/json",
-          ...auth,
-        },
+  const { internet_ip, gateway, netmask, dns } = wan;
+
+  useEffect(
+    async () =>
+      await form.setFieldsValue({
+        internet_ip: internet_ip,
+        gateway: gateway,
+        netmask: netmask,
+        dns: dns,
       })
-        .then((res) => {
-          const {
-            internet_ip,
-            gateway,
-            netmask,
-            dns,
-          } = res.data.wired_network_param;
-          form.setFieldsValue({
-            internet_ip: internet_ip,
-            gateway: gateway,
-            netmask: netmask,
-            dns: dns,
-          });
-          setLoading(false);
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
-        })
-        .catch((err) => console.log(err));
-    }
-    fetchData();
-  }, []);
+  );
 
   const handleApply = async (data) => {
     const inputData = {
@@ -70,23 +49,15 @@ const WANStatic = () => {
           ...auth,
         },
       })
-
       .then((res) => {
         if ((res.statusCode = 200)) {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
+          fetchData();
         } else {
-          setLoading(true);
           message.error("Operation Failed! ");
-          setLoading(false);
         }
       })
-
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
         console.log(err);
       });
   };

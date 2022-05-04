@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Form, Input, Button, message, Spin, Row, Col } from "antd";
 import axios from "axios";
 
 const getToken = localStorage.getItem("token");
 const baseUrl = process.env.REACT_APP_API_URL;
 
-const WANDynamic = () => {
+const WANDynamic = ({ wan, fetchData }) => {
   const [items, setItems] = useState({});
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -22,26 +23,7 @@ const WANDynamic = () => {
     },
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      await axios({
-        method: "GET",
-        url: `${baseUrl}/settings/wirednetwork/status`,
-        headers: {
-          "content-type": "application/json",
-          ...auth,
-        },
-      })
-        .then((res) => {
-          setItems(res.data.wired_network_param);
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
-        })
-        .catch((err) => console.log(err));
-    }
-    fetchData();
-  }, []);
+  const { internet_ip, gateway, netmask, dns } = wan;
 
   const handleApply = async () => {
     await axios({
@@ -54,21 +36,15 @@ const WANDynamic = () => {
     })
       .then(async (res) => {
         if ((res.statusCode = 200)) {
-          setTimeout(() => {
-            message.success("Successful!");
-          }, 1000);
+          message.success("Successful!");
+          fetchData();
         } else {
-          setLoading(true);
           message.error("operation failed! ");
-          setLoading(false);
         }
       })
 
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-        message.error(err.response.data.reason);
+        console.log(err);
       });
   };
 
@@ -82,7 +58,7 @@ const WANDynamic = () => {
 
   return (
     <React.Fragment>
-      <Form {...layout} onFinish={handleApply}>
+      <Form {...layout} onFinish={handleApply} form={form}>
         <Row gutter={[0, 24]}>
           <Col span="24">
             <Form.Item label="Internet IP">
@@ -91,7 +67,7 @@ const WANDynamic = () => {
                 size="large"
                 placeholder="0.0.0.0"
                 className="label-info"
-                value={items.internet_ip}
+                value={internet_ip}
               />
             </Form.Item>
           </Col>
@@ -102,7 +78,7 @@ const WANDynamic = () => {
                 size="large"
                 placeholder="0.0.0.0"
                 className="label-info"
-                value={items.netmask}
+                value={netmask}
               />
             </Form.Item>
           </Col>
@@ -113,7 +89,7 @@ const WANDynamic = () => {
                 size="large"
                 placeholder="0.0.0.0"
                 className="label-info"
-                value={items.gateway}
+                value={gateway}
               />
             </Form.Item>
           </Col>
@@ -124,7 +100,7 @@ const WANDynamic = () => {
                 size="large"
                 placeholder="0.0.0.0"
                 className="label-info"
-                value={items.dns}
+                value={dns}
               />
             </Form.Item>
           </Col>
