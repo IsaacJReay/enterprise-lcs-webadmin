@@ -20,7 +20,7 @@ const IP_ADDRESS: &str = "0.0.0.0";
 const PORT: &str = "8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
-const TOKEN_EXPIRATION_SEC: u64 = 3600; // Cannot Exceed u64
+const TOKEN_EXPIRATION_SEC: u64 = 300; // Cannot Exceed u64
 const SESSION_LIMIT: u64 = 3; // How many session at the same time for one user
 
 #[actix_web::main]
