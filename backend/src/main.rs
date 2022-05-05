@@ -30,7 +30,7 @@ async fn main() -> Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Cors::permissive().allow_any_origin()) // For Development
+            .wrap(Cors::permissive()) // For Development
             // .wrap(
             //     Cors::default()
             //         .allowed_origin("https://admin.koompi.app")
