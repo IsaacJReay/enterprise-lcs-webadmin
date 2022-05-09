@@ -67,8 +67,8 @@ pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<D
         .skip(8)
         .partition(|each_line| each_line.split_whitespace().count() <= 3);
 
-    if !three_items.is_empty() {
-        three_items.into_iter().for_each(|each_line| {
+    three_items.into_iter().for_each(|each_line| {
+        if !each_line.is_empty() {
             let splited_each_line = each_line
                 .split_whitespace()
                 .map(|each_str| each_str.to_string())
@@ -80,10 +80,11 @@ pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<D
                     address: splited_each_line[2].to_owned(),
                 })
             }
-        });
-    }
-    if !four_items.is_empty() {
-        four_items.into_iter().for_each(|each_line| {
+        }
+    });
+
+    four_items.into_iter().for_each(|each_line| {
+        if !each_line.is_empty() {
             let splited_each_line = each_line
                 .split_whitespace()
                 .map(|each_str| each_str.to_string())
@@ -110,8 +111,9 @@ pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<D
                 dns_type: current_dns_type,
                 address: current_address,
             })
-        });
-    }
+        }
+    });
+
     vec_record
 }
 
