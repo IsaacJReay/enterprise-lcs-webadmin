@@ -67,50 +67,51 @@ pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<D
         .skip(8)
         .partition(|each_line| each_line.split_whitespace().count() <= 3);
 
-    println!("three: {:#?}\nfour: {:#?}", three_items, four_items);
-
-
-    three_items.into_iter().for_each(|each_line| {
-        let splited_each_line = each_line
-            .split_whitespace()
-            .map(|each_str| each_str.to_string())
-            .collect::<Vec<String>>();
-        if splited_each_line[1] == "A" {
+    if !three_items.is_empty() {
+        three_items.into_iter().for_each(|each_line| {
+            let splited_each_line = each_line
+                .split_whitespace()
+                .map(|each_str| each_str.to_string())
+                .collect::<Vec<String>>();
+            if splited_each_line[1] == "A" {
+                vec_record.push(DnsRecords {
+                    subdomain_name: String::new(),
+                    dns_type: "A".to_string(),
+                    address: splited_each_line[2].to_owned(),
+                })
+            }
+        });
+    }
+    if !four_items.is_empty() {
+        four_items.into_iter().for_each(|each_line| {
+            let splited_each_line = each_line
+                .split_whitespace()
+                .map(|each_str| each_str.to_string())
+                .collect::<Vec<String>>();
+            let current_subdomain_name = splited_each_line[0].clone();
+            let (current_dns_type, current_address) = match splited_each_line[2].as_ref() {
+                "MX" => (
+                    splited_each_line[2].clone() + " " + &splited_each_line[3],
+                    splited_each_line[4].clone(),
+                ),
+                "CAA" => (
+                    splited_each_line[2].clone(),
+                    each_line
+                        .split_whitespace()
+                        .skip(3)
+                        .map(|each_str| each_str.to_string())
+                        .collect::<Vec<String>>()
+                        .join(" "),
+                ),
+                _ => (splited_each_line[2].clone(), splited_each_line[3].clone()),
+            };
             vec_record.push(DnsRecords {
-                subdomain_name: String::new(),
-                dns_type: "A".to_string(),
-                address: splited_each_line[2].to_owned(),
+                subdomain_name: current_subdomain_name,
+                dns_type: current_dns_type,
+                address: current_address,
             })
-        }
-    });
-    four_items.into_iter().for_each(|each_line| {
-        let splited_each_line = each_line
-            .split_whitespace()
-            .map(|each_str| each_str.to_string())
-            .collect::<Vec<String>>();
-        let current_subdomain_name = splited_each_line[0].clone();
-        let (current_dns_type, current_address) = match splited_each_line[2].as_ref() {
-            "MX" => (
-                splited_each_line[2].clone() + " " + &splited_each_line[3],
-                splited_each_line[4].clone(),
-            ),
-            "CAA" => (
-                splited_each_line[2].clone(),
-                each_line
-                    .split_whitespace()
-                    .skip(3)
-                    .map(|each_str| each_str.to_string())
-                    .collect::<Vec<String>>()
-                    .join(" "),
-            ),
-            _ => (splited_each_line[2].clone(), splited_each_line[3].clone()),
-        };
-        vec_record.push(DnsRecords {
-            subdomain_name: current_subdomain_name,
-            dns_type: current_dns_type,
-            address: current_address,
-        })
-    });
+        });
+    }
     vec_record
 }
 
