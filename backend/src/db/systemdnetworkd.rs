@@ -124,9 +124,9 @@ pub fn read_eth0() -> (String, String, String, String) {
     let (_code, gateway_output, _error) =
         run_script::run_script!(eth0_gateway, &vec![], &options).unwrap();
 
-    let (eth0_ipaddr,eth0_subnetmask) = match prefix_output.parse::<Ipv4Network>() {
-        Ok(subnet) => (subnet.ip().to_string(),subnet.mask().to_string()),
-        Err(_) => ("".to_string(),"".to_string()),
+    let (eth0_ipaddr,eth0_subnetmask, gateway_output) = match prefix_output.parse::<Ipv4Network>() {
+        Ok(subnet) => (subnet.ip().to_string(),subnet.mask().to_string(), gateway_output),
+        Err(_) => ("down".to_string(),"down".to_string(), "down".to_string()),
     };
 
     (
