@@ -11,18 +11,23 @@ use crate::{
 };
 
 pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String> {
+    // Download database Update from link
     download_file(
         "https://dev.koompi.org/contentserver/update_db.toml",
         continue_file("/tmp/update_db.toml"),
     )?;
 
+    // read the downloaded new update database and save it to an object
     let new_update =
         toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml")).unwrap();
+    // read the machine new update database and save it to an object
     let current_update =
         toml::from_str::<ContentServerUpdate>(&read_file("/kmp/update_db.toml")).unwrap();
+    // read the machine installing update database and save it to an object
     let current_installing =
         toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml.installing"))
             .unwrap();
+    // read the machine downloading update database and save it an object
     let current_downloading =
         toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml.downloading"))
             .unwrap();
@@ -74,48 +79,45 @@ pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String
         None => vec_downloading_patch_update.push(String::new()),
     };
 
-    match current_sys_update == new_sys_update {
-        true => (),
-        false => {
-            let current_display_name = new_update
-                .sys_update
-                .as_ref()
-                .unwrap()
-                .get(&new_sys_update)
-                .unwrap()
-                .get("display_name")
-                .unwrap()
-                .as_str()
-                .unwrap()
-                .to_string();
-            let current_update_size = new_update
-                .sys_update
-                .as_ref()
-                .unwrap()
-                .get(&new_sys_update)
-                .unwrap()
-                .get("size")
-                .unwrap()
-                .as_integer()
-                .unwrap()
-                .try_into()
-                .unwrap();
-            let current_status = match current_downloading_sys_update == new_sys_update {
-                true => String::from("Downloading"),
-                false => match current_installing_sys_update == new_sys_update {
-                    true => String::from("Installing"),
-                    false => String::from("New"),
-                },
-            };
+    if current_sys_update == new_sys_update {
+        let current_display_name = new_update
+            .sys_update
+            .as_ref()
+            .unwrap()
+            .get(&new_sys_update)
+            .unwrap()
+            .get("display_name")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string();
+        let current_update_size = new_update
+            .sys_update
+            .as_ref()
+            .unwrap()
+            .get(&new_sys_update)
+            .unwrap()
+            .get("size")
+            .unwrap()
+            .as_integer()
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let current_status = match current_downloading_sys_update == new_sys_update {
+            true => String::from("Downloading"),
+            false => match current_installing_sys_update == new_sys_update {
+                true => String::from("Installing"),
+                false => String::from("New"),
+            },
+        };
 
-            vec_updatable.push(SystemUpdateInformation {
-                id: new_sys_update.clone(),
-                display_name: current_display_name,
-                update_size: current_update_size,
-                sys_update: true,
-                status: current_status,
-            })
-        }
+        vec_updatable.push(SystemUpdateInformation {
+            id: new_sys_update.clone(),
+            display_name: current_display_name,
+            update_size: current_update_size,
+            sys_update: true,
+            status: current_status,
+        })
     };
 
     for each_update in vec_new_patch_update {
