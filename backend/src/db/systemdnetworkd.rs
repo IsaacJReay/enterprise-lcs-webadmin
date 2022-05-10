@@ -111,30 +111,28 @@ pub fn read_wan_networkd() -> (bool, String, String, String, String) {
 
 pub fn read_eth0() -> (String, String, String, String) {
     let options = run_script::ScriptOptions::new();
-    let eth0_macaddress = r#"ip address show eth0 | grep link/ether | awk -F' ' '{printf $2}'"#;
-    let eth0_prefixaddr = r#"ip address show eth0 | grep -w "inet" | awk -F' ' '{printf $2}'"#;
-    let eth0_gateway = r#"ip route | awk 'NR==1' | awk -F ' ' '{printf $3}'"#;
+    let eth0_macaddr_cmd = r#"ip address show eth0 | grep link/ether | awk -F' ' '{printf $2}'"#;
+    let eth0_ipaddr_cmd = r#"ip address show eth0 | grep -w "inet" | awk -F' ' '{printf $2}'"#;
+    let eth0_gateway_cmd = r#"ip route | awk 'NR==1' | awk -F ' ' '{printf $3}'"#;
 
-    let (_code, macaddr_output, _error) =
-        run_script::run_script!(eth0_macaddress, &vec![], &options).unwrap();
+    let (_code, eth0_macaddress, _error) =
+        run_script::run_script!(eth0_macaddr_cmd, &vec![], &options).unwrap();
 
-    let (_code, prefix_output, _error) =
-        run_script::run_script!(eth0_prefixaddr, &vec![], &options).unwrap();
+    let (_code, ipaddr_output, _error) =
+        run_script::run_script!(eth0_ipaddr_cmd, &vec![], &options).unwrap();
 
-    let (_code, gateway_output, _error) =
-        run_script::run_script!(eth0_gateway, &vec![], &options).unwrap();
-
-    let (eth0_ipaddr,eth0_subnetmask, gateway_output) = match prefix_output.parse::<Ipv4Network>() {
-        Ok(subnet) => (subnet.ip().to_string(),subnet.mask().to_string(), gateway_output),
-        Err(_) => ("down".to_string(),"down".to_string(), "down".to_string()),
+    let (eth0_ipaddr, eth0_subnetmask, eth0_gateway) = match ipaddr_output.parse::<Ipv4Network>() {
+        Ok(subnet) => (
+            subnet.ip().to_string(),
+            subnet.mask().to_string(),
+            run_script::run_script!(eth0_gateway_cmd, &vec![], &options)
+                .unwrap()
+                .1,
+        ),
+        Err(_) => ("down".to_string(), "down".to_string(), "down".to_string()),
     };
 
-    (
-        macaddr_output,
-        eth0_ipaddr,
-        eth0_subnetmask,
-        gateway_output,
-    )
+    (eth0_macaddress, eth0_ipaddr, eth0_subnetmask, eth0_gateway)
 }
 
 pub fn read_wlan0() -> (String, String, String) {
