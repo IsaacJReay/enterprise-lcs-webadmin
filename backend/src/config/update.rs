@@ -371,7 +371,7 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         .unwrap();
 
         insert_update_information_to_toml(
-            (true, false),
+            (true, false),  // this will put the info into .downloading
             &each_update.get_id(),
             current_update_information,
             each_update.get_sys_update(),
@@ -412,13 +412,13 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         .unwrap();
 
         remove_update_information_from_toml(
-            (true, false),
+            (true, false), // this will remove info from .downloading
             &each_update.get_id(),
             each_update.get_sys_update(),
         );
         if download_status {
             insert_update_information_to_toml(
-                (false, true),
+                (false, true), // this will put info into .installing
                 &each_update.get_id(),
                 current_update_information,
                 each_update.get_sys_update(),
@@ -468,7 +468,7 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         .unwrap();
 
         remove_update_information_from_toml(
-            (false, true),
+            (false, true), // this will remove info from .installing
             &each_update.get_id(),
             each_update.get_sys_update(),
         );
@@ -488,7 +488,7 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
                 }
             }
             insert_update_information_to_toml(
-                (false, false),
+                (false, false), // this will put info into /kmp/update.toml (finished)
                 &each_update.get_id(),
                 current_update_information,
                 each_update.get_sys_update(),
