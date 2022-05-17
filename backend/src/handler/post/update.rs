@@ -19,13 +19,11 @@ pub async fn post_update_content_server(
         false => {
             write_file(" ".as_bytes(), "/tmp/update_db.lock");
             rt::task::spawn_blocking(move || {
-                if let Ok(Fork::Child) = daemon(false, true) {
-                    update_content_server(
-                        &password,
-                        &update_request_struct.id,
-                        update_request_struct.sys_update,
-                    );
-                }
+                update_content_server(
+                    &password,
+                    &update_request_struct.id,
+                    update_request_struct.sys_update,
+                );
             });
             Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap()))
         }

@@ -366,7 +366,7 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
     let vec_updatable = query_updatable_depedencies_update_content_server(id, is_sys_update);
 
     let mut install_status: bool = false;
-    let mut download_status: bool = false;
+    let mut download_status: bool = true;
 
     // put all the updateable update with all its offical info into a downloading lists
     for each_update in &vec_updatable {
