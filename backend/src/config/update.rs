@@ -386,6 +386,8 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         );
     }
 
+    println!("finished put into downloading");
+
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
             true => all_new_update_information.sys_update.as_ref(),
@@ -403,8 +405,10 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
 
         let output_file = continue_file(&("/tmp/".to_owned() + filename));
         let download_link = &("https://dev.koompi.org/contentserver/".to_owned() + filename);
-        download_file(download_link, output_file).unwrap_or_else(|_| download_status = false);
+        download_file(download_link, output_file).unwrap_or_else(|err| {download_status = false; println!("the error is {}", err)});
     }
+
+    println!("finished download loop and result is {}", download_status);
 
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
@@ -428,6 +432,8 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             );
         }
     }
+
+    println!("finished put into installing");
 
     if download_status {
         for each_update in &vec_updatable {
@@ -454,6 +460,8 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             };
         }
     }
+
+    println!("finished installed loop and the result is {}", install_status);
 
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
@@ -490,5 +498,8 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             );
         }
     }
+
+    println!("finished put to kmp loop");
     remove_filedir_root(password, "/tmp/update_db.lock");
+    println!("remove done");
 }
