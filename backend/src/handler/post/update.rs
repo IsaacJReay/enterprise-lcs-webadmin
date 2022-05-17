@@ -4,7 +4,7 @@ use crate::{
     structs::SystemUpdateRequest,
 };
 use actix_web::{error, http, post, rt, web, HttpRequest, HttpResponse, Result};
-use fork::{daemon, Fork};
+// use fork::{daemon, Fork};
 
 #[post("/private/api/settings/update/update")]
 pub async fn post_update_content_server(
