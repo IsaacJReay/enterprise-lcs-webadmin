@@ -3,7 +3,7 @@ use crate::{
     handler,
     structs::SystemUpdateRequest,
 };
-use actix_web::{error, http, post, web, HttpRequest, HttpResponse, Result};
+use actix_web::{error, http, post, rt, web, HttpRequest, HttpResponse, Result};
 use fork::{daemon, Fork};
 
 #[post("/private/api/settings/update/update")]
@@ -18,13 +18,15 @@ pub async fn post_update_content_server(
         )),
         false => {
             write_file(" ".as_bytes(), "/tmp/update_db.lock");
-            if let Ok(Fork::Child) = daemon(false, true) {
-                update_content_server(
-                    &password,
-                    &update_request_struct.id,
-                    update_request_struct.sys_update,
-                );
-            }
+            rt::task::spawn_blocking(move || {
+                if let Ok(Fork::Child) = daemon(false, true) {
+                    update_content_server(
+                        &password,
+                        &update_request_struct.id,
+                        update_request_struct.sys_update,
+                    );
+                }
+            });
             Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap()))
         }
     }
