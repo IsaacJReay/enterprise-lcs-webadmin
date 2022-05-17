@@ -402,14 +402,11 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             .unwrap()
             .as_str()
             .unwrap();
+        println!("{}", filename);
 
         let output_file = continue_file(&("/tmp/".to_owned() + filename));
         let download_link = &("https://dev.koompi.org/contentserver/".to_owned() + filename);
-        // download_file(download_link, output_file).unwrap_or_else(|err| {download_status = false; println!("the error is {}", err)});
-        match download_file(download_link, output_file) {
-            Ok(()) => (),
-            Err(t) => {println!("{}", t); download_status = false}
-        }
+        download_file(download_link, output_file).unwrap_or_else(|err| {download_status = false; println!("the error is {}", err)});
     }
 
     println!("finished download loop and result is {}", download_status);
