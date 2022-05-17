@@ -18,7 +18,7 @@ pub async fn post_update_content_server(
         )),
         false => {
             write_file(" ".as_bytes(), "/tmp/update_db.lock");
-            if let Ok(Fork::Child) = daemon(false, false) {
+            if let Ok(Fork::Child) = daemon(false, true) {
                 update_content_server(
                     &password,
                     &update_request_struct.id,
