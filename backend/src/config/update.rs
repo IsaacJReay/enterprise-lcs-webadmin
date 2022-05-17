@@ -365,6 +365,8 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
     // read all update needed info from the update list and generate a list of update with all its dependencies
     let vec_updatable = query_updatable_depedencies_update_content_server(id, is_sys_update);
 
+    println!("{:#?}", vec_updatable);
+
     let mut install_status: bool = false;
     let mut download_status: bool = true;
 
@@ -402,7 +404,6 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             .unwrap()
             .as_str()
             .unwrap();
-        println!("{}", filename);
 
         let output_file = continue_file(&("/tmp/".to_owned() + filename));
         let download_link = &("https://dev.koompi.org/contentserver/".to_owned() + filename);
