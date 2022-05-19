@@ -492,6 +492,9 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
                     true => update_sys_pacman(password, extract_location),
                     false => update_patch_script(password, extract_location),
                 };
+            }
+            else {
+                println!("untar failed")
             };
         }
     }
