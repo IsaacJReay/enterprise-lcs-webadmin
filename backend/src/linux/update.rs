@@ -16,7 +16,9 @@ pub fn update_sys_pacman(password: &str, package_folder: &str) -> bool {
     let _command = _command.replace("package_folder", package_folder);
     let command = _command.replace("password", password);
 
-    let (code, _output, _error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
+    let (code, _output, error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
+
+    println!("{}", error);
 
     match code {
         0 => true,
