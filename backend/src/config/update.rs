@@ -171,7 +171,38 @@ pub fn query_updatable_depedencies_update_content_server(
     sys_update: bool,
 ) -> Vec<SystemUpdateInformation> {
     let mut vec_updatable: Vec<SystemUpdateInformation> = Vec::new();
-    query_all_depedencies_update_content_server(&mut vec_updatable, id, sys_update);
+    query_all_depedencies_update_content_server(&mut vec_updatable, id, sys_update); // return nothing if the update doesn't have any dependencies
+
+    // read new update information
+    let new_update =
+        toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml")).unwrap();
+
+    let update_info = match sys_update {
+        true => new_update.sys_update.as_ref(),
+        false => new_update.patch_update.as_ref(),
+    }
+    .unwrap()
+    .get(id)
+    .unwrap();
+
+    vec_updatable.push(SystemUpdateInformation {
+        id: id.to_string(),
+        display_name: update_info
+            .get("display_name")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string(),
+        update_size: update_info
+            .get("size")
+            .unwrap()
+            .as_integer()
+            .unwrap()
+            .try_into()
+            .unwrap(),
+        sys_update,
+        status: "Undefined".to_string(),
+    });
 
     display_new_update_lists()
         .unwrap()
@@ -230,23 +261,21 @@ fn query_all_depedencies_update_content_server(
     };
 
     // check if the update depends on any patch updates and get the list of patch update if it does
-    match get_dependencies_value.as_ref() {
-        Some(current_value) => match current_value.get("patch_update") {
-            Some(value) => value
+    if let Some(current_value) = get_dependencies_value.as_ref() {
+        if let Some(value) = current_value.get("patch_update") {
+            value
                 .as_array()
                 .unwrap()
                 .into_iter()
                 .for_each(|each_value| {
                     depend_on_patch_update
                         .push(each_value.as_integer().unwrap().try_into().unwrap())
-                }),
-            None => {}
-        },
-        None => {}
-    };
+                })
+        }
+    }
 
     // Operation for update systemupdate if the current update needs systemupdate
-    if depend_on_sys_update == true {
+    if depend_on_sys_update {
         // get the latest systemupdate ID
         let new_update_id = new_update
             .sys_update
@@ -365,8 +394,6 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
     // read all update needed info from the update list and generate a list of update with all its dependencies
     let vec_updatable = query_updatable_depedencies_update_content_server(id, is_sys_update);
 
-    println!("{:#?}", vec_updatable);
-
     let mut install_status: bool = false;
     let mut download_status: bool = true;
 
@@ -388,8 +415,6 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         );
     }
 
-    println!("finished put into downloading");
-
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
             true => all_new_update_information.sys_update.as_ref(),
@@ -407,10 +432,10 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
 
         let output_file = continue_file(&("/tmp/".to_owned() + filename));
         let download_link = &("https://dev.koompi.org/contentserver/".to_owned() + filename);
-        download_file(download_link, output_file).unwrap_or_else(|err| {download_status = false; println!("the error is {}", err)});
+        download_file(download_link, output_file).unwrap_or_else(|_| download_status = false);
     }
 
-    println!("finished download loop and result is {}", download_status);
+    println!("{}", download_status);
 
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
@@ -434,8 +459,6 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             );
         }
     }
-
-    println!("finished put into installing");
 
     if download_status {
         for each_update in &vec_updatable {
@@ -462,8 +485,6 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             };
         }
     }
-
-    println!("finished installed loop and the result is {}", install_status);
 
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
@@ -501,7 +522,5 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         }
     }
 
-    println!("finished put to kmp loop");
     remove_filedir_root(password, "/tmp/update_db.lock");
-    println!("remove done");
 }
