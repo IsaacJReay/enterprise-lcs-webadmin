@@ -1,4 +1,5 @@
 use rusqlite::{params, Connection};
+use crate::DATABASE;
 
 pub fn insert_into_storage_table(
     udevpath: &str,
@@ -6,7 +7,7 @@ pub fn insert_into_storage_table(
     mountlocation: &str,
     fsystype: &str,
 ) {
-    Connection::open("/tmp/lcs.db")
+    Connection::open(DATABASE)
         .unwrap()
         .execute(
             "INSERT INTO tblStorage VALUES (?, ?, ?, ?)",
@@ -16,14 +17,14 @@ pub fn insert_into_storage_table(
 }
 
 pub fn delete_from_storage_table(partuuid: &str) {
-    Connection::open("/tmp/lcs.db")
+    Connection::open(DATABASE)
         .unwrap()
         .execute("DELETE FROM tblStorage WHERE PartUUID=?", &[partuuid])
         .unwrap();
 }
 
 pub fn query_existence_from_storage_table_by_path(udevpath: &str) -> bool {
-    let connection = Connection::open("/tmp/lcs.db").unwrap();
+    let connection = Connection::open(DATABASE).unwrap();
 
     let mut stmt = connection
         .prepare("SELECT EXISTS(SELECT UdevPath FROM tblStorage WHERE UdevPath=? LIMIT 1);")
@@ -37,7 +38,7 @@ pub fn query_from_storage_table(
     udevpath: Option<&str>,
     partuuid: Option<&str>,
 ) -> (String, String) {
-    let connection = Connection::open("/tmp/lcs.db").unwrap();
+    let connection = Connection::open(DATABASE).unwrap();
 
     let mut stmt = connection
         .prepare(match udevpath {
@@ -62,7 +63,7 @@ pub fn query_from_storage_table(
 }
 
 // pub fn query_mount_by_path_from_storage_table(path: &str) -> String {
-//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
+//     let connection = sqlite::open(DATABASE).unwrap();
 
 //     let mut read_path_mount = connection
 //         .prepare(
@@ -78,7 +79,7 @@ pub fn query_from_storage_table(
 
 // pub fn query_mount_by_uuid_from_storage_table(uuid: &str) -> String {
 
-//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
+//     let connection = sqlite::open(DATABASE).unwrap();
 
 //     let mut read_path_mount = connection
 //         .prepare(
@@ -94,7 +95,7 @@ pub fn query_from_storage_table(
 
 // pub fn query_path_by_uuid_from_storage_table(uuid: &str) -> String {
 
-//     let connection = sqlite::open("/tmp/lcs.db").unwrap();
+//     let connection = sqlite::open(DATABASE).unwrap();
 
 //     let mut read_path_mount = connection
 //         .prepare(

@@ -3,14 +3,16 @@ pub mod storage;
 pub mod systemdnetworkd;
 pub mod users;
 
+use crate::DATABASE;
+
 pub fn create_tables() {
-    if let Err(err) = std::fs::remove_file("/tmp/lcs.db") {
+    if let Err(err) = std::fs::remove_file(DATABASE) {
         if &err.to_string() == "Operation not permitted (os error 1)" {
             eprintln!("{:#?}", &err);
         }
     }
 
-    rusqlite::Connection::open("/tmp/lcs.db")
+    rusqlite::Connection::open(DATABASE)
         .unwrap()
         .execute_batch(
             "BEGIN;
