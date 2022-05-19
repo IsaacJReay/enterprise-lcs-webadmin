@@ -12,7 +12,7 @@ arr=( "$@" ); for ((y=0; y<$#; y++));do val="$val ${arr[$y]}";done;yes | pacman 
 pub fn update_sys_pacman(password: &str, package_folder: &str) -> bool {
     let options = ScriptOptions::new();
 
-    let _command = r#"echo password | sudo -S bash /tmp/sys_update_script package_folder/packages/* "#;
+    let _command = r#"echo password | sudo -S bash /tmp/sys_update_script package_folder/* "#;
     let _command = _command.replace("package_folder", package_folder);
     let command = _command.replace("password", password);
 
