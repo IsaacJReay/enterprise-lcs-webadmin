@@ -40,19 +40,31 @@ pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String
 
     // sys_update operation
     let current_sys_update = match current_update.sys_update {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
     let current_downloading_sys_update = match current_downloading.sys_update {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
     let current_installing_sys_update = match current_installing.sys_update {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
     let new_sys_update = match new_update.sys_update.as_ref() {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
 
