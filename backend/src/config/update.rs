@@ -435,8 +435,6 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         download_file(download_link, output_file).unwrap_or_else(|_| download_status = false);
     }
 
-    println!("{}", download_status);
-
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
             true => all_new_update_information.sys_update.as_ref().unwrap(),

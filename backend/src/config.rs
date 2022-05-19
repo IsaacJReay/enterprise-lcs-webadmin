@@ -90,6 +90,11 @@ pub fn remove_update_information_from_toml(
     };
 
     map.remove(update_id).unwrap();
+    
+    write_file(
+        toml::to_string(&config).unwrap().as_bytes(),
+        output_file_location,
+    );
 }
 
 pub fn read_file(source_file: &str) -> String {
