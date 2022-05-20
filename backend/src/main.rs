@@ -35,8 +35,7 @@ async fn main() -> Result<()> {
             .wrap(
                 Cors::default()
                     .allowed_origin("https://admin.koompi.app")
-                    // .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-                    .allow_any_header()
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
                     .max_age(TOKEN_EXPIRATION_SEC as usize),
