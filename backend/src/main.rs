@@ -9,7 +9,7 @@ mod tool;
 use actix_cors::Cors;
 use actix_web::{
     middleware,
-    // http,
+    http,
     App,
     HttpServer,
 };
@@ -31,16 +31,16 @@ async fn main() -> Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Cors::permissive()) // For Development
-            // .wrap(
-            //     Cors::default()
-            //         .allowed_origin("https://admin.koompi.app")
-            //         .allowed_origin("http://localhost:3000")
-            //         .allowed_origin("http://127.0.0.1:3000")
-            //         .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-            //         .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT, http::header::CONTENT_TYPE])
-            //         .max_age(TOKEN_EXPIRATION_SEC as usize),
-            // ) // For Production
+            // .wrap(Cors::permissive()) // For Development
+            .wrap(
+                Cors::default()
+                    .allowed_origin("https://admin.koompi.app")
+                    // .allowed_origin("http://localhost:3000")
+                    // .allowed_origin("http://127.0.0.1:3000")
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                    .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT, http::header::CONTENT_TYPE])
+                    .max_age(TOKEN_EXPIRATION_SEC as usize),
+            ) // For Production
             .wrap(middleware::Logger::default())
             //Host frontend
             .service(actix_files::Files::new("/", "./public").index_file("index.html"))
