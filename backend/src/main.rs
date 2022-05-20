@@ -16,9 +16,9 @@ use actix_web::{
 use std::io::Result;
 
 const CHUNK_SIZE: u32 = 409599;
-const DATABASE: &str = "/tmp/lcs-bk.db";
+const DATABASE: &str = "/tmp/lcs.db";
 const IP_ADDRESS: &str = "0.0.0.0";
-const PORT: &str = "9090";
+const PORT: &str = "8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 const TOKEN_EXPIRATION_SEC: u64 = 86400; // Cannot Exceed u64
