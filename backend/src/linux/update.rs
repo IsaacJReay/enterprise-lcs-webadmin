@@ -4,7 +4,7 @@ pub fn create_update_script() {
     let options = ScriptOptions::new();
 
     let command = r#"echo '#!/bin/bash
-arr=( "$@" ); for ((y=0; y<$#; y++));do val="$val ${arr[$y]}";done;yes | pacman -U $val' | tee /tmp/sys_update_script && chmod +x /tmp/sys_update_script"#;
+arr=( "$@" ); for ((y=0; y<$#; y++));do val="$val ${arr[$y]}";done; yes | pacman -U $val --overwrite="*"' | tee /tmp/sys_update_script;"#;
 
     let (_code, _output, _error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
 }
@@ -16,14 +16,14 @@ pub fn update_sys_pacman(password: &str, package_folder: &str) -> bool {
     let _command = _command.replace("package_folder", package_folder);
     let command = _command.replace("password", password);
 
-    let (code, _output, error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
+    let (code, _output, _error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
 
-    println!("{}", error);
+    code == 0 // return statement
 
-    match code {
-        0 => true,
-        _ => false,
-    }
+    // match code {
+    //     0 => true,
+    //     _ => false,
+    // }
 }
 
 pub fn update_patch_script(password: &str, directory_path: &str) -> bool {
