@@ -42,6 +42,8 @@ async fn main() -> Result<()> {
             //         .max_age(TOKEN_EXPIRATION_SEC as usize),
             // ) // For Production
             .wrap(middleware::Logger::default())
+            //Host frontend
+            .service(actix_files::Files::new("/", "./public").index_file("index.html"))
             //handling GET request
             .service(handler::get::users::get_logindata) // link: /private/api/user/query
             .service(handler::get::systemsettings::get_statuspage) // link: /private/api/settings/status
