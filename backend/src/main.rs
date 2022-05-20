@@ -42,8 +42,6 @@ async fn main() -> Result<()> {
                     .max_age(TOKEN_EXPIRATION_SEC as usize),
             ) // For Production
             .wrap(middleware::Logger::default())
-            //Host frontend
-            .service(actix_files::Files::new("/", "./public").index_file("index.html"))
             //handling GET request
             .service(handler::get::users::get_logindata) // link: /private/api/user/query
             .service(handler::get::systemsettings::get_statuspage) // link: /private/api/settings/status
@@ -79,6 +77,8 @@ async fn main() -> Result<()> {
             .service(handler::delete::post_storage_device_remove_filedir) // link: /private/api/settings/storage/device/deletion
             //                                             //handling PUT request
             .service(handler::put::put_rename_domain_name) // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
+            //Host frontend
+            .service(actix_files::Files::new("/", "./public").index_file("index.html"))
     })
     .bind(format!("{}:{}", IP_ADDRESS, PORT))?
     .run();
