@@ -13,7 +13,7 @@ use actix_web::{
     App,
     HttpServer,
 };
-use std::{io::Result, path::PathBuf};
+use std::io::Result;
 
 const CHUNK_SIZE: u32 = 409599;
 const DATABASE: &str = "/tmp/lcs.db";
