@@ -13,7 +13,7 @@ use actix_web::{
     App,
     HttpServer,
 };
-use std::io::Result;
+use std::{io::Result, path::PathBuf};
 
 const CHUNK_SIZE: u32 = 409599;
 const DATABASE: &str = "/tmp/lcs.db";
@@ -23,6 +23,12 @@ const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 const TOKEN_EXPIRATION_SEC: u64 = 86400; // Cannot Exceed u64
 const SESSION_LIMIT: u64 = 3; // How many session at the same time for one user
+
+fn single_page_app() -> Result<actix_files::NamedFile> {
+    // 1.
+    let path: PathBuf = PathBuf::from("./public/index.html");
+    Ok(actix_files::NamedFile::open(path)?)
+}
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -79,6 +85,7 @@ async fn main() -> Result<()> {
             .service(handler::put::put_rename_domain_name) // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
             //Host frontend
             .service(actix_files::Files::new("/", "./public").index_file("index.html"))
+            .service(actix_files::Files::new("/status", "./public").index_file("index.html"))
     })
     .bind(format!("{}:{}", IP_ADDRESS, PORT))?
     .run();
