@@ -382,7 +382,7 @@ pub struct ContentServerUpdate {
     pub patch_update: Option<Table>,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize)]
 pub struct SystemUpdateInformation {
     pub id: String,
     pub display_name: String,
