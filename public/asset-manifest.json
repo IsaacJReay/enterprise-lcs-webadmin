@@ -1,12 +1,12 @@
 {
   "main.css": "/static/css/main.268a9c1d.chunk.css",
-  "main.js": "/static/js/main.1f4962af.chunk.js",
-  "main.js.map": "/static/js/main.1f4962af.chunk.js.map",
+  "main.js": "/static/js/main.f36e173b.chunk.js",
+  "main.js.map": "/static/js/main.f36e173b.chunk.js.map",
   "static/js/1.257f6f77.chunk.js": "/static/js/1.257f6f77.chunk.js",
   "static/js/1.257f6f77.chunk.js.map": "/static/js/1.257f6f77.chunk.js.map",
   "static/css/2.c4f2e146.chunk.css": "/static/css/2.c4f2e146.chunk.css",
-  "static/js/2.ab246e76.chunk.js": "/static/js/2.ab246e76.chunk.js",
-  "static/js/2.ab246e76.chunk.js.map": "/static/js/2.ab246e76.chunk.js.map",
+  "static/js/2.8c45c546.chunk.js": "/static/js/2.8c45c546.chunk.js",
+  "static/js/2.8c45c546.chunk.js.map": "/static/js/2.8c45c546.chunk.js.map",
   "runtime~main.js": "/static/js/runtime~main.5b13412f.js",
   "runtime~main.js.map": "/static/js/runtime~main.5b13412f.js.map",
   "static/media/koompi-black.png": "/static/media/koompi-black.08e87fdd.png",
@@ -20,6 +20,6 @@
   "static/css/main.268a9c1d.chunk.css.map": "/static/css/main.268a9c1d.chunk.css.map",
   "static/css/2.c4f2e146.chunk.css.map": "/static/css/2.c4f2e146.chunk.css.map",
   "index.html": "/index.html",
-  "precache-manifest.eabe5b93c6f92af15ba0459a805691c2.js": "/precache-manifest.eabe5b93c6f92af15ba0459a805691c2.js",
+  "precache-manifest.df7cda61ef05635e40749c9b10ea6b61.js": "/precache-manifest.df7cda61ef05635e40749c9b10ea6b61.js",
   "service-worker.js": "/service-worker.js"
 }
