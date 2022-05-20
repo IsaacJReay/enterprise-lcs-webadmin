@@ -78,7 +78,8 @@ async fn main() -> Result<()> {
             //                                             //handling PUT request
             .service(handler::put::put_rename_domain_name) // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
             //Host frontend
-            .default_service(actix_files::Files::new("/", "./public").index_file("index.html"))
+            .service(actix_files::Files::new("/", "./public").index_file("index.html"))
+            .default_service(actix_files::NamedFile::open(std::path::PathBuf::from("./public/index.html")).unwrap())
             // .service(actix_files::Files::new("/status", "./public").index_file("index.html"))
     })
     .bind(format!("{}:{}", IP_ADDRESS, PORT))?
