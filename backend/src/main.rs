@@ -24,12 +24,6 @@ const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 const TOKEN_EXPIRATION_SEC: u64 = 86400; // Cannot Exceed u64
 const SESSION_LIMIT: u64 = 3; // How many session at the same time for one user
 
-fn single_page_app() -> Result<actix_files::NamedFile> {
-    // 1.
-    let path: PathBuf = PathBuf::from("./public/index.html");
-    Ok(actix_files::NamedFile::open(path)?)
-}
-
 #[actix_web::main]
 async fn main() -> Result<()> {
     linux::update::create_update_script();
