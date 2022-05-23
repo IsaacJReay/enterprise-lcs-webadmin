@@ -31,15 +31,15 @@ async fn main() -> Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            // .wrap(Cors::permissive()) // For Development
-            .wrap(
-                Cors::default()
-                    .allowed_origin("https://admin.koompi.app")
-                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-                    .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-                    .allowed_header(http::header::CONTENT_TYPE)
-                    .max_age(TOKEN_EXPIRATION_SEC as usize),
-            ) // For Production
+            .wrap(Cors::permissive()) // For Development
+            // .wrap(
+            //     Cors::default()
+            //         .allowed_origin("https://admin.koompi.app")
+            //         .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+            //         .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+            //         .allowed_header(http::header::CONTENT_TYPE)
+            //         .max_age(TOKEN_EXPIRATION_SEC as usize),
+            // ) // For Production
             .wrap(middleware::Logger::default())
             //handling GET request
             .service(handler::get::users::get_logindata) // link: /private/api/user/query
