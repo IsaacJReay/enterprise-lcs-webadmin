@@ -80,6 +80,13 @@ pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<D
                     address: splited_each_line[2].to_owned(),
                 })
             }
+            else if splited_each_line[1] == "NS" {
+                vec_record.push(DnsRecords {
+                    subdomain_name: String::from(" "),
+                    dns_type: "NS".to_string(),
+                    address: splited_each_line[2].to_owned(),
+                })
+            }
         }
     });
 
