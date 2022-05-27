@@ -7,12 +7,8 @@ mod structs;
 mod tool;
 
 use actix_cors::Cors;
-use actix_web::{
-    middleware,
-    http,
-    App,
-    HttpServer,
-};
+// use actix_web::{http, middleware, App, HttpServer};
+use actix_web::{middleware, App, HttpServer};
 use std::io::Result;
 
 const CHUNK_SIZE: u32 = 409599;
@@ -78,8 +74,17 @@ async fn main() -> Result<()> {
             .service(handler::put::put_rename_domain_name) // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
             //Host frontend
             .service(actix_files::Files::new("/", "./public").index_file("index.html"))
-            .default_service(actix_files::NamedFile::open(std::path::PathBuf::from("./public/index.html")).unwrap())
-            // .service(actix_files::Files::new("/status", "./public").index_file("index.html"))
+            .default_service(
+                actix_files::NamedFile::open(std::path::PathBuf::from("./public/index.html"))
+                    .unwrap_or_else(|_| {
+                        eprintln!("Warning: this Code is executed from the wrong directory. Consider change directory to base directory.");
+                        actix_files::NamedFile::open(std::path::PathBuf::from(
+                            "../public/index.html",
+                        ))
+                        .unwrap()
+                    }),
+            )
+        // .service(actix_files::Files::new("/status", "./public").index_file("index.html"))
     })
     .bind(format!("{}:{}", IP_ADDRESS, PORT))?
     .run();
