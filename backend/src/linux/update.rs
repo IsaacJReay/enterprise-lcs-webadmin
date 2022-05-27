@@ -20,10 +20,6 @@ pub fn update_sys_pacman(password: &str, package_folder: &str) -> bool {
 
     code == 0 // return statement
 
-    // match code {
-    //     0 => true,
-    //     _ => false,
-    // }
 }
 
 pub fn update_patch_script(password: &str, directory_path: &str) -> bool {
@@ -36,8 +32,6 @@ pub fn update_patch_script(password: &str, directory_path: &str) -> bool {
 
     let (code, _output, _error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();
 
-    match code {
-        0 => true,
-        _ => false,
-    }
+    code == 0 // return statement
+
 }
