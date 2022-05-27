@@ -103,7 +103,7 @@ printf "$part_uuid $total_size $free_space $percentage"
 
 pub fn make_dir(dir_location: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
-    let command = r#"mkdir 'dir_location'"#;
+    let command = r#"mkdir dir_location"#;
     let command = command.replace("dir_location", dir_location);
 
     let (code, output, error) = run_script!(&format!("{}", command), &vec![], &options).unwrap();

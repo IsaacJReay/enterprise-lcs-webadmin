@@ -84,7 +84,6 @@ async fn main() -> Result<()> {
                         .unwrap()
                     }),
             )
-        // .service(actix_files::Files::new("/status", "./public").index_file("index.html"))
     })
     .bind(format!("{}:{}", IP_ADDRESS, PORT))?
     .run();
