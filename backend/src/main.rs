@@ -7,18 +7,19 @@ mod structs;
 mod tool;
 
 use actix_cors::Cors;
-// use actix_web::{http, middleware, App, HttpServer};
-use actix_web::{middleware, App, HttpServer};
+use actix_web::{http, middleware, App, HttpServer};
 use std::io::Result;
 
-const CHUNK_SIZE: u32 = 409599;
-const DATABASE: &str = "/tmp/lcs.db";
-const IP_ADDRESS: &str = "0.0.0.0";
+const CHUNK_SIZE: u32 = 409599; // Download Chunk size
+const DATABASE: &str = "/tmp/lcs.db"; // SQLite Database location
+const IP_ADDRESS: &str = "0.0.0.0"; 
 const PORT: &str = "8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 const TOKEN_EXPIRATION_SEC: u64 = 86400; // Cannot Exceed u64
 const SESSION_LIMIT: u64 = 3; // How many session at the same time for one user
+const ENABLE_CORS: bool = false; // Set to TRUE for production
+const CORS_ORIGIN: &str = "https://admin.koompi.app"; // Allowed Origin for CORS
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -27,15 +28,17 @@ async fn main() -> Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Cors::permissive()) // For Development
-            // .wrap(
-            //     Cors::default()
-            //         .allowed_origin("https://admin.koompi.app")
-            //         .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-            //         .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-            //         .allowed_header(http::header::CONTENT_TYPE)
-            //         .max_age(TOKEN_EXPIRATION_SEC as usize),
-            // ) // For Production
+            .wrap(
+                match ENABLE_CORS {
+                    true => Cors::default()
+                        .allowed_origin(CORS_ORIGIN)
+                        .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                        .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+                        .allowed_header(http::header::CONTENT_TYPE)
+                        .max_age(TOKEN_EXPIRATION_SEC as usize),
+                    false => Cors::permissive(),
+                }
+            )
             .wrap(middleware::Logger::default())
             //handling GET request
             .service(handler::get::users::get_logindata) // link: /private/api/user/query
