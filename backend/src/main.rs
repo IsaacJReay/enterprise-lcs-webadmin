@@ -18,7 +18,7 @@ const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
 const TOKEN_EXPIRATION_SEC: u64 = 86400; // Cannot Exceed u64
 const SESSION_LIMIT: u64 = 3; // How many session at the same time for one user
-const ENABLE_CORS: bool = false; // Set to TRUE for production
+const ENABLE_CORS: bool = true; // Set to TRUE for production
 const CORS_ORIGIN: &str = "https://admin.koompi.app"; // Allowed Origin for CORS
 
 #[actix_web::main]

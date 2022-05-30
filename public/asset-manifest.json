@@ -1,25 +1,24 @@
 {
-  "main.css": "/static/css/main.268a9c1d.chunk.css",
-  "main.js": "/static/js/main.fc0ee61f.chunk.js",
-  "main.js.map": "/static/js/main.fc0ee61f.chunk.js.map",
-  "static/js/1.257f6f77.chunk.js": "/static/js/1.257f6f77.chunk.js",
-  "static/js/1.257f6f77.chunk.js.map": "/static/js/1.257f6f77.chunk.js.map",
-  "static/css/2.c4f2e146.chunk.css": "/static/css/2.c4f2e146.chunk.css",
-  "static/js/2.0bce125a.chunk.js": "/static/js/2.0bce125a.chunk.js",
-  "static/js/2.0bce125a.chunk.js.map": "/static/js/2.0bce125a.chunk.js.map",
-  "runtime~main.js": "/static/js/runtime~main.5b13412f.js",
-  "runtime~main.js.map": "/static/js/runtime~main.5b13412f.js.map",
-  "static/media/koompi-black.png": "/static/media/koompi-black.08e87fdd.png",
-  "static/media/Hard-Drive3.png": "/static/media/Hard-Drive3.94fd6cf1.png",
-  "static/media/Hard-Drive.png": "/static/media/Hard-Drive.eb285860.png",
-  "static/media/login2.png": "/static/media/login2.ad5e1439.png",
-  "static/media/App.css": "/static/media/background-1.933d6cd4.png",
-  "static/media/history.png": "/static/media/history.b5184f36.png",
-  "static/media/mission.png": "/static/media/mission.35cd711f.png",
-  "static/media/vision.png": "/static/media/vision.89ddb0d6.png",
-  "static/css/main.268a9c1d.chunk.css.map": "/static/css/main.268a9c1d.chunk.css.map",
-  "static/css/2.c4f2e146.chunk.css.map": "/static/css/2.c4f2e146.chunk.css.map",
-  "index.html": "/index.html",
-  "precache-manifest.346982422f46b2f4c2cdfbfa16644ec9.js": "/precache-manifest.346982422f46b2f4c2cdfbfa16644ec9.js",
-  "service-worker.js": "/service-worker.js"
+  "files": {
+    "main.css": "/static/css/main.24b6dc4f.css",
+    "main.js": "/static/js/main.aa77eb6a.js",
+    "static/js/787.f3f68feb.chunk.js": "/static/js/787.f3f68feb.chunk.js",
+    "static/media/background-1.png": "/static/media/background-1.45d99684c905945a737a.png",
+    "static/media/background.jpg": "/static/media/background.8ec077f508e52c1195de.jpg",
+    "static/media/mission.png": "/static/media/mission.ada387024df662f953f0.png",
+    "static/media/Hard-Drive3.png": "/static/media/Hard-Drive3.1aae7036b38cb408e127.png",
+    "static/media/Hard-Drive.png": "/static/media/Hard-Drive.da9c82b1258e3dbad775.png",
+    "static/media/koompi-black.png": "/static/media/koompi-black.e8fe6c05af7c9177974f.png",
+    "static/media/login2.png": "/static/media/login2.da5d86408abc3d12a101.png",
+    "static/media/vision.png": "/static/media/vision.f5637a684be287a2058f.png",
+    "static/media/history.png": "/static/media/history.fedddd17753bf8ed591e.png",
+    "index.html": "/index.html",
+    "main.24b6dc4f.css.map": "/static/css/main.24b6dc4f.css.map",
+    "main.aa77eb6a.js.map": "/static/js/main.aa77eb6a.js.map",
+    "787.f3f68feb.chunk.js.map": "/static/js/787.f3f68feb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.24b6dc4f.css",
+    "static/js/main.aa77eb6a.js"
+  ]
 }
