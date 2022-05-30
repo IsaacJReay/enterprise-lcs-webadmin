@@ -4,17 +4,21 @@ import WANStatic from "./wan-static";
 import WANDynamic from "./wan-dynamic";
 import { IoIosHelpCircle } from "react-icons/io";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 const { Option } = Select;
 
 const WANSetting = () => {
   const [values, setValues] = useState();
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [wan, setWan] = useState({});
 
+  console.log(values);
+
   // ============auth =============
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const baseUrl = process.env.REACT_APP_API_URL;
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -44,7 +48,7 @@ const WANSetting = () => {
 
   useEffect(() => {
     fetchData();
-    handleChange();
+    // handleChange();
   }, []);
 
   return (
@@ -62,6 +66,7 @@ const WANSetting = () => {
                     <Form.Item label="WAN Connection type">
                       <Select
                         onChange={handleChange}
+                        value={values}
                         defaultValue={values === true ? "Dynamic" : "Static"}
                         size="large"
                         className="select-option"

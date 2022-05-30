@@ -356,10 +356,11 @@ b {
   width: 100% !important;
   padding: 0px 50px;
   border-radius: 8px !important;
-  height: 30px;
+  height: 45px !important;
   min-width: 30%;
   margin-top: 30px;
   float: right;
+  font-weight: bolder !important;
 }
 
 .ant-input-number {
@@ -401,7 +402,7 @@ b {
 .desc-container-banner {
   width: 100%;
   margin: auto;
-  margin-top: 25px;
+  margin-top: 15px;
   display: grid;
   place-items: center;
 }
@@ -485,13 +486,12 @@ b {
   height: 50px !important;
   position: absolute;
   left: 112% !important;
-  top: 400px;
+  top: 370px;
   font-weight: bolder !important;
 }
 .button-apply2 {
   float: right;
-  margin-top: 40px;
-
+  margin-top: 47px;
   border-radius: 8px !important;
   padding: 5px 50px !important;
 }
@@ -500,8 +500,8 @@ b {
   padding: 5px 50px !important;
   height: 50px !important;
   position: absolute;
-  left: 112% !important;
-  top: 220px;
+  left: 115% !important;
+  top: 190px;
   font-weight: bolder !important;
 }
 .button-apply4 {
@@ -509,29 +509,37 @@ b {
   padding: 5px 50px !important;
   height: 50px !important;
   position: absolute;
-  left: 112% !important;
-  top: 310px;
+  left: 115% !important;
+  top: 280px;
   font-weight: bolder !important;
 }
 .button-apply5 {
   float: right;
   margin-top: 600px;
-
   border-radius: 8px !important;
   padding: 5px 50px !important;
+}
+.button-apply6 {
+  border-radius: 8px !important;
+  padding: 5px 50px !important;
+  height: 50px !important;
+  position: absolute;
+  left: 115% !important;
+  top: 330px;
+  font-weight: bolder !important;
 }
 .button-export {
   border-radius: 8px !important;
   padding: 5px 50px !important;
   height: 50px !important;
-  margin-top: 530px;
+  margin-top: 500px;
   margin-left: 780px !important;
 }
 .button-export2 {
   border-radius: 8px !important;
   padding: 5px 50px !important;
   height: 50px !important;
-  margin-top: 367px;
+  margin-top: 410px;
   margin-left: 780px !important;
 }
 .button-reset {
@@ -633,7 +641,7 @@ b {
   /* float: right; */
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: flex-end;
   column-gap: 20px;
 }
 .add-button {
@@ -654,6 +662,7 @@ b {
 .item-storages {
   border-radius: 8px;
   padding: 10px 20px;
+  cursor: pointer;
 }
 .item-storages p {
   color: #000;
@@ -661,6 +670,7 @@ b {
 .item-storages:hover {
   background: rgba(101, 221, 255, 0.21);
   border: 1px solid #65ddff;
+  cursor: pointer;
 }
 .storages-icon {
   width: 80px;
@@ -742,7 +752,7 @@ b {
   display: flex;
   flex-direction: row;
   column-gap: 20px;
-  padding: 20px 25px;
+  padding: 20px 10px;
 }
 .ant-btn-circle {
   border-radius: 50px !important;
@@ -755,25 +765,13 @@ b {
   padding: 8px 20px;
   font-size: 20px;
   font-weight: 700;
-  background-color: #e0e0e0;
+  background-color: #ffffff;
   width: 100%;
 }
 .btn-options-storages {
-  display: flex;
-  flex-direction: row;
-  column-gap: 20px;
-  padding: 10px 25px;
-  justify-content: end;
-  text-align: end;
+  padding-right: 10px;
 }
-.btn-options-storages2 {
-  display: flex;
-  flex-direction: row;
-  column-gap: 20px;
-  /* padding: 10px 25px; */
-  justify-content: end;
-  text-align: end;
-}
+
 .button-unselected {
   background-color: #bebebe !important;
   border: none !important;
@@ -802,7 +800,7 @@ b {
   display: flex;
   flex-direction: row;
   column-gap: 15px;
-  justify-content: end;
+  justify-content: flex-end;
 }
 .icons-update {
   font-weight: 600;
@@ -815,7 +813,7 @@ b {
 .container-update {
   padding: 30px 15px;
   max-height: 800px;
-  height: 750px;
+  height: 730px;
   overflow-y: scroll;
   margin-top: 20px;
 }
@@ -946,6 +944,14 @@ b {
   border: 2px solid red;
   background-color: rgba(255, 0, 0, 0.137);
 }
+.options-right-click {
+  padding: 10px 7px;
+}
+.ant-dropdown {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
 .icons-table {
   margin-right: 10px;
 }
@@ -955,19 +961,31 @@ b {
 .file-container {
   list-style: none;
 }
+.file-container ul {
+  padding: 0 0 0 10px;
+}
+
 .list-file {
   width: 100%;
   display: block;
 }
 .list-file:hover {
-  background-color: #4dd8ff11;
+  background-color: #ffffff;
   border-radius: 8px;
 }
 .selected-file {
-  background-color: #4dd8ff42;
+  background-color: #ffffff;
   /* padding: 5px 15px 0px 5px; */
   border-radius: 8px;
 }
+.container-more {
+  width: 20px;
+  cursor: pointer;
+}
+.more-storage-icon {
+  padding-top: 15px;
+}
+
 /* .local-data-container ul{
   padding: 0px !important;
 } */
@@ -978,7 +996,7 @@ b {
   padding: 0 0 0 5px;
 }
 .header-file-manager {
-  background-color: #e0e0e0;
+  background-color: #ffffff;
   padding: 15px 15px 0px 15px;
   margin-bottom: 15px;
   border-radius: 8px;
@@ -991,4 +1009,33 @@ b {
 }
 .filename {
   padding-top: 10px;
+}
+.delete-folder {
+  cursor: pointer;
+  font-size: 40px;
+  background-color: #fff;
+  padding: 5px 10px;
+  border-radius: 8px;
+  color: red;
+}
+.create-folder {
+  cursor: pointer;
+  font-size: 40px;
+  background-color: #fff;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+.delete-folder:hover,
+.create-folder:hover {
+  background-color: #1890ff;
+  color: #fff;
+}
+.delete-folder:active,
+.create-folder:active {
+  background-color: #1890ff !important;
+}
+.send-to-sub-space {
+  font-size: 10px;
+  position: absolute;
+  top: 20px;
 }

@@ -1,16 +1,36 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { Layout } from "antd";
+import { Layout, Modal } from "antd";
 import SideNavBar from "./components/layouts/side-navbar";
 import jwt_decode from "jwt-decode";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  let token = localStorage.getItem("token");
+  // let token = localStorage.getItem("token");
+
+  let token = Cookies.get("token");
+  var decoded = jwt_decode(token);
+  const isNow = Math.floor(new Date().getTime() / 1000.0);
+  
+  function onLogout() {
+    return window.location.replace("/logout");
+  }
 
   const isLogin = () => {
     if (token) {
+      if (decoded.exp <= isNow) {
+        return Modal.error({
+          title: "Your permission is time out!",
+          icon: <ExclamationCircleOutlined />,
+          content:
+            "You cannot do anything! Re-login if you want to have more permission!",
+          okText: "Logout",
+          onOk: onLogout,
+        });
+      }
       return true;
     } else {
       return false;

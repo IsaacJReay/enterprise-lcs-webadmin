@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 
 import { FiX } from "react-icons/fi";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const { Option } = Select;
 
@@ -21,7 +22,8 @@ const AddRecord = ({
 
   //   // ------- token ----------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
@@ -92,7 +94,7 @@ const AddRecord = ({
         <div className="container-adding-records">
           <Form {...layout} size="large" onFinish={handleApply}>
             <Form.Item
-              label="Sub domain name"
+              label="Subdomain name"
               name="subdomain_name"
               rules={[
                 { required: true, message: "Please input sub domain name!" },
@@ -108,7 +110,7 @@ const AddRecord = ({
               <Input placeholder="text here ..." size="large" />
             </Form.Item>
             <Form.Item
-              label="Type"
+              label="Record Type"
               name="dns_type"
               rules={[
                 {
@@ -131,6 +133,7 @@ const AddRecord = ({
                 <Option value="SRV">SRV</Option>
                 <Option value="TXT">TXT</Option>
                 <Option value="SOA">SOA</Option>
+                <Option value="NS">NS</Option>
               </Select>
             </Form.Item>
             <Form.Item>

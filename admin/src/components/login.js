@@ -3,6 +3,7 @@ import { Input, Button, Form, Col, Row, message } from "antd";
 import axios from "axios";
 import image from "../assets/images/login2.png";
 import icon from "../assets/images/icons/koompi-black.png";
+import Cookies from "js-cookie";
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -17,6 +18,7 @@ const Login = () => {
     await axios
       .post(`${baseUrl}/user/login`, adminLogin, {
         headers: {
+          "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json",
           Authorization: "",
         },
@@ -24,7 +26,7 @@ const Login = () => {
       })
       .then((res) => {
         if ((res.statusCode = 200)) {
-          localStorage.setItem("token", res.data.token);
+          Cookies.set("token", res.data);
           setLoading(true);
           message.success("Successful!");
           window.location.replace("/status");
@@ -107,6 +109,7 @@ const Login = () => {
                     type="primary"
                     htmlType="submit"
                     className="login-form-button"
+                    size="large"
                   >
                     LOGIN
                   </Button>

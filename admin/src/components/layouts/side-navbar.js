@@ -13,19 +13,20 @@ import {
 import { BiLogOutCircle } from "react-icons/bi";
 import { FiEdit } from "react-icons/fi";
 import Avatar1 from "../../assets/images/avatar/avatar.png";
+import Cookies from "js-cookie";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 const rootSubmenuKeys = ["/network", "/management"];
 
-const baseUrl = process.env.REACT_APP_API_URL;
-const getToken = localStorage.getItem("token");
-
 const SideNavBar = () => {
   const [openKeys, setOpenKeys] = useState(["/status"]);
   const [currentUser, setCurrentUser] = useState();
-  const [, setLoading] = useState(false);
+
+  const baseUrl = process.env.REACT_APP_API_URL;
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
@@ -43,9 +44,10 @@ const SideNavBar = () => {
     })
       .then((res) => {
         setCurrentUser(res.data);
-        setLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const onOpenChange = (keys) => {
@@ -141,9 +143,9 @@ const SideNavBar = () => {
             <Menu.Item key="/management/users-account">
               <Link to="/management/users-account">USER ACCOUNT</Link>
             </Menu.Item>
-            <Menu.Item key="/management/backup-restore">
+            {/* <Menu.Item key="/management/backup-restore">
               <Link to="/management/backup-restore">BACKUP & RESTORE</Link>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="/management/reset">
               <Link to="/management/reset">RESET ALL</Link>
             </Menu.Item>

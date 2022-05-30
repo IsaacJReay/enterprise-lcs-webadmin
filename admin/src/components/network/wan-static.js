@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, message, Spin, Row, Col } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, message, Row, Col } from "antd";
 import axios from "axios";
+import Cookies from "js-cookie";
 
-const getToken = localStorage.getItem("token");
+// const getToken = localStorage.getItem("token");
+const getToken = Cookies.get("token");
 const baseUrl = process.env.REACT_APP_API_URL;
 
 const WANStatic = ({ wan, fetchData }) => {
-  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   const auth = {
@@ -62,13 +63,13 @@ const WANStatic = ({ wan, fetchData }) => {
       });
   };
 
-  if (loading) {
-    return (
-      <div className="spin">
-        <Spin />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="spin">
+  //       <Spin />
+  //     </div>
+  //   );
+  // }
 
   return (
     <React.Fragment>

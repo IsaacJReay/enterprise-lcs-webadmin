@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Checkbox, Button, Row, Col, Layout, message, Space } from "antd";
 import axios from "axios";
 import { IoIosHelpCircle } from "react-icons/io";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 
@@ -10,7 +11,8 @@ const ResetAll = () => {
   const [checked, setChecked] = useState(false);
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };

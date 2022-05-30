@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal, Button, message, Input, Form } from "antd";
 import axios from "axios";
 import { FiX } from "react-icons/fi";
-import { useForm } from "antd/lib/form/Form";
+import Cookies from "js-cookie";
 
 const CreateFolder = ({
   visible,
@@ -14,12 +14,12 @@ const CreateFolder = ({
 }) => {
   // -------state management ---------------
 
-  const [, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   // -------token ----------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
@@ -46,25 +46,17 @@ const CreateFolder = ({
 
       .then((res) => {
         if ((res.statusCode = 200)) {
-          setLoading(true);
           message.success("Successful!");
-          fetchData();
           form.resetFields();
+          fetchData();
           handleOk();
-          setLoading(false);
         } else {
-          setLoading(true);
           message.error("Operation Failed! ");
-          setLoading(false);
         }
       })
 
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
         console.log(err);
-        message.error("Operation Failed! ");
       });
   };
 

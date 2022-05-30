@@ -1,0 +1,254 @@
+import React, { useState, useContext } from "react";
+import { Row, Col, Dropdown, message, Modal } from "antd";
+import { MoreOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { FiSend, FiFolderPlus, FiCopy } from "react-icons/fi";
+import { MdOutlineContentPaste, MdDelete } from "react-icons/md";
+import { BsFolderX } from "react-icons/bs";
+import { FcFolder, FcFile } from "react-icons/fc";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import CreateFolder from "./create-folder";
+
+export default function StorageItem({
+  data,
+  parent,
+  setParent,
+  setSelected,
+  selected,
+  fetchData,
+}) {
+  // -------token ----------
+  const baseUrl = process.env.REACT_APP_API_URL;
+  const getToken = localStorage.getItem("token");
+  const auth = {
+    Authorization: "Bearer " + getToken,
+  };
+
+  // ===========state============
+  const [visible, setVisible] = useState(false);
+  const { name, meta } = data;
+  const { item_size, item_last_modify_date } = meta;
+  const [expand, setExpand] = useState(false);
+
+  const { id } = useParams();
+  let uuid = id;
+
+  function formatBytes(item_size, decimals = 2) {
+    if (item_size === 0) return "0 B";
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const total = Math.floor(Math.log(item_size) / Math.log(k));
+    return (
+      parseFloat((item_size / Math.pow(k, total)).toFixed(dm)) +
+      " " +
+      sizes[total]
+    );
+  }
+
+  const showCreateFoder = () => {
+    setVisible(true);
+  };
+
+  const handleOk = () => {
+    setVisible(false);
+  };
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  // -------delete dir---------------
+
+  const deleteDir = () => {
+    axios
+      .delete(`${baseUrl}/settings/storage/device/deletion`, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+        data: {
+          selected_filedir: [`${selected}`],
+          drive_partuuid: uuid,
+        },
+      })
+
+      .then((res) => {
+        if ((res.statusCode = 200)) {
+          message.success("Successful!");
+          window.location.reload();
+        } else {
+          message.error("Operation Failed! ");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const options = (
+    <div style={{ width: "170px" }} className="options-right-click">
+      {data.meta.item_is_dir && (
+        <Row className="accountNavbarhover" onClick={showCreateFoder}>
+          <Col style={{ paddingTop: "6px" }} span={4}>
+            <FiFolderPlus style={{ fontSize: "20px", color: "black" }} />
+          </Col>
+          <Col className="logout" span={20}>
+            <p style={{ paddingTop: "4px", color: "black" }}>New Folder</p>
+          </Col>
+        </Row>
+      )}
+      <Row className="accountNavbarhover">
+        <Col span={4} style={{ paddingTop: "6px" }}>
+          <FiSend className="about-us-icon" />
+        </Col>
+        <Col className="logout" span={20}>
+          <a style={{ paddingTop: "4px", color: "black" }}>Send To</a>
+        </Col>
+      </Row>
+      <Row className="accountNavbarhover">
+        <Col span={4} style={{ paddingTop: "6px" }}>
+          <BsFolderX className="about-us-icon" />
+        </Col>
+        <Col className="logout" span={20}>
+          <a style={{ paddingTop: "4px", color: "black" }}>Cut</a>
+        </Col>
+      </Row>
+      <Row className="accountNavbarhover">
+        <Col span={4} style={{ paddingTop: "6px" }}>
+          <FiCopy className="about-us-icon" />
+        </Col>
+        <Col className="logout" span={20}>
+          <a style={{ paddingTop: "4px", color: "black" }}>Copy</a>
+        </Col>
+      </Row>
+      <Row className="accountNavbarhover">
+        <Col span={4} style={{ paddingTop: "6px" }}>
+          <MdOutlineContentPaste className="about-us-icon" />
+        </Col>
+        <Col className="logout" span={20}>
+          <a style={{ paddingTop: "4px", color: "black" }}>Paste</a>
+        </Col>
+      </Row>
+      <Row
+        className="accountNavbarhover"
+        onClick={() => {
+          Modal.confirm({
+            title: "Are you sure to delte it?",
+            icon: <ExclamationCircleOutlined />,
+            content: "Make sure you can lose your data!",
+            okText: "Delete",
+            cancelText: "Cancel",
+            onOk: deleteDir,
+          });
+        }}
+      >
+        <Col style={{ paddingTop: "6px" }} span={4}>
+          <MdDelete style={{ fontSize: "20px", color: "red" }} />
+        </Col>
+        <Col className="logout" span={20}>
+          <p style={{ paddingTop: "4px", color: "red" }}>Delete</p>
+        </Col>
+      </Row>
+    </div>
+  );
+
+  if (data.meta.item_is_dir) {
+    const selfLocation = `${parent}${name}/`;
+    return (
+      <>
+        <CreateFolder
+          visible={visible}
+          handleCancel={handleCancel}
+          handleOk={handleOk}
+          uuid={uuid}
+          selected={selected}
+          fetchData={fetchData}
+        />
+        <ul className="file-container">
+          <li
+            className={`list-file ${
+              selected === selfLocation ? "selected-file" : ""
+            }`}
+            onClick={(e) => {
+              e.preventDefault();
+              setExpand(!expand);
+              setSelected(selfLocation);
+              // console.log(`${selfLocation} is dir`);
+            }}
+          >
+            <Dropdown overlay={options} trigger={["contextMenu"]}>
+              <Row gutter={6}>
+                <Col span={2}>
+                  <FcFolder size={35} className="folder-icon" />
+                </Col>
+                <Col span={11}>
+                  <p className="file-name">{name}</p>
+                </Col>
+                <Col span={8}>
+                  <p className="file-name">{item_last_modify_date}</p>
+                </Col>
+                <Col span={2}>
+                  <div className="file-size">{formatBytes(item_size)}</div>
+                </Col>
+                <Col span={1}>
+                  <MoreOutlined className="more-storage-icon" />
+                </Col>
+              </Row>
+            </Dropdown>
+          </li>
+
+          {!expand ? (
+            ""
+          ) : (
+            <ul className="children-dir">
+              {data.children.map((child) => (
+                <StorageItem
+                  data={child}
+                  parent={selfLocation}
+                  setParent={setParent}
+                  setSelected={setSelected}
+                  selected={selected}
+                />
+              ))}
+            </ul>
+          )}
+        </ul>
+      </>
+    );
+  } else {
+    const selfLocation = `${parent}${name}`;
+    return (
+      <>
+        <li
+          className={`list-file ${
+            selected === selfLocation ? "selected-file" : ""
+          }`}
+          onClick={(e) => {
+            setSelected(selfLocation);
+            // console.log(`${selfLocation} is file`);
+          }}
+        >
+          <Dropdown overlay={options} trigger={["contextMenu"]}>
+            <Row gutter={12}>
+              <Col span={2}>
+                <FcFile size={35} className="folder-icon" />
+              </Col>
+              <Col span={11}>
+                <p className="filename">{name}</p>
+              </Col>
+              <Col span={8}>
+                <p className="file-name">{item_last_modify_date}</p>
+              </Col>
+              <Col span={2}>
+                <p className="filename">{formatBytes(item_size)}</p>
+              </Col>
+              <Col span={1}>
+                <MoreOutlined className="more-storage-icon" />
+              </Col>
+            </Row>
+          </Dropdown>
+        </li>
+      </>
+    );
+  }
+}

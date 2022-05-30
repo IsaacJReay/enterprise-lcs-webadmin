@@ -21,6 +21,7 @@ import AddRecord from "./adding-record";
 import { PlusOutlined, CaretRightOutlined } from "@ant-design/icons";
 import { IoIosHelpCircle } from "react-icons/io";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -37,7 +38,8 @@ const DNSManagement = ({ match }) => {
 
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
@@ -56,17 +58,13 @@ const DNSManagement = ({ match }) => {
         },
       })
       .then((res) => {
-        setLoading(true);
         setItems(res.data);
         setSubdomain(res.data.zone_record);
         setDomainStatus(res.data.status);
         const { status } = res.data;
         form.setFieldsValue({
           status: status,
-        });
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        });       
       })
       .catch((err) => console.log(err));
   }
@@ -99,10 +97,7 @@ const DNSManagement = ({ match }) => {
 
       .catch((err) => {
         console.log(err);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-        message.error("Operation Failed! ");
+      
       });
   };
 
@@ -113,7 +108,6 @@ const DNSManagement = ({ match }) => {
       status: data.status,
       zone_record: null,
     };
-    console.log(inputData);
     await axios
       .post(`${baseUrl}/settings/dns/new/${zone}`, inputData, {
         headers: {
@@ -135,11 +129,8 @@ const DNSManagement = ({ match }) => {
       })
 
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+       
         console.log(err);
-        message.error("Operation Failed! ");
       });
   };
 
@@ -163,7 +154,7 @@ const DNSManagement = ({ match }) => {
 
   const columns = [
     {
-      title: "Sub Domain",
+      title: "Subdomain Name",
       dataIndex: "subdomain_name",
       key: "subdomain_name",
       editable: true,
@@ -177,7 +168,7 @@ const DNSManagement = ({ match }) => {
       width: "20%",
     },
     {
-      title: "Type",
+      title: "Record Type",
       dataIndex: "dns_type",
       key: "dns_type",
       width: "20%",
@@ -365,6 +356,20 @@ const DNSManagement = ({ match }) => {
                     <IoIosHelpCircle className="icon-help" />
                   </Space>
                 </div>
+                <>
+                  <p>
+                    A record Entry inside DNS domain name entry is its subdomain
+                    and settings.{" "}
+                  </p>
+                  <p>
+                    In this settings, you can rename a domain name, edit its
+                    status and add new records
+                  </p>
+                  <p>
+                    To create a new subdomain records, click the Add Record
+                    button.
+                  </p>
+                </>
               </div>
             </div>
           </Col>

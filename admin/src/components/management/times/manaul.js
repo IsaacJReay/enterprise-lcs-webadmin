@@ -13,6 +13,7 @@ import "moment/locale/zh-cn";
 import locale from "antd/lib/locale/en_US";
 import moment from "moment";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import Cookies from "js-cookie";
 
 const CustomeTime = ({ pick }) => {
   const [setLoading] = useState(false);
@@ -20,7 +21,8 @@ const CustomeTime = ({ pick }) => {
 
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };

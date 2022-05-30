@@ -13,6 +13,7 @@ import {
 import Avatar1 from "../../assets/images/avatar/avatar.png";
 import axios from "axios";
 import { IoIosHelpCircle } from "react-icons/io";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 
@@ -23,7 +24,8 @@ const UserAccount = () => {
 
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
@@ -169,7 +171,7 @@ const UserAccount = () => {
                     <Button
                       type="primary"
                       htmlType="submit"
-                      className="button-apply4"
+                      className="button-apply6"
                       size="large"
                     >
                       SAVE & APPLY

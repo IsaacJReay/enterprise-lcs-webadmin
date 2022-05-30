@@ -7,24 +7,33 @@ import {
   message,
   Spin,
   Popover,
-  Popconfirm,
+  Space,
+  Modal,
 } from "antd";
-import { FiArrowLeft } from "react-icons/fi";
-import { CaretRightOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { FiArrowLeft, FiFolderPlus, FiSend, FiCopy } from "react-icons/fi";
+import {
+  CaretRightOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import CreateFolder from "./create-folder";
 import StorageItem from "./storage-item";
 import SendTO from "./send-to";
+import { IoIosHelpCircle } from "react-icons/io";
+import { MdOutlineContentPaste, MdDelete } from "react-icons/md";
+import { BsFolderX } from "react-icons/bs";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 
-const StoragesManagement = ({ match }) => {
+const StoragesManagement = () => {
   // -------state management ---------------
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataStorage, setDataStorage] = useState({});
-  const uuid = match.params.id;
+  const { id } = useParams();
+  const uuid = id;
   const [parent, setParent] = useState("/");
   const [selected, setSelected] = useState("");
   const [operation, setOperation] = useState("");
@@ -34,15 +43,16 @@ const StoragesManagement = ({ match }) => {
 
   // -------token ----------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
 
   // -------- get data ----------
 
-  async function fetchData() {
-    await axios
+  function fetchData() {
+    axios
       .get(`${baseUrl}/settings/storage/device/status/${uuid}`, {
         headers: {
           "content-type": "application/json",
@@ -51,7 +61,6 @@ const StoragesManagement = ({ match }) => {
       })
       .then((res) => {
         setDataStorage(res.data);
-        setLoading(false);
       })
       .catch((err) => console.log(err));
   }
@@ -60,6 +69,57 @@ const StoragesManagement = ({ match }) => {
     fetchData();
   }, []);
 
+  // ============= handle cut =============
+
+  const handleCut = () => {
+    setOperation("move");
+    setSources(`${selected}`);
+    setSourcesUUID(`${uuid}`);
+    message.success("Moved");
+  };
+
+  // ==============handle Copy ==================
+
+  const handleCopy = () => {
+    setOperation("copy");
+    setSources(`${selected}`);
+    setSourcesUUID(`${uuid}`);
+    message.success("Copied");
+  };
+
+  // ---------handle Paste  ---------
+
+  const handlePaste = () => {
+    const inputData = {
+      operation: operation,
+      source_uuid: sourceUUID,
+      source_items: [`${sources}`],
+      destination_uuid: uuid,
+      items_destination: selected,
+    };
+
+    axios
+      .post(`${baseUrl}/settings/storage/device/copy_or_move`, inputData, {
+        headers: {
+          "content-type": "application/json",
+          ...auth,
+        },
+      })
+      .then((res) => {
+        if ((res.statusCode = 200)) {
+          setLoading(true);
+          message.success("Successful!");
+          setLoading(false);
+          fetchData();
+        } else {
+          message.error("Operation Failed! ");
+        }
+      })
+
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   // -------delete dir---------------
 
   const deleteDir = () => {
@@ -77,117 +137,18 @@ const StoragesManagement = ({ match }) => {
 
       .then((res) => {
         if ((res.statusCode = 200)) {
-          setLoading(true);
           message.success("Successful!");
           fetchData();
-          setLoading(false);
         } else {
-          setLoading(true);
           message.error("Operation Failed! ");
-          setLoading(false);
         }
       })
-
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
         console.log(err);
-        message.error("Operation Failed! ");
       });
   };
 
-  // ============= handle cut =============
-
-  const handleCut = () => {
-    setOperation("move");
-    setSources(`${selected}`);
-    setSourcesUUID(`${uuid}`);
-  };
-
-  // ==============handle Copy ==================
-
-  const handleCopy = () => {
-    setOperation("copy");
-    setSources(`${selected}`);
-    setSourcesUUID(`${uuid}`);
-  };
-
-  // ---------handle Paste  ---------
-
-  const handlePaste = () => {
-    const inputData = {
-      operation: operation,
-      source_uuid: sourceUUID,
-      source_items: [`${sources}`],
-      destination_uuid: uuid,
-      items_destination: selected,
-    };
-    axios
-      .post(`${baseUrl}/settings/storage/device/copy_or_move`, inputData, {
-        headers: {
-          "content-type": "application/json",
-          ...auth,
-        },
-      })
-      .then((res) => {
-        if ((res.statusCode = 200)) {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
-          fetchData();
-        } else {
-          setLoading(true);
-          message.error("Operation Failed! ");
-          setLoading(false);
-        }
-      })
-
-      .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-        console.log(err);
-        message.error("Operation Failed! ");
-      });
-  };
-
-  // ============handle unmount ============
-
-  const handleUnmount = () => {
-    const unmountData = {
-      drive_partuuid: uuid,
-    };
-    axios
-      .post(`${baseUrl}/settings/storage/device/unmount`, unmountData, {
-        headers: {
-          "content-type": "application/json",
-          ...auth,
-        },
-      })
-      .then((res) => {
-        if ((res.statusCode = 200)) {
-          setLoading(true);
-          message.success("Successful!");
-          setLoading(false);
-          fetchData();
-        } else {
-          setLoading(true);
-          message.error("Operation Failed! ");
-          setLoading(false);
-        }
-      })
-
-      .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-        console.log(err);
-        message.error("Operation Failed! ");
-      });
-  };
-
-  const showCreateFoder = () => {
+  const showCreateFolder = () => {
     setVisible(true);
   };
   const handleOk = () => {
@@ -211,179 +172,68 @@ const StoragesManagement = ({ match }) => {
     );
   }
 
-  const OperationButtonFlash = () => {
-    return (
-      <React.Fragment>
-        <div className="btn-options-storages">
-          {selected ? (
-            <div className="btn-options-storages2">
-              <Button
-                type="primary"
-                className="button-update2"
-                onClick={handleCopy}
-              >
-                Copy
-              </Button>
-              <Button
-                type="primary"
-                className="button-update2"
-                onClick={handlePaste}
-              >
-                Paste
-              </Button>
-              <Button
-                type="primary"
-                className="button-update2"
-                onClick={handleCut}
-              >
-                Cut
-              </Button>
-              <Popover
-                content={contents}
-                placement="rightTop"
-                title={null}
-                trigger="click"
-                // visible={showModal}
-                onVisibleChange={showSendTo}
-              >
-                <Button type="primary" className="button-update2">
-                  Send to
-                </Button>
-              </Popover>
-              <Button type="primary" className="button-update2">
-                Delete
-              </Button>
-            </div>
-          ) : (
-            <div className="btn-options-storages2">
-              <Button type="primary" className="button-unselected">
-                Copy
-              </Button>
-              <Button type="primary" className="button-unselected">
-                Paste
-              </Button>
-              <Button type="primary" className="button-unselected">
-                Cut
-              </Button>
-
-              <Button type="primary" className="button-unselected">
-                Send to
-              </Button>
-
-              <Button type="primary" className="button-unselected">
-                Delete
-              </Button>
-            </div>
-          )}
-          <Button
-            type="primary"
-            className="button-update2"
-            onClick={showCreateFoder}
-          >
-            New Folder
-          </Button>
-          <Button
-            type="primary"
-            className="button-update2"
-            onClick={handleUnmount}
-          >
-            Safely Remove
-          </Button>
-        </div>
-      </React.Fragment>
-    );
-  };
-
   const OperationButtonLocal = () => {
     return (
-      <React.Fragment>
-        <div className="btn-options-storages">
-          {selected ? (
-            <div className="btn-options-storages2">
-              <Button
-                type="primary"
-                className="button-update2"
-                onClick={handleCopy}
-              >
-                Copy
-              </Button>
-              <Button
-                type="primary"
-                className="button-update2"
-                onClick={handlePaste}
-              >
-                Paste
-              </Button>
-              <Button
-                type="primary"
-                className="button-update2"
-                onClick={handleCut}
-              >
-                Cut
-              </Button>
-              <Popover
-                content={contents}
-                placement="rightTop"
-                title={null}
-                trigger="click"
-                // visible={showModal}
-                onVisibleChange={showSendTo}
-              >
-                <Button type="primary" className="button-update2">
-                  Send to
-                </Button>
-              </Popover>
-              <Popconfirm
-                title="Are you sure to delete it?"
-                placement="rightTop"
-                okText="Yes"
-                cancelText="No"
-                onConfirm={deleteDir}
-                onCancel={handleCancel}
-              >
-                <Button type="primary" className="button-update2">
-                  Delete
-                </Button>
-              </Popconfirm>
-            </div>
-          ) : (
-            <div className="btn-options-storages2">
-              <Button type="primary" className="button-unselected">
-                Copy
-              </Button>
-              <Button type="primary" className="button-unselected">
-                Paste
-              </Button>
-              <Button type="primary" className="button-unselected">
-                Cut
-              </Button>
-
-              <Button type="primary" className="button-unselected">
-                Send to
-              </Button>
-
-              <Button type="primary" className="button-unselected">
-                Delete
-              </Button>
-            </div>
+      <div className="btn-options-storages">
+        <Row gutter={6} justify="end">
+          {selected && (
+            <>
+              <Col>
+                <Popover title={null} content="Send Folder">
+                  <FiSend className="create-folder" onClick={showSendTo} />
+                </Popover>
+              </Col>
+              <Col>
+                <Popover title={null} content="Move">
+                  <BsFolderX className="create-folder" onClick={handleCut} />
+                </Popover>
+              </Col>
+              <Col>
+                <Popover title={null} content="Copy">
+                  <FiCopy className="create-folder" onClick={handleCopy} />
+                </Popover>
+              </Col>
+              <Col>
+                <Popover title={null} content="Paste">
+                  <MdOutlineContentPaste
+                    className="create-folder"
+                    onClick={handlePaste}
+                  />
+                </Popover>
+              </Col>
+              <Col>
+                <Popover title={null} content="Delete">
+                  <MdDelete
+                    className="delete-folder"
+                    onClick={() => {
+                      Modal.confirm({
+                        title: "Are you sure to delte it?",
+                        icon: <ExclamationCircleOutlined />,
+                        content: "Make sure you can lose your data!",
+                        okText: "Delete",
+                        cancelText: "Cancel",
+                        onOk: deleteDir,
+                      });
+                    }}
+                  />
+                </Popover>
+              </Col>
+            </>
           )}
-          <Button
-            type="primary"
-            className="button-update2"
-            onClick={showCreateFoder}
-          >
-            New Folder
-          </Button>
-        </div>
-      </React.Fragment>
+          {dataStorage && (
+            <Col>
+              <Popover title={null} content="New folder">
+                <FiFolderPlus
+                  className="create-folder"
+                  onClick={showCreateFolder}
+                />
+              </Popover>
+            </Col>
+          )}
+        </Row>
+      </div>
     );
   };
-
-  const contents = (
-    <React.Fragment>
-      <SendTO selected={selected} uuid={uuid} fetchData={fetchData} />
-    </React.Fragment>
-  );
 
   return (
     <React.Fragment>
@@ -395,15 +245,22 @@ const StoragesManagement = ({ match }) => {
         selected={selected}
         fetchData={fetchData}
       />
+      <SendTO
+        selected={selected}
+        uuid={uuid}
+        fetchData={fetchData}
+        showModal={showModal}
+        handleCancel={handleCancel}
+        handleOk={handleOk}
+      />
       <Content>
         <Row gutter={12}>
           <Col span={16}>
             <div className="card">
               <div className="container">
                 <div className="container-header">
-                  <h1>File Storages</h1>
+                  <h1>STORAGE MANAGEMENT</h1>
                 </div>
-                <hr />
                 <div className="header-storages">
                   <Button type="primary" shape="circle" size="large">
                     <Link to="/storages">
@@ -415,12 +272,9 @@ const StoragesManagement = ({ match }) => {
                     {dataStorage.name}
                   </div>
                 </div>
-                {dataStorage.name !== "Local Content Storage" ? (
-                  <OperationButtonFlash />
-                ) : (
-                  <OperationButtonLocal />
-                )}
-                <hr />
+
+                <OperationButtonLocal />
+
                 <div className="local-data-container">
                   <div className="header-file-manager">
                     <Row getItem={12}>
@@ -435,17 +289,20 @@ const StoragesManagement = ({ match }) => {
                   </div>
                   {!loading &&
                     dataStorage.children &&
-                    JSON.parse(
-                      JSON.stringify(dataStorage)
-                    ).children.map((item) => (
-                      <StorageItem
-                        data={item}
-                        parent={parent}
-                        setParent={setParent}
-                        setSelected={setSelected}
-                        selected={selected}
-                      />
-                    ))}
+                    JSON.parse(JSON.stringify(dataStorage)).children.map(
+                      (item) => (
+                        <StorageItem
+                          fetchData={fetchData}
+                          data={item}
+                          parent={parent}
+                          setParent={setParent}
+                          setSelected={setSelected}
+                          selected={selected}
+                          setSources={setSources}
+                          setSourcesUUID={setSourcesUUID}
+                        />
+                      )
+                    )}
                 </div>
               </div>
             </div>
@@ -454,8 +311,25 @@ const StoragesManagement = ({ match }) => {
             <div className="card2">
               <div className="container">
                 <div className="container-header">
-                  <h1>Desciptions</h1>
+                  <Space>
+                    <h1>HELPS</h1>
+                    <IoIosHelpCircle className="icon-help" />
+                  </Space>
                 </div>
+                <p>
+                  There are 5 operations open to user for control their file on
+                  their USB, which includes{" "}
+                  <strong>
+                    {" "}
+                    Copy, Move, Delete, Create Folder, and Safely unmount their
+                    USB drive
+                  </strong>
+                  .
+                </p>
+                <p>
+                  Similar operation are also available for content server, but
+                  unmount is not allowed.
+                </p>
               </div>
             </div>
           </Col>

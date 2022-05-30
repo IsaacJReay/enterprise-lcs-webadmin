@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Input, Form, Button, message } from "antd";
 import { useParams } from "react-router-dom";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
+import Cookies from "js-cookie";
 
-const DNSRename = ({ visible, handleCancel, handleOk, fetchData, zone }) => {
+const DNSRename = ({ visible, handleCancel, handleOk,  zone }) => {
   //  ----------state -----------
   const [, setLoading] = useState(false);
   let { slug } = useParams();
 
   //   // ------- token ----------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, message } from "antd";
 import axios from "axios";
 import fileDownload from "js-file-download";
+import Cookies from "js-cookie";
 
 const Backup = () => {
   const [, setLoading] = useState(false);
@@ -9,7 +10,8 @@ const Backup = () => {
 
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };

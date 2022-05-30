@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Col, Row, message } from "antd";
+import { Col, Row, message, Modal } from "antd";
 import myImage from "../../assets/images/Hard-Drive3.png";
 import driver from "../../assets/images/Hard-Drive.png";
+import { FiX } from "react-icons/fi";
+import Cookies from "js-cookie";
 
-const SendTO = ({ selected, uuid, fetchData }) => {
+const SendTO = ({ selected, uuid, fetchData, showModal, handleCancel }) => {
   // -------state management ---------------
 
   const [, setLoading] = useState(false);
@@ -12,7 +14,8 @@ const SendTO = ({ selected, uuid, fetchData }) => {
 
   // -------token ----------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
@@ -29,9 +32,6 @@ const SendTO = ({ selected, uuid, fetchData }) => {
     })
       .then((res) => {
         setStorages(res.data);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -58,26 +58,25 @@ const SendTO = ({ selected, uuid, fetchData }) => {
           setLoading(true);
           message.success("Successful!");
           fetchData();
+          handleCancel();
           setLoading(false);
         } else {
-          setLoading(true);
           message.error("Operation Failed! ");
-          setLoading(false);
         }
       })
-
       .catch((err) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
         console.log(err);
-        message.error("Operation Failed! ");
       });
   };
 
   return (
     <React.Fragment>
-      <div>
+      <Modal
+        visible={showModal}
+        footer={null}
+        closeIcon={<FiX className="close-icon" onClick={handleCancel} />}
+        width={350}
+      >
         {storages.map((res, index) => {
           if (index === 0) {
             return (
@@ -95,6 +94,9 @@ const SendTO = ({ selected, uuid, fetchData }) => {
                   </Col>
                   <Col span={18}>
                     <p>{res.drive_label}</p>
+                    <p className="send-to-sub-space">
+                      {res.free_space} free of {res.total_space}
+                    </p>
                   </Col>
                 </Row>
               </div>
@@ -115,13 +117,16 @@ const SendTO = ({ selected, uuid, fetchData }) => {
                   </Col>
                   <Col span={18}>
                     <p>{res.drive_label}</p>
+                    <p className="send-to-sub-space">
+                      {res.free_space} free of {res.total_space}
+                    </p>
                   </Col>
                 </Row>
               </div>
             );
           }
         })}
-      </div>
+      </Modal>
     </React.Fragment>
   );
 };

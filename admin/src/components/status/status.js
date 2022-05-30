@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Layout, Col, Row, Spin, Space } from "antd";
 import axios from "axios";
 import { IoIosHelpCircle } from "react-icons/io";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 const baseUrl = process.env.REACT_APP_API_URL;
-const getToken = localStorage.getItem("token");
+// const getToken = localStorage.getItem("token");
+const getToken = Cookies.get("token");
 
 const StatusPage = () => {
   const [loading, setLoading] = useState(false);
@@ -40,8 +42,6 @@ const StatusPage = () => {
     );
   }
 
-  console.log(status);
-
   return (
     <React.Fragment>
       <Content>
@@ -58,7 +58,7 @@ const StatusPage = () => {
                       <Row gutter={[64, 0]}>
                         <Col>
                           <div className="desc-details-left">
-                            <p>Fireware Version : 32.2.3 Build 2021</p>
+                            <p>Firmware Version : 32.2.3 Build 2021</p>
                           </div>
                         </Col>
                         <div className="vertical-line" />

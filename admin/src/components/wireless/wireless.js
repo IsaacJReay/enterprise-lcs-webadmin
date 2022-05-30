@@ -15,6 +15,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { IoIosHelpCircle } from "react-icons/io";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -25,7 +26,8 @@ for (let i = 0; i < 14; i++) {
   options.push(<Option value={i + 1}>{i + 1}</Option>);
 }
 
-const getToken = localStorage.getItem("token");
+// const getToken = localStorage.getItem("token");
+const getToken = Cookies.get("token");
 const baseUrl = process.env.REACT_APP_API_URL;
 
 const WirelessSetting = () => {
@@ -191,7 +193,7 @@ const WirelessSetting = () => {
                         </Form.Item>
                       </Col>
                       <Col span={24}>
-                        <Form.Item label="Mood" name="mode">
+                        <Form.Item label="Mode" name="mode">
                           <Select
                             size="large"
                             className="select-option-wireless"

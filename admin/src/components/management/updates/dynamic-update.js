@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Button, message } from "antd";
+import { Row, Col, Button, message, Spin } from "antd";
 import { SyncOutlined } from "@ant-design/icons";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const DynamicUpdate = () => {
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const baseUrl = process.env.REACT_APP_API_URL;
   const auth = {
     Authorization: "Bearer " + getToken,
@@ -35,7 +37,9 @@ const DynamicUpdate = () => {
   }
 
   useEffect(() => {
-    fetchData();
+    setInterval(() => {
+      fetchData();
+    }, 1000);
   }, []);
 
   const onReload = () => {
@@ -61,13 +65,23 @@ const DynamicUpdate = () => {
 
       .then((res) => {
         if ((res.statusCode = 200)) {
+          setLoading(true);
           fetchData();
+          setLoading(false);
         } else {
           message.error("Operation Failed! ");
         }
       })
       .catch((err) => console.log(err));
   };
+
+  if (loading) {
+    return (
+      <center>
+        <Spin />
+      </center>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -79,7 +93,6 @@ const DynamicUpdate = () => {
       </div>
       <div className="container-update">
         {updates.map((res) => {
-          const { zise } = res.update_size;
           function formatBytes(zise, decimals = 2) {
             if (zise === 0) return "0 B";
             const k = 1024;
@@ -96,18 +109,19 @@ const DynamicUpdate = () => {
           return (
             <div className="item-storages">
               <Row gutter={[12, 12]}>
-                <Col span={21}>
+                <Col span={19}>
                   <div>
                     <h3>{res.display_name}</h3>
                     <p>Size: {formatBytes(res.update_size)}</p>
                   </div>
                 </Col>
-                <Col span={3}>
+                <Col span={5}>
+                  {res.status === "Downloading" | res.status === "Installing" && (<Spin/>)}
                   {res.status === "Installing" && (
                     <Button
                       type="primary"
                       className="button-update"
-                      // onClick={(e) => handleUpdates(e, res.id, res.sys_update)}
+                      disabled
                     >
                       Installing
                     </Button>
@@ -116,7 +130,7 @@ const DynamicUpdate = () => {
                     <Button
                       type="primary"
                       className="button-update"
-                      // onClick={(e) => handleUpdates(e, res.id, res.sys_update)}
+                      disabled
                     >
                       Downloading
                     </Button>

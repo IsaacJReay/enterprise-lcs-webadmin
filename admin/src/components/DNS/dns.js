@@ -19,6 +19,7 @@ import { IoIosHelpCircle } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { ControlOutlined, ImportOutlined } from "@ant-design/icons";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -26,7 +27,8 @@ const { TabPane } = Tabs;
 const DNSSetting = () => {
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };
@@ -178,35 +180,35 @@ const DNSSetting = () => {
 
   // -------------- create domain name ----------------
 
-  const CreateDomain = () => {
-    return (
-      <React.Fragment>
-        <Form form={form} layout="inline" onFinish={handleApply}>
-          <Form.Item
-            label="Domain name"
-            name="domain_name"
-            rules={[{ required: true, message: "Input domain name!" }]}
-          >
-            <Input
-              placeholder="example.com "
-              size="large"
-              className="input-info-dns"
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="button-update2"
-              size="large"
-            >
-              Create
-            </Button>
-          </Form.Item>
-        </Form>
-      </React.Fragment>
-    );
-  };
+  // const CreateDomain = () => {
+  //   return (
+  //     <React.Fragment>
+  //       <Form form={form} layout="inline" onFinish={handleApply}>
+  //         <Form.Item
+  //           label="Domain name"
+  //           name="domain_name"
+  //           rules={[{ required: true, message: "Input domain name!" }]}
+  //         >
+  //           <Input
+  //             placeholder="example.com "
+  //             size="large"
+  //             className="input-info-dns"
+  //           />
+  //         </Form.Item>
+  //         <Form.Item>
+  //           <Button
+  //             type="primary"
+  //             htmlType="submit"
+  //             className="button-update2"
+  //             size="large"
+  //           >
+  //             Create
+  //           </Button>
+  //         </Form.Item>
+  //       </Form>
+  //     </React.Fragment>
+  //   );
+  // };
 
   return (
     <React.Fragment>
@@ -230,7 +232,31 @@ const DNSSetting = () => {
                     key="internal"
                   >
                     <div className="dns-desc-container">
-                      <CreateDomain />
+                      <Form form={form} layout="inline" onFinish={handleApply}>
+                        <Form.Item
+                          label="Domain name"
+                          name="domain_name"
+                          rules={[
+                            { required: true, message: "Input domain name!" },
+                          ]}
+                        >
+                          <Input
+                            placeholder="example.com "
+                            size="large"
+                            className="input-info-dns"
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            className="button-update2"
+                            size="large"
+                          >
+                            Create
+                          </Button>
+                        </Form.Item>
+                      </Form>
                     </div>
                     <Form>
                       <div className="dns-desc-container">
@@ -255,7 +281,31 @@ const DNSSetting = () => {
                     key="external"
                   >
                     <div className="dns-desc-container">
-                      <CreateDomain />
+                      <Form form={form} layout="inline" onFinish={handleApply}>
+                        <Form.Item
+                          label="Domain name"
+                          name="domain_name"
+                          rules={[
+                            { required: true, message: "Input domain name!" },
+                          ]}
+                        >
+                          <Input
+                            placeholder="example.com "
+                            size="large"
+                            className="input-info-dns"
+                          />
+                        </Form.Item>
+                        <Form.Item>
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            className="button-update2"
+                            size="large"
+                          >
+                            Create
+                          </Button>
+                        </Form.Item>
+                      </Form>
                     </div>
                     <Form>
                       <div className="dns-desc-container">
@@ -283,6 +333,59 @@ const DNSSetting = () => {
                     <IoIosHelpCircle className="icon-help" />
                   </Space>
                 </div>
+                <>
+                  <p>
+                    The Domain Name System (DNS) is the phonebook of the
+                    Internet. Humans access information online through domain
+                    names, like{" "}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://www.nytimes.com"
+                    >
+                      nytimes.com
+                    </a>{" "}
+                    or{" "}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://www.espn.com"
+                    >
+                      espn.com
+                    </a>
+                    . Web browsers interact through Internet Protocol (IP)
+                    addresses.
+                  </p>
+                  <p>
+                    {" "}
+                    DNS translates domain names to IP addresses so browsers can
+                    load Internet resources.
+                  </p>
+                  <p>
+                    A domain name is a string that identifies a realm of
+                    administrative autonomy, authority or control within the
+                    Internet. Domain names are used in various networking
+                    contexts and for application-specific naming and addressing
+                    purposes. Example:{" "}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://www.koompi.com"
+                    >
+                      koompi.com
+                    </a>
+                    . Domain name does not allow space or slashes
+                  </p>
+                  <p>
+                    In DNS management, you can disable or enable a DNS entry
+                    that you created with the button 'status'.{" "}
+                  </p>
+                  <p>
+                    Control button allow you to add changes to a DNS domain name
+                    entry's records inside.{" "}
+                  </p>
+                  <p>Delete button allow you to remove a DNS entry</p>
+                </>
               </div>
             </div>
           </Col>

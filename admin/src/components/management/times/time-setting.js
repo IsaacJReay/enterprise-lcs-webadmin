@@ -4,6 +4,7 @@ import Automaticaly from "./auto";
 import CustomeTime from "./manaul";
 import axios from "axios";
 import { IoIosHelpCircle } from "react-icons/io";
+import Cookies from "js-cookie";
 
 const { Content } = Layout;
 
@@ -15,7 +16,8 @@ const TimeSetting = () => {
 
   // ------token ------
   const baseUrl = process.env.REACT_APP_API_URL;
-  const getToken = localStorage.getItem("token");
+  // const getToken = localStorage.getItem("token");
+  const getToken = Cookies.get("token");
   const auth = {
     Authorization: "Bearer " + getToken,
   };

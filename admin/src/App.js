@@ -23,68 +23,82 @@ import TimeSetting from "./components/management/times/time-setting";
 import InternalWebsite from "./components/website/internal";
 import CustomWebsite from "./components/website/custom-website/main";
 import DownloadWebsite from "./components/website/download-website/download";
+import PageNotFound from "./components/404";
 
 function App() {
   return (
     <React.Fragment>
       <Router>
         <Switch>
-          <PublicRoute exact="true" path="/" component={Login} />
-          <PublicRoute exact="true" path="/login" component={Login} />
-          <PublicRoute exact="true" path="/logout" component={Logout} />
-          <PrivateRoute exact path="/status" component={StatusPage} />
-          <PrivateRoute exact path="/network/wan" component={WANSetting} />
-          <PrivateRoute exact path="/network/wlan" component={WLANSetting} />
-          <PrivateRoute exact path="/wireless" component={WirelessSetting} />
-          <PrivateRoute exact path="/dns" component={DNSSetting} />
+          <PublicRoute exact={true} path="/" component={Login} />
+          <PublicRoute exact={true} path="/login" component={Login} />
+          <PublicRoute exact={true} path="/logout" component={Logout} />
+          <PrivateRoute exact={true} path="/status" component={StatusPage} />
           <PrivateRoute
-            exact
+            exact={true}
+            path="/network/wan"
+            component={WANSetting}
+          />
+          <PrivateRoute
+            exact={true}
+            path="/network/wlan"
+            component={WLANSetting}
+          />
+          <PrivateRoute
+            exact={true}
+            path="/wireless"
+            component={WirelessSetting}
+          />
+          <PrivateRoute exact="true" path="/dns" component={DNSSetting} />
+          <PrivateRoute
+            exact={true}
             path="/dns-management/:zones/:slug"
             component={DNSManagement}
           />
           <PrivateRoute exact path="/storages" component={Storages} />
           <PrivateRoute
-            exact
+            exact={true}
             path="/storages/setting/:id"
             component={StoragesManagement}
           />
           <PrivateRoute exact path="/about-us" component={AboutUs} />
           <PrivateRoute
-            exact
+            exact={true}
             path="/management/system-update"
             component={SystemUpdates}
           />
           <PrivateRoute
-            exact
+            exact={true}
             path="/management/users-account"
             component={UserAccount}
           />
           <PrivateRoute
-            exact
+            exact={true}
             path="/management/backup-restore"
             component={BackupSetting}
           />
           <PrivateRoute exact path="/management/reset" component={ResetAll} />
           <PrivateRoute
-            exact
+            exact={true}
             path="/management/time-setting"
             component={TimeSetting}
           />
           <PrivateRoute
-            exact
+            exact={true}
             path="/website/internal"
             component={InternalWebsite}
           />
           <PrivateRoute
-            exact
+            exact={true}
             path="/website/custom"
             component={CustomWebsite}
           />
           <PrivateRoute
-            exact
+            exact={true}
             path="/website/download"
             component={DownloadWebsite}
           />
+          <PublicRoute component={PageNotFound} />
         </Switch>
       </Router>
     </React.Fragment>
