@@ -29,7 +29,7 @@ impl HostapdParam {
             hw_mode: String::from("g"),
             channel: 11,
             wpa: 2,
-            passphrase: String::from("Koompi-Onelab"),
+            passphrase: String::from("12345678"),
             hw_n_mode: true,
             qos: true,
         }
@@ -189,6 +189,20 @@ pub struct DnsRecords {
     pub subdomain_name: String,
     pub dns_type: String,
     pub address: String,
+}
+
+impl PartialEq for DnsRecords {
+    fn eq(&self, other: &Self) -> bool {
+        self.subdomain_name == other.subdomain_name
+            && self.dns_type == other.dns_type
+            && self.address == other.address
+    }
+}
+
+#[derive(Deserialize)]
+pub struct EditDnsRecords {
+    pub old_record: DnsRecords, 
+    pub new_record: DnsRecords
 }
 
 #[derive(Serialize, Deserialize)]
