@@ -31,7 +31,7 @@
 >> Token invalid
 >> ```
 
-> ### - /private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}
+> ### - /private/api/settings/dns/delete/{zone}/{domain_name}
 >>
 >> | Header Parameter | Data Type |
 >> | ---------------- | --------- |
@@ -41,10 +41,14 @@
 >> | ---------------- | ------------------------- |
 >> | zone             | `internal` or `external`  |
 >> | domain_name      | Example: `koompi.com`     |
->> | subdomain_name   | Example: `sala` or `wiki` |
 >>
 >>  - Body
 >> ```json
+>> {
+>>     "subdomain_name": "",
+>>     "dns_type": "A",
+>>     "address": "10.100.100.1"
+>> }
 >> ```
 >>
 >> - Response 200 

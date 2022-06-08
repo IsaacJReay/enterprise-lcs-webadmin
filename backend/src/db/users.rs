@@ -1,4 +1,4 @@
-use crate::{security, DECRYPT_KEY, SESSION_LIMIT, TOKEN_EXPIRATION_SEC};
+use crate::{DATABASE, security, DECRYPT_KEY, SESSION_LIMIT, TOKEN_EXPIRATION_SEC};
 use actix_web::HttpRequest;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use pam::Authenticator;
@@ -20,7 +20,7 @@ pub fn insert_into_auth_table(
     session_id: &str,
     iat: u64,
 ) {
-    let connection = Connection::open("/tmp/lcs.db").unwrap();
+    let connection = Connection::open(DATABASE).unwrap();
 
     let mut check_overflowed_statement = connection
         .prepare("SELECT COUNT(UserName) FROM tblAuth WHERE UserName=:name")
@@ -44,7 +44,7 @@ pub fn insert_into_auth_table(
 }
 
 pub fn logout(claims: &Claims) -> Result<(), String> {
-    let connection = Connection::open("/tmp/lcs.db").unwrap();
+    let connection = Connection::open(DATABASE).unwrap();
 
     match connection.execute(
         "DELETE FROM tblAuth WHERE UserName=? AND SessionID=? AND IAT=?",
@@ -60,7 +60,7 @@ pub fn get_pass_from_tbl(
     session_id: &str,
     iat: u64,
 ) -> Result<String, (u32, String)> {
-    let connection = Connection::open("/tmp/lcs.db").unwrap();
+    let connection = Connection::open(DATABASE).unwrap();
 
     let mut check_overflowed_statement = connection
         .prepare("SELECT CryptedPass FROM tblAuth WHERE UserName=? AND SessionID=? AND IAT=?")

@@ -38,22 +38,37 @@ pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String
     let mut vec_downloading_patch_update: Vec<String> = Vec::new();
     let mut vec_installing_patch_update: Vec<String> = Vec::new();
 
+    // sys_update operation
     let current_sys_update = match current_update.sys_update {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
     let current_downloading_sys_update = match current_downloading.sys_update {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
     let current_installing_sys_update = match current_installing.sys_update {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
     let new_sys_update = match new_update.sys_update.as_ref() {
-        Some(update) => update.keys().last().unwrap().to_owned(),
+        Some(update) => match update.keys().last() {
+            Some(update) => update.to_owned(),
+            None => String::new(),
+        },
         None => String::new(),
     };
+
+    // patch update operation
     match current_update.patch_update {
         Some(update) => update
             .keys()
@@ -79,7 +94,8 @@ pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String
         None => vec_downloading_patch_update.push(String::new()),
     };
 
-    if current_sys_update == new_sys_update {
+    // Generate system update list
+    if current_sys_update != new_sys_update {
         let current_display_name = new_update
             .sys_update
             .as_ref()
@@ -120,44 +136,42 @@ pub fn display_new_update_lists() -> Result<Vec<SystemUpdateInformation>, String
         })
     };
 
+    // generate patch update list
     for each_update in vec_new_patch_update {
-        match vec_current_patch_update.contains(&each_update) {
-            true => (),
-            false => {
-                let current_update_info = new_update
-                    .patch_update
-                    .as_ref()
-                    .unwrap()
-                    .get(&each_update)
-                    .unwrap();
-                let current_display_name = current_update_info
-                    .get("display_name")
-                    .unwrap()
-                    .as_str()
-                    .unwrap()
-                    .to_string();
-                let current_update_size = current_update_info
-                    .get("size")
-                    .unwrap()
-                    .as_integer()
-                    .unwrap()
-                    .try_into()
-                    .unwrap();
-                let current_status = match vec_downloading_patch_update.contains(&each_update) {
-                    true => String::from("Downloading"),
-                    false => match vec_installing_patch_update.contains(&each_update) {
-                        true => String::from("Installing"),
-                        false => String::from("New"),
-                    },
-                };
-                vec_updatable.push(SystemUpdateInformation {
-                    id: each_update,
-                    display_name: current_display_name,
-                    update_size: current_update_size,
-                    sys_update: false,
-                    status: current_status,
-                });
-            }
+        if !vec_current_patch_update.contains(&each_update) {
+            let current_update_info = new_update
+                .patch_update
+                .as_ref()
+                .unwrap()
+                .get(&each_update)
+                .unwrap();
+            let current_display_name = current_update_info
+                .get("display_name")
+                .unwrap()
+                .as_str()
+                .unwrap()
+                .to_string();
+            let current_update_size = current_update_info
+                .get("size")
+                .unwrap()
+                .as_integer()
+                .unwrap()
+                .try_into()
+                .unwrap();
+            let current_status = match vec_downloading_patch_update.contains(&each_update) {
+                true => String::from("Downloading"),
+                false => match vec_installing_patch_update.contains(&each_update) {
+                    true => String::from("Installing"),
+                    false => String::from("New"),
+                },
+            };
+            vec_updatable.push(SystemUpdateInformation {
+                id: each_update,
+                display_name: current_display_name,
+                update_size: current_update_size,
+                sys_update: false,
+                status: current_status,
+            });
         }
     }
 
@@ -169,7 +183,38 @@ pub fn query_updatable_depedencies_update_content_server(
     sys_update: bool,
 ) -> Vec<SystemUpdateInformation> {
     let mut vec_updatable: Vec<SystemUpdateInformation> = Vec::new();
-    query_all_depedencies_update_content_server(&mut vec_updatable, id, sys_update);
+    query_all_depedencies_update_content_server(&mut vec_updatable, id, sys_update); // return nothing if the update doesn't have any dependencies
+
+    // read new update information
+    let new_update =
+        toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml")).unwrap();
+
+    let update_info = match sys_update {
+        true => new_update.sys_update.as_ref(),
+        false => new_update.patch_update.as_ref(),
+    }
+    .unwrap()
+    .get(id)
+    .unwrap();
+
+    vec_updatable.push(SystemUpdateInformation {
+        id: id.to_string(),
+        display_name: update_info
+            .get("display_name")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string(),
+        update_size: update_info
+            .get("size")
+            .unwrap()
+            .as_integer()
+            .unwrap()
+            .try_into()
+            .unwrap(),
+        sys_update,
+        status: "Undefined".to_string(),
+    });
 
     display_new_update_lists()
         .unwrap()
@@ -228,23 +273,21 @@ fn query_all_depedencies_update_content_server(
     };
 
     // check if the update depends on any patch updates and get the list of patch update if it does
-    match get_dependencies_value.as_ref() {
-        Some(current_value) => match current_value.get("patch_update") {
-            Some(value) => value
+    if let Some(current_value) = get_dependencies_value.as_ref() {
+        if let Some(value) = current_value.get("patch_update") {
+            value
                 .as_array()
                 .unwrap()
                 .into_iter()
                 .for_each(|each_value| {
                     depend_on_patch_update
                         .push(each_value.as_integer().unwrap().try_into().unwrap())
-                }),
-            None => {}
-        },
-        None => {}
-    };
+                })
+        }
+    }
 
     // Operation for update systemupdate if the current update needs systemupdate
-    if depend_on_sys_update == true {
+    if depend_on_sys_update {
         // get the latest systemupdate ID
         let new_update_id = new_update
             .sys_update
@@ -356,22 +399,28 @@ fn query_all_depedencies_update_content_server(
 }
 
 pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
+    // read all updates from the new update list
     let all_new_update_information =
         toml::from_str::<ContentServerUpdate>(&read_file("/tmp/update_db.toml")).unwrap();
-    let vec_updatable = query_updatable_depedencies_update_content_server(id, is_sys_update);
-    let mut install_status: bool = false;
-    let mut download_status: bool = false;
 
+    // read all update needed info from the update list and generate a list of update with all its dependencies
+    let vec_updatable = query_updatable_depedencies_update_content_server(id, is_sys_update);
+
+    let mut install_status: bool = false;
+    let mut download_status: bool = true;
+
+    // put all the updateable update with all its offical info into a downloading lists
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
-            true => all_new_update_information.sys_update.as_ref().unwrap(),
-            false => all_new_update_information.patch_update.as_ref().unwrap(),
+            true => all_new_update_information.sys_update.as_ref(),
+            false => all_new_update_information.patch_update.as_ref(),
         }
+        .unwrap()
         .get(&each_update.get_id())
         .unwrap();
 
         insert_update_information_to_toml(
-            (true, false),
+            (true, false), // this will put the info into .downloading
             &each_update.get_id(),
             current_update_information,
             each_update.get_sys_update(),
@@ -380,9 +429,10 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
 
     for each_update in &vec_updatable {
         let current_update_information = match each_update.get_sys_update() {
-            true => all_new_update_information.sys_update.as_ref().unwrap(),
-            false => all_new_update_information.patch_update.as_ref().unwrap(),
+            true => all_new_update_information.sys_update.as_ref(),
+            false => all_new_update_information.patch_update.as_ref(),
         }
+        .unwrap()
         .get(&each_update.get_id())
         .unwrap();
 
@@ -393,14 +443,8 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
             .unwrap();
 
         let output_file = continue_file(&("/tmp/".to_owned() + filename));
-
-        match download_file(
-            &("https://dev.koompi.org/contentserver/".to_owned() + filename),
-            output_file,
-        ) {
-            Ok(()) => (),
-            Err(_) => download_status = false,
-        };
+        let download_link = &("https://dev.koompi.org/contentserver/".to_owned() + filename);
+        download_file(download_link, output_file).unwrap_or_else(|_| download_status = false);
     }
 
     for each_update in &vec_updatable {
@@ -412,13 +456,13 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         .unwrap();
 
         remove_update_information_from_toml(
-            (true, false),
+            (true, false), // this will remove info from .downloading
             &each_update.get_id(),
             each_update.get_sys_update(),
         );
         if download_status {
             insert_update_information_to_toml(
-                (false, true),
+                (false, true), // this will put info into .installing
                 &each_update.get_id(),
                 current_update_information,
                 each_update.get_sys_update(),
@@ -429,9 +473,10 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
     if download_status {
         for each_update in &vec_updatable {
             let current_update_information = match each_update.get_sys_update() {
-                true => all_new_update_information.sys_update.as_ref().unwrap(),
-                false => all_new_update_information.patch_update.as_ref().unwrap(),
+                true => all_new_update_information.sys_update.as_ref(),
+                false => all_new_update_information.patch_update.as_ref(),
             }
+            .unwrap()
             .get(&each_update.get_id())
             .unwrap();
 
@@ -442,20 +487,12 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
                 .unwrap();
             let extract_location = &("/tmp/".to_owned() + &filename + "_extract");
 
-            if !untar_file(&("/tmp/".to_owned() + &filename), extract_location) {
-                match each_update.get_sys_update() {
-                    true => {
-                        if !update_sys_pacman(password, extract_location) {
-                            install_status = false
-                        }
-                    }
-                    false => {
-                        if !update_patch_script(password, extract_location) {
-                            install_status = false
-                        }
-                    }
+            if untar_file(&("/tmp/".to_owned() + &filename), extract_location) {
+                install_status = match each_update.get_sys_update() {
+                    true => update_sys_pacman(password, extract_location),
+                    false => update_patch_script(password, extract_location),
                 };
-            };
+            }
         }
     }
 
@@ -468,7 +505,7 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
         .unwrap();
 
         remove_update_information_from_toml(
-            (false, true),
+            (false, true), // this will remove info from .installing
             &each_update.get_id(),
             each_update.get_sys_update(),
         );
@@ -478,22 +515,22 @@ pub fn update_content_server(password: &str, id: &str, is_sys_update: bool) {
                 let old_update_informaton =
                     toml::from_str::<ContentServerUpdate>(&read_file("/kmp/update_db.toml"))
                         .unwrap();
-                match old_update_informaton.sys_update.as_ref() {
-                    Some(update) => remove_update_information_from_toml(
+                if let Some(update) = old_update_informaton.sys_update.as_ref() {
+                    remove_update_information_from_toml(
                         (false, false),
                         update.keys().last().unwrap(),
                         each_update.get_sys_update(),
-                    ),
-                    None => (),
+                    )
                 }
             }
             insert_update_information_to_toml(
-                (false, false),
+                (false, false), // this will put info into /kmp/update.toml (finished)
                 &each_update.get_id(),
                 current_update_information,
                 each_update.get_sys_update(),
             );
         }
     }
+
     remove_filedir_root(password, "/tmp/update_db.lock");
 }

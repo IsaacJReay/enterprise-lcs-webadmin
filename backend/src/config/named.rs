@@ -62,55 +62,44 @@ pub fn read_zone_record_file(zone_is_internal: bool, domain_name: &str) -> Vec<D
 
     let mut vec_record: Vec<DnsRecords> = Vec::new();
 
-    let (three_items, four_items): (Vec<&str>, Vec<&str>) = file_data
-        .lines()
-        .skip(8)
-        .partition(|each_line| each_line.split_whitespace().count() <= 3);
-
-    three_items.into_iter().for_each(|each_line| {
+    file_data.lines().skip(8).into_iter().for_each(|each_line| {
         if !each_line.is_empty() {
-            let splited_each_line = each_line
-                .split_whitespace()
-                .map(|each_str| each_str.to_string())
-                .collect::<Vec<String>>();
-            if splited_each_line[1] == "A" {
+            let splited_each_line = each_line.split_whitespace().collect::<Vec<_>>();
+            if each_line.split_whitespace().count() <= 3 {
+                if splited_each_line[1] == "A" || splited_each_line[1] == "NS" {
+                    vec_record.push(DnsRecords {
+                        subdomain_name: String::from(" "),
+                        dns_type: splited_each_line[1].to_owned(),
+                        address: splited_each_line[2].to_owned(),
+                    })
+                }
+            } else {
+                let current_subdomain_name = splited_each_line[0].to_owned();
+                let (current_dns_type, current_address) = match splited_each_line[2].as_ref() {
+                    "MX" => (
+                        splited_each_line[2].to_owned() + " " + &splited_each_line[3],
+                        splited_each_line[4].to_owned(),
+                    ),
+                    "CAA" => (
+                        splited_each_line[2].to_owned(),
+                        each_line
+                            .split_whitespace()
+                            .skip(3)
+                            .map(|each_str| each_str.to_owned())
+                            .collect::<Vec<String>>()
+                            .join(" "),
+                    ),
+                    _ => (
+                        splited_each_line[2].to_owned(),
+                        splited_each_line[3].to_owned(),
+                    ),
+                };
                 vec_record.push(DnsRecords {
-                    subdomain_name: String::new(),
-                    dns_type: "A".to_string(),
-                    address: splited_each_line[2].to_owned(),
+                    subdomain_name: current_subdomain_name,
+                    dns_type: current_dns_type,
+                    address: current_address,
                 })
             }
-        }
-    });
-
-    four_items.into_iter().for_each(|each_line| {
-        if !each_line.is_empty() {
-            let splited_each_line = each_line
-                .split_whitespace()
-                .map(|each_str| each_str.to_string())
-                .collect::<Vec<String>>();
-            let current_subdomain_name = splited_each_line[0].clone();
-            let (current_dns_type, current_address) = match splited_each_line[2].as_ref() {
-                "MX" => (
-                    splited_each_line[2].clone() + " " + &splited_each_line[3],
-                    splited_each_line[4].clone(),
-                ),
-                "CAA" => (
-                    splited_each_line[2].clone(),
-                    each_line
-                        .split_whitespace()
-                        .skip(3)
-                        .map(|each_str| each_str.to_string())
-                        .collect::<Vec<String>>()
-                        .join(" "),
-                ),
-                _ => (splited_each_line[2].clone(), splited_each_line[3].clone()),
-            };
-            vec_record.push(DnsRecords {
-                subdomain_name: current_subdomain_name,
-                dns_type: current_dns_type,
-                address: current_address,
-            })
         }
     });
 
@@ -286,7 +275,7 @@ pub fn delete_domain_name(
 pub fn delete_dns_records(
     password: &str,
     domain_name: &str,
-    subdomain_name: &str,
+    record_info: DnsRecords,
     zone_is_internal: bool,
 ) -> Result<(), String> {
     let zone_location = match zone_is_internal {
@@ -308,7 +297,7 @@ pub fn delete_dns_records(
     vec_selected_zone_record.remove(
         vec_selected_zone_record
             .iter()
-            .position(|each_record| each_record.subdomain_name == subdomain_name)
+            .position(|each_record| each_record == &record_info)
             .unwrap(),
     );
 
@@ -349,4 +338,85 @@ pub fn rename_domain_name(
     delete_domain_name(password, old_domain_name, zone_is_internal)?;
     handle_new_domain_name_and_record(password, selected_zone_config, zone_is_internal)?;
     Ok(())
+}
+
+pub fn sort_dns_records(
+    password: &str,
+    domain_name: &str,
+    new_order_list: Vec<DnsRecords>,
+    zone_is_internal: bool,
+) -> Result<(), String> {
+    let zone_location = match zone_is_internal {
+        true => "internal",
+        false => "external",
+    };
+    let zone_record_name: String = format!("{}.{}.zone", domain_name, zone_location);
+
+    let zone_record =
+        config::templates::generate_records_for_zone(domain_name, Some(new_order_list));
+
+    config::write_file(zone_record.as_bytes(), zone_record_name.as_ref());
+    linux::storage::move_filedir_root(&password, zone_record_name.as_ref(), "/var/named/");
+    linux::chown_chmod(
+        &password,
+        "root",
+        "named",
+        "770",
+        &("/var/named/".to_owned() + zone_record_name.as_ref()),
+    );
+
+    let (code, _output, error) = linux::restartservice(&password, "named");
+    match code {
+        0 => Ok(()),
+        _ => Err(error),
+    }
+}
+
+pub fn edit_dns_record(
+    password: &str,
+    domain_name: &str,
+    old_record: DnsRecords,
+    new_record: DnsRecords,
+    zone_is_internal: bool,
+) -> Result<(), String> {
+    let zone_location = match zone_is_internal {
+        true => "internal",
+        false => "external",
+    };
+    let zone_record_name: String = format!("{}.{}.zone", domain_name, zone_location);
+    let vec_all_zone_config: Vec<DnsZonesInfo> = read_zone_config_file(zone_is_internal, true);
+    let mut vec_selected_zone_record = vec_all_zone_config
+        .iter()
+        .filter(|each_zone| each_zone.domain_name == domain_name)
+        .next()
+        .unwrap()
+        .to_owned()
+        .zone_record
+        .unwrap();
+
+    let target_element_index = vec_selected_zone_record
+        .iter()
+        .position(|each_record| each_record == &old_record)
+        .unwrap();
+    
+    vec_selected_zone_record[target_element_index] = new_record;
+
+    let zone_record =
+        config::templates::generate_records_for_zone(domain_name, Some(vec_selected_zone_record));
+
+    config::write_file(zone_record.as_bytes(), zone_record_name.as_ref());
+    linux::storage::move_filedir_root(&password, zone_record_name.as_ref(), "/var/named/");
+    linux::chown_chmod(
+        &password,
+        "root",
+        "named",
+        "770",
+        &("/var/named/".to_owned() + zone_record_name.as_ref()),
+    );
+
+    let (code, _output, error) = linux::restartservice(&password, "named");
+    match code {
+        0 => Ok(()),
+        _ => Err(error),
+    }
 }

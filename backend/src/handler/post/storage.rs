@@ -18,25 +18,20 @@ pub async fn post_storage_device_copy_or_move(
 
     let destination_prefix = match args_vec.destination_uuid.as_str() {
         "kmp" => "/kmp/webadmin".to_string(),
-        _ => {
-            db::storage::query_from_storage_table(None, Some(args_vec.destination_uuid.as_str())).1
-        }
+        _ => db::storage::query_from_storage_table(None, Some(args_vec.destination_uuid.as_str())).1
     };
 
     let source_string = args_vec
         .source_items
         .iter()
-        .map(|s| format!("{}/{}", source_prefix, s))
+        .map(|s| format!("'{}/{}'", source_prefix, s))
         .collect::<Vec<String>>()
         .join(" ");
 
-    let destination_string = format!("{}/{}", destination_prefix, args_vec.items_destination);
+    let destination_string = format!("'{}/{}'", destination_prefix, args_vec.items_destination);
 
     let (code, output, error) = linux::storage::copy_or_move(
-        match args_vec.operation.as_str() {
-            "copy" => true,
-            _ => false,
-        },
+        args_vec.operation == "copy",
         &source_string,
         &destination_string,
     );
@@ -59,11 +54,11 @@ pub async fn post_storage_device_directory_creation(
 
     let dir_location = match directory_info.drive_partuuid.as_str() {
         "kmp" => format!(
-            "/kmp/webadmin/{}/{}",
+            "'/kmp/webadmin/{}/{}'",
             directory_info.parent_directory, directory_info.directory_name
         ),
         _ => format!(
-            "{}/{}/{}",
+            "'{}/{}/{}'",
             db::storage::query_from_storage_table(None, Some(&directory_info.drive_partuuid)).1,
             directory_info.parent_directory,
             directory_info.directory_name

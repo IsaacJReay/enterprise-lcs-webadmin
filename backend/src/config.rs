@@ -45,12 +45,22 @@ pub fn insert_update_information_to_toml(
     let mut config =
         toml::from_str::<ContentServerUpdate>(&read_file(output_file_location)).unwrap();
 
+    let mut new_map = toml::map::Map::new();
+
     let map = match is_sys_update {
-        true => config.sys_update.as_mut().unwrap(),
-        false => config.patch_update.as_mut().unwrap(),
+        true => config.sys_update.as_mut(),
+        false => config.patch_update.as_mut(),
     };
 
-    map.insert(new_update_id.to_string(), new_update.to_owned());
+    if let Some(existed_map) = map {
+        existed_map.insert(new_update_id.to_string(), new_update.to_owned());
+    } else {
+        new_map.insert(new_update_id.to_string(), new_update.to_owned());
+        match is_sys_update {
+            true => config.sys_update = Some(new_map),
+            false => config.patch_update = Some(new_map),
+        };
+    }
 
     write_file(
         toml::to_string(&config).unwrap().as_bytes(),
@@ -80,6 +90,11 @@ pub fn remove_update_information_from_toml(
     };
 
     map.remove(update_id).unwrap();
+    
+    write_file(
+        toml::to_string(&config).unwrap().as_bytes(),
+        output_file_location,
+    );
 }
 
 pub fn read_file(source_file: &str) -> String {

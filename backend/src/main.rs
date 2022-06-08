@@ -7,21 +7,19 @@ mod structs;
 mod tool;
 
 use actix_cors::Cors;
-use actix_web::{
-    middleware,
-    // http,
-    App,
-    HttpServer,
-};
+use actix_web::{http, middleware, App, HttpServer};
 use std::io::Result;
 
-const CHUNK_SIZE: u32 = 409599;
-const IP_ADDRESS: &str = "0.0.0.0";
+const CHUNK_SIZE: u32 = 409599; // Download Chunk size
+const DATABASE: &str = "/tmp/lcs.db"; // SQLite Database location
+const IP_ADDRESS: &str = "0.0.0.0"; 
 const PORT: &str = "8080";
 const DECRYPT_KEY: &str = "Koompi-Onelab"; // Cannot Exceed 32 characters
 const DECRYPT_NONCE: &str = "KoompiOnelab"; // Cannot Exceed 12 characters
-const TOKEN_EXPIRATION_SEC: u64 = 300; // Cannot Exceed u64
+const TOKEN_EXPIRATION_SEC: u64 = 86400; // Cannot Exceed u64
 const SESSION_LIMIT: u64 = 3; // How many session at the same time for one user
+const ENABLE_CORS: bool = true; // Set to TRUE for production
+const CORS_ORIGIN: &str = "https://admin.koompi.app"; // Allowed Origin for CORS
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -30,16 +28,17 @@ async fn main() -> Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Cors::permissive()) // For Development
-            // .wrap(
-            //     Cors::default()
-            //         .allowed_origin("https://admin.koompi.app")
-            //         .allowed_origin("http://localhost:3000")
-            //         .allowed_origin("http://127.0.0.1:3000")
-            //         .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-            //         .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT, http::header::CONTENT_TYPE])
-            //         .max_age(TOKEN_EXPIRATION_SEC as usize),
-            // ) // For Production
+            .wrap(
+                match ENABLE_CORS {
+                    true => Cors::default()
+                        .allowed_origin(CORS_ORIGIN)
+                        .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                        .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+                        .allowed_header(http::header::CONTENT_TYPE)
+                        .max_age(TOKEN_EXPIRATION_SEC as usize),
+                    false => Cors::permissive(),
+                }
+            )
             .wrap(middleware::Logger::default())
             //handling GET request
             .service(handler::get::users::get_logindata) // link: /private/api/user/query
@@ -75,7 +74,21 @@ async fn main() -> Result<()> {
             .service(handler::delete::delete_delete_zone_record) // link: /private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}
             .service(handler::delete::post_storage_device_remove_filedir) // link: /private/api/settings/storage/device/deletion
             //                                             //handling PUT request
-            .service(handler::put::put_rename_domain_name) // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}/{new_domain_name}
+            .service(handler::put::put_rename_domain_name) // link: /private/api/settings/dns/domain_name/rename/{zone}/{old_domain_name}
+            .service(handler::put::put_edit_dns_records) // link: /private/api/settings/dns/edit/{zone}/{domain_name}
+            .service(handler::put::put_sort_dns_records) // link: /private/api/settings/dns/sort/{zone}/{domain_name}
+            //Host frontend
+            .service(actix_files::Files::new("/", "./public").index_file("index.html"))
+            .default_service(
+                actix_files::NamedFile::open(std::path::PathBuf::from("./public/index.html"))
+                    .unwrap_or_else(|_| {
+                        eprintln!("Warning: this Code is executed from the wrong directory. Consider change directory to base directory.");
+                        actix_files::NamedFile::open(std::path::PathBuf::from(
+                            "../public/index.html",
+                        ))
+                        .unwrap()
+                    }),
+            )
     })
     .bind(format!("{}:{}", IP_ADDRESS, PORT))?
     .run();

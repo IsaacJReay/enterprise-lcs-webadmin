@@ -1,4 +1,7 @@
-use crate::{config, handler, linux, structs::DeleteArgs};
+use crate::{
+    config, handler, linux,
+    structs::{DeleteArgs, DnsRecords},
+};
 use actix_web::{delete, error, http, web, HttpRequest, HttpResponse, Result};
 
 #[delete("/private/api/settings/dns/delete/{zone}/{domain_name}")]
@@ -16,19 +19,21 @@ pub async fn delete_delete_domain_name(req: HttpRequest) -> Result<HttpResponse>
     }
 }
 
-#[delete("/private/api/settings/dns/delete/{zone}/{domain_name}/{subdomain_name}")]
-pub async fn delete_delete_zone_record(req: HttpRequest) -> Result<HttpResponse> {
+#[delete("/private/api/settings/dns/delete/{zone}/{domain_name}")]
+pub async fn delete_delete_zone_record(
+    req: HttpRequest,
+    record_info: web::Json<DnsRecords>
+) -> Result<HttpResponse> {
     let (_username, password) = handler::handle_validate_token_response(&req)?;
     let zone_is_internal = match req.match_info().get("zone").unwrap() {
         "internal" => true,
         _ => false,
     };
-    let subdomain_name = req.match_info().get("subdomain_name").unwrap();
     let domain_name = req.match_info().get("domain_name").unwrap();
     match config::named::delete_dns_records(
         &password,
         domain_name,
-        subdomain_name,
+        record_info.into_inner(),
         zone_is_internal,
     ) {
         Ok(()) => Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap())),

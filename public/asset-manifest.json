@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.24b6dc4f.css",
+    "main.js": "/static/js/main.aa77eb6a.js",
+    "static/js/787.f3f68feb.chunk.js": "/static/js/787.f3f68feb.chunk.js",
+    "static/media/background-1.png": "/static/media/background-1.45d99684c905945a737a.png",
+    "static/media/background.jpg": "/static/media/background.8ec077f508e52c1195de.jpg",
+    "static/media/mission.png": "/static/media/mission.ada387024df662f953f0.png",
+    "static/media/Hard-Drive3.png": "/static/media/Hard-Drive3.1aae7036b38cb408e127.png",
+    "static/media/Hard-Drive.png": "/static/media/Hard-Drive.da9c82b1258e3dbad775.png",
+    "static/media/koompi-black.png": "/static/media/koompi-black.e8fe6c05af7c9177974f.png",
+    "static/media/login2.png": "/static/media/login2.da5d86408abc3d12a101.png",
+    "static/media/vision.png": "/static/media/vision.f5637a684be287a2058f.png",
+    "static/media/history.png": "/static/media/history.fedddd17753bf8ed591e.png",
+    "index.html": "/index.html",
+    "main.24b6dc4f.css.map": "/static/css/main.24b6dc4f.css.map",
+    "main.aa77eb6a.js.map": "/static/js/main.aa77eb6a.js.map",
+    "787.f3f68feb.chunk.js.map": "/static/js/787.f3f68feb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.24b6dc4f.css",
+    "static/js/main.aa77eb6a.js"
+  ]
+}
