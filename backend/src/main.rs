@@ -36,7 +36,8 @@ async fn main() -> std::io::Result<()> {
                     false => actix_cors::Cors::default()
                         .allow_any_header()
                         .allow_any_method()
-                        .allow_any_origin()                        ,
+                        .allow_any_origin()
+                        .supports_credentials(),
                 }
             )
             .wrap(middleware::Logger::default())
