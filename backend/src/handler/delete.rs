@@ -19,7 +19,7 @@ pub async fn delete_delete_domain_name(req: HttpRequest) -> Result<HttpResponse>
     }
 }
 
-#[delete("/private/api/settings/dns/delete/{zone}/{domain_name}")]
+#[delete("/private/api/settings/dns/delete/{zone}/{domain_name}/subdomain")]
 pub async fn delete_delete_zone_record(
     req: HttpRequest,
     record_info: web::Json<DnsRecords>

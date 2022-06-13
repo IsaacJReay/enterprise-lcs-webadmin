@@ -31,7 +31,7 @@
 >> Token invalid
 >> ```
 
-> ### - /private/api/settings/dns/delete/{zone}/{domain_name}
+> ### - /private/api/settings/dns/delete/{zone}/{domain_name}/subdomain
 >>
 >> | Header Parameter | Data Type |
 >> | ---------------- | --------- |
