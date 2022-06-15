@@ -24,7 +24,7 @@ pub struct HostapdParam {
 impl HostapdParam {
     pub fn default() -> Self {
         Self {
-            ssid: String::from("Sala"),
+            ssid: String::from("SALA"),
             hide_ssid: false,
             hw_mode: String::from("g"),
             channel: 11,
@@ -130,7 +130,7 @@ impl DnsZonesInfo {
                     address: wan_ip.unwrap_or_else(|| "10.100.100.1").to_string(),
                 },
                 DnsRecords {
-                    subdomain_name: "".to_string(),
+                    subdomain_name: " ".to_string(),
                     dns_type: "A".to_string(),
                     address: wan_ip.unwrap_or_else(|| "10.100.100.1").to_string(),
                 },

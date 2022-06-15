@@ -1,26 +1,18 @@
-// use std::io::Write;
 use actix_web::{
     error,
     http,
-    // web,
     post,
     HttpRequest,
     HttpResponse,
     Result,
 };
-// use futures::{
-//     StreamExt,
-//     TryStreamExt,
-// };
 use crate::{
     config,
     db,
     handler,
-    // security,
     linux,
     structs::{
         DnsZonesInfo,
-        // RestoreParam,
         HostapdParam,
         PasswdParam,
         WirelessNetworkParam,
@@ -71,5 +63,6 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
         0 => Ok(()),
         _ => Err(error::ErrorInternalServerError("reset_password_error")),
     }?;
+    linux::rebootserver("123");
     Ok(HttpResponse::new(http::StatusCode::from_u16(200).unwrap()))
 }

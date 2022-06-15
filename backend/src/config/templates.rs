@@ -40,7 +40,7 @@ pub fn generate_records_for_zone(domain_name: &str, vec_record: Option<Vec<DnsRe
         .to_string()
         .parse::<u64>()
         .unwrap();
-    let current_datetime = format!("{}{}", date, hours+minutes+seconds);
+    let current_datetime = format!("{}{}", date, hours + minutes + seconds);
 
     if let Some(vec_record) = vec_record {
         vec_record.iter().for_each(|each_record| {
@@ -82,45 +82,23 @@ pub fn gen_hostapd_conf(
 ) -> String {
     format!(
         "interface=wlan0
-# SSID to be used in IEEE 802.11 management frames
 ssid={}
-# Driver interface type (hostap/wired/none/nl80211/bsd)
 driver=nl80211
-# Country code (ISO/IEC 3166-1)
-#country_code=US
-
-# Operation mode (a = IEEE 802.11a (5 GHz), b = IEEE 802.11b (2.4 GHz)
+country_code=KH
 hw_mode={}
-# Channel number
 channel={}
-# Maximum number of stations allowed
-#max_num_sta=5
-
-# Bit field: bit0 = WPA, bit1 = WPA2
 wpa={}
-# Bit field: 1=wpa, 2=wep, 3=both
 auth_algs=1
-
-# Set of accepted cipher suites; disabling insecure TKIP
 wpa_pairwise=CCMP
-# Set of accepted key management algorithms
 wpa_key_mgmt=WPA-PSK
 wpa_passphrase={}
-
-# hostapd event logger configuration
 logger_stdout=-1
 logger_stdout_level=2
-
 ignore_broadcast_ssid={}
 macaddr_acl=0
-
-# Uncomment and modify the following section if your device supports 802.11n
-## Enable 802.11n support
 ieee80211n={}
-## QoS support
 wmm_enabled={}
-## Use iw list to show device capabilities and modify ht_capab accordingly
-#ht_capab=[HT40+][SHORT-GI-40][TX-STBC][RX-STBC1][DSSS_CCK-40]",
+",
         ssid, hw_mode, channel, wpa, passphrase, hide_ssid as u8, hw_n_mode as u8, qos as u8
     )
 }
@@ -177,8 +155,7 @@ pub fn gen_systemd_networkd_wired_static(
             .unwrap()
             .to_string();
     format!(
-        "
-[Match]
+        "[Match]
 Name=eth0
 
 [Network]
@@ -192,8 +169,8 @@ IPv6PrivacyExtensions=yes",
 }
 
 pub fn gen_systemd_networkd_wired_dynamic() -> String {
-    r#"
-[Match]
+    String::from(
+        "[Match]
 Name=eth0
 
 [Network]
@@ -201,9 +178,8 @@ DHCP=yes
 IPv6PrivacyExtensions=yes
 
 [DHCP]
-RouteMetric=1024
-"#
-    .to_string()
+RouteMetric=1024",
+    )
 }
 
 pub fn gen_named_conf_acl(router_ip: &str, netmask: &str) -> String {

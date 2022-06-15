@@ -50,3 +50,8 @@ pub fn restartservice(password: &str, servicename: &str) -> (i32, String, String
 
     (code, output, error)
 }
+
+pub fn rebootserver(password: &str) {
+    let options = ScriptOptions::new();
+    let (_, _, _) = run_script!(&format!("echo {} | sudo -S systemctl boot", password), &vec![], &options).unwrap();
+}
