@@ -56,7 +56,7 @@ pub async fn post_storage_device_remove_filedir(
     let items_string = args_vec
         .selected_filedir
         .iter()
-        .map(|s| format!("{}/{}", items_prefix, s))
+        .map(|s| format!("'{}/{}'", items_prefix, s))
         .collect::<Vec<String>>()
         .join(" ");
 

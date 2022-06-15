@@ -114,7 +114,7 @@ pub fn make_dir(dir_location: &str) -> (i32, String, String) {
 pub fn remove_filedir_root(password: &str, filepath: &str) -> (i32, String, String) {
     let options = ScriptOptions::new();
 
-    let _command = r#"echo password | sudo -S rm -rf 'filepath'"#;
+    let _command = r#"echo password | sudo -S rm -rf filepath"#;
     let _command = _command.replace("password", password);
     let command = _command.replace("filepath", filepath);
 

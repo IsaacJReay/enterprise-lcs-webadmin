@@ -49,6 +49,9 @@ pub async fn post_settings_reset(req: HttpRequest) -> Result<HttpResponse> {
 
     let internal_dns = DnsZonesInfo::default(None);
     let external_dns = DnsZonesInfo::default(Some(&db::systemdnetworkd::read_eth0().1));
+
+    linux::storage::remove_filedir_root(&password, "/var/named/*.{internal,external}.zone /etc/named.{internal,external}.zones");
+
     match config::named::handle_new_domain_name_and_record(password.as_ref(), internal_dns, true) {
         Ok(()) => Ok(()),
         Err(error) => Err(error::ErrorInternalServerError(error)),
