@@ -127,7 +127,7 @@ impl DnsZonesInfo {
                 DnsRecords {
                     subdomain_name: "@".to_string(),
                     dns_type: "NS".to_string(),
-                    address: wan_ip.unwrap_or_else(|| "10.100.100.1").to_string(),
+                    address: "koompi.app.".to_string(),
                 },
                 DnsRecords {
                     subdomain_name: " ".to_string(),
